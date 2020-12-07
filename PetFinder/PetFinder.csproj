@@ -5,6 +5,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\css\open-iconic\**" />
+    <Content Remove="wwwroot\css\open-iconic\**" />
+    <EmbeddedResource Remove="wwwroot\css\open-iconic\**" />
+    <None Remove="wwwroot\css\open-iconic\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="Shared\NavMenu.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Data\" />
   </ItemGroup>
 
