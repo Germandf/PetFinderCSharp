@@ -10,12 +10,12 @@
     z-index: 1000;
 }
 
-    #blazor-error-ui .dismiss {
-        cursor: pointer;
-        position: absolute;
-        right: 0.75rem;
-        top: 0.5rem;
-    }
+#blazor-error-ui .dismiss {
+    cursor: pointer;
+    position: absolute;
+    right: 0.75rem;
+    top: 0.5rem;
+}
 
 /* Fonts */
 /*Zona fuentes*/
@@ -42,13 +42,13 @@ body, li {
     font-family: 'VAGRoundedLtNormal !important';
 }
 
-    body .navbar-brand {
-        font-family: '-apple-system,BlinkMacSystemFont',"Segoe UI",'Roboto';
-    }
+body .navbar-brand {
+    font-family: '-apple-system,BlinkMacSystemFont',"Segoe UI",'Roboto';
+}
 
-    body button, body .btn, body select, body input, .list-group, .list-group-item, p, th, td {
-        font-family: 'VAGRoundedLtNormal';
-    }
+body button, body .btn, body select, body input, .list-group, .list-group-item, p, th, td {
+    font-family: 'VAGRoundedLtNormal';
+}
 
 .lastPetsTitle, .categoriesTitle, .petTitle {
     font-size: 26px;
@@ -198,9 +198,9 @@ body .bg-red {
     padding: 10px 15px 25px;
 }
 
-    .modal-confirm .modal-footer a {
-        color: #999;
-    }
+.modal-confirm .modal-footer a {
+    color: #999;
+}
 
 .modal-confirm .icon-box {
     width: 80px;
@@ -212,12 +212,12 @@ body .bg-red {
     border: 3px solid #f15e5e;
 }
 
-    .modal-confirm .icon-box i {
-        color: #f15e5e;
-        font-size: 46px;
-        display: inline-block;
-        margin-top: 13px;
-    }
+.modal-confirm .icon-box i {
+    color: #f15e5e;
+    font-size: 46px;
+    display: inline-block;
+    margin-top: 13px;
+}
 
 .modal-confirm .btn, .modal-confirm .btn:active {
     color: #fff;
