@@ -9,12 +9,13 @@
     width: 100%;
     z-index: 1000;
 }
-#blazor-error-ui .dismiss {
-    cursor: pointer;
-    position: absolute;
-    right: 0.75rem;
-    top: 0.5rem;
-}
+
+    #blazor-error-ui .dismiss {
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+    }
 
 /* Fonts */
 /*Zona fuentes*/
@@ -41,13 +42,15 @@ body, li {
     font-family: 'VAGRoundedLtNormal !important';
 }
 
-body .navbar-brand {
-    font-family: '-apple-system,BlinkMacSystemFont',"Segoe UI",'Roboto';
-}
+    body .navbar-brand {
+        font-family: '-apple-system,BlinkMacSystemFont',"Segoe UI",'Roboto';
+    }
 
-body button, body .btn, body select, body input, .list-group, .list-group-item, p, th, td {
-    font-family: 'VAGRoundedLtNormal';
-}
+    body button, body .btn, body select, body input, .list-group, .list-group-item, p, th, td {
+        font-family: 'VAGRoundedLtNormal';
+    }
+
+.lastPetsTitle, .categoriesTitle, .petTitle {
     font-size: 26px;
 }
 
@@ -75,13 +78,14 @@ body button, body .btn, body select, body input, .list-group, .list-group-item, 
     letter-spacing: 1px;
     color: white !important;
 }
-.nav-link.active{
-        background-color: #CF5D28;
-        padding-top: 8px;
-        padding-bottom: 8px;
-        color: white !important;
-        border-radius: 8px;
-    }
+
+.nav-link.active {
+    background-color: #CF5D28;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    color: white !important;
+    border-radius: 8px;
+}
 
 body .bg-orange {
     background: #DF9226;
@@ -114,7 +118,7 @@ body .bg-red {
 
 
 /* COMMENTS */
-@media (min-width: 0){
+@media (min-width: 0) {
     .g-mt-3 {
         margin-top: 0.21429rem !important;
     }
@@ -148,7 +152,7 @@ body .bg-red {
 }
 
 .media-comment {
-    margin-top:20px
+    margin-top: 20px
 }
 
 /*Modal confirmation*/
@@ -194,9 +198,9 @@ body .bg-red {
     padding: 10px 15px 25px;
 }
 
-.modal-confirm .modal-footer a {
-    color: #999;
-}
+    .modal-confirm .modal-footer a {
+        color: #999;
+    }
 
 .modal-confirm .icon-box {
     width: 80px;
@@ -208,12 +212,12 @@ body .bg-red {
     border: 3px solid #f15e5e;
 }
 
-.modal-confirm .icon-box i {
-    color: #f15e5e;
-    font-size: 46px;
-    display: inline-block;
-    margin-top: 13px;
-}
+    .modal-confirm .icon-box i {
+        color: #f15e5e;
+        font-size: 46px;
+        display: inline-block;
+        margin-top: 13px;
+    }
 
 .modal-confirm .btn, .modal-confirm .btn:active {
     color: #fff;
