@@ -12,13 +12,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Remove="Pages\pagina_.cshtml.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Content Remove="Pages\pagina_.cshtml" />
     <Content Remove="Shared\NavMenu.razor" />
     <Content Remove="Shared\SurveyPrompt.razor" />
+    <Content Remove="Shared\SurveyPrompt.razor" />
+    <Content Remove="wwwroot\favicon.ico" />
   </ItemGroup>
 
   <ItemGroup>
