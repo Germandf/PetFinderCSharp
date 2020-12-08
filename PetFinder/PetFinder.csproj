@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <Content Remove="Shared\NavMenu.razor" />
+    <Content Remove="wwwroot\favicon.ico" />
   </ItemGroup>
 
   <ItemGroup>
