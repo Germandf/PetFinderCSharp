@@ -1,0 +1,80 @@
+﻿@page "/admin"
+
+<section class="container-fluid bg-orange-dark">
+    <div class="row">
+        <div class="col-12 mt-3 mb-3">
+            <a href="agregar" class="btn bg-orange text-white mr-2 mt-1">
+                <span><i class="fa fa-paw"></i></span>
+                <span>Añadir mascota perdida</span>
+            </a>
+            <a href="agregar-ciudad" class="btn bg-orange text-white mr-2 mt-1">
+                <span><i class="fa fa-city"></i></span>
+                <span>Añadir ciudad</span>
+            </a>
+            <a href="agregar-tipo-de-animal" class="btn bg-orange text-white mr-2 mt-1">
+                <span><i class="fa fa-feather"></i></span>
+                <span>Añadir tipo de animal</span>
+            </a>
+            <a href="usuarios" class="btn bg-orange text-white mr-2 mt-1">
+                <span><i class="fa fa-users"></i></span>
+                <span>Tabla de usuarios</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+
+<section class="container">
+    <div class="row">
+        <div class="col-12 col-md-6 mt-4">
+            <ul class="list-group">
+                <li class="list-group-item bg-orange text-white m-0">Ciudades</li>
+                <!-- {foreach from=$cities item=city} -->
+                <li class="list-group-item d-flex align-items-center">
+                    <div class="col-6 text-left">Tandil</div>
+                    <div class="col-6 text-right">
+                        <a href="#" class="btn bg-gray text-white">Editar</a>
+                        <a href="#" class="btn bg-red text-white">Eliminar</a>
+                    </div>
+                </li>
+                <li class="list-group-item d-flex align-items-center">
+                    <div class="col-6 text-left">Tres Arroyos</div>
+                    <div class="col-6 text-right">
+                        <a href="#" class="btn bg-gray text-white">Editar</a>
+                        <a href="#" class="btn bg-red text-white">Eliminar</a>
+                    </div>
+                </li>
+                <!-- {/foreach} -->
+            </ul>
+        </div>
+        <div class="col-12 col-md-6 mt-4">
+            <ul class="list-group">
+                <li class="list-group-item  bg-orange text-white m-0">Tipo de animal</li>
+                <!-- {foreach from=$animaltypes item=animaltype} -->
+                <li class="list-group-item d-flex align-items-center">
+                    <div class="col-6 text-left">Perro</div>
+                    <div class="col-6 text-right">
+                        <a href="#" class="btn bg-gray text-white">Editar</a>
+                        <a href="#" class="btn bg-red text-white">Eliminar</a>
+                    </div>
+                </li>
+                <li class="list-group-item d-flex align-items-center">
+                    <div class="col-6 text-left">Gato</div>
+                    <div class="col-6 text-right">
+                        <a href="#" class="btn bg-gray text-white">Editar</a>
+                        <a href="#" class="btn bg-red text-white">Eliminar</a>
+                    </div>
+                </li>
+                <!-- {/foreach} -->
+            </ul>
+        </div>
+    </div>
+</section>
+
+
+<section class="container">
+    <h1>Acá van las mascotas TODO</h1>
+</section>
+@code {
+
+}
