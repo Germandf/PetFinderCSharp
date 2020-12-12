@@ -158,7 +158,7 @@ body .bg-red {
 /*Modal confirmation*/
 .modal-confirm {
     color: #636363;
-    width: 400px;
+    max-width: 400px;
 }
 
 .modal-confirm .modal-content {
@@ -166,7 +166,7 @@ body .bg-red {
     border-radius: 5px;
     border: none;
     text-align: center;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .modal-confirm .modal-header {
@@ -209,17 +209,21 @@ body .bg-red {
     border-radius: 50%;
     z-index: 9;
     text-align: center;
-    border: 3px solid;
-        
+    border: 3px solid; 
 }
 
-.modal-confirm .icon-box-err{
+.modal-confirm .icon-box-error{
     border-color: #f15e5e;
 }
-.modal-confirm .icon-box-err i {
+.modal-confirm .icon-box-error i {
     color: #f15e5e;
 }
-
+.modal-confirm .icon-box-warning {
+    border-color: #FFC600;
+}
+.modal-confirm .icon-box-warning i {
+    color: #FFC600;
+}
 .modal-confirm .icon-box-success {
     border-color: #4BB543;
 }

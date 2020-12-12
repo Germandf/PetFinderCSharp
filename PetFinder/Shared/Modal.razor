@@ -1,12 +1,11 @@
-﻿<div class="modal fade  @modalClass" aria-hidden="true" tabindex="-1" role="dialog" style="display:@modalDisplay; overflow-y: auto;">>
-    <div class="modal-dialog modal-confirm">
+﻿<div class="modal fade @modalClass" aria-hidden="true" tabindex="-1" role="dialog" style="display:@modalDisplay; overflow-y: auto;">>
+    <div class="modal-dialog-centered mx-auto modal-confirm">
         <div class="modal-content">
             <div class="modal-header flex-column">
                 <div class="icon-box @iconBoxClass">
-                    <i class="fas fa-exclamation"></i>
+                    <i class="fas @fasClass"></i>
                 </div>
                 <h4 class="modal-title w-100">@Title </h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
             </div>
             <div class="modal-body">
                 <p>
@@ -35,17 +34,34 @@
     [Parameter]
     public RenderFragment Footer { get; set; }
 
+    public bool isSuccess { get; set; }
+    public bool isWarning { get; set; }
     public bool isError { get; set; }
 
     private string modalDisplay = "none;";
     private string modalClass = "";
     private bool showBackdrop = false;
     private string iconBoxClass { get; set; }
+    private string fasClass { get; set; }
+    private Func<Task> functionConfirm { get; set; }
 
     public void Open()
     {
-        iconBoxClass = isError ? "icon-box-error" : "icon-box-success";
-
+        if (isError)
+        {
+            iconBoxClass = "icon-box-error";
+            fasClass = "fa-times";
+        }
+        else if (isWarning)
+        {
+            iconBoxClass = "icon-box-warning";
+            fasClass = "fa-exclamation";
+        }
+        else
+        {
+            iconBoxClass = "icon-box-success";
+            fasClass = "fa-check";
+        }
         modalDisplay = "block;";
         modalClass = "show";
         showBackdrop = true;
@@ -56,5 +72,16 @@
         modalDisplay = "none";
         modalClass = "";
         showBackdrop = false;
+    }
+
+    public void Confirm()
+    {
+        functionConfirm();
+        this.Close();
+    }
+
+    public void OnConfirm(Func<Task> functionAsParameter)
+    {
+        functionConfirm = functionAsParameter;
     }
 }
