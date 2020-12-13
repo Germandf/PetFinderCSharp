@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 namespace PetFinder.Models
 {
-    public partial class AnimalType
+    public partial class Gender
     {
-        public AnimalType()
+        public Gender()
         {
             Pets = new HashSet<Pet>();
         }

@@ -1,13 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+
+#nullable disable
 
 namespace PetFinder.Models
 {
-    public class City
+    public partial class City
     {
+        public City()
+        {
+            Pets = new HashSet<Pet>();
+        }
+
         public int Id { get; set; }
         public string Name { get; set; }
+
+        public virtual ICollection<Pet> Pets { get; set; }
     }
 }
