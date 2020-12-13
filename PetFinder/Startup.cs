@@ -2,9 +2,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PetFinder.Data;
+using PetFinder.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -27,6 +30,10 @@ namespace PetFinder
         {
             services.AddRazorPages();
             services.AddServerSideBlazor();
+            services.AddDbContext<PetFinderContext>(options =>
+                    options.UseSqlServer(Configuration.GetConnectionString("SqlConnection"))
+                  );
+            services.AddScoped<ICityService, CityService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

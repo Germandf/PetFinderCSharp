@@ -1,0 +1,82 @@
+﻿@page "/agregar-ciudad"
+@page "/editar-ciudad/{id:int}"
+@inject ICityService CityService
+@inject NavigationManager NavigationManager
+
+<div class="row">
+    <div class="col-12 mt-5 text-center">
+        <EditForm Model="@city" id="addcityForm" class="form-signin text-left shadow rounded">
+            <!-- Muestra el titulo correspondiente -->
+            @if (id != 0 && isError == false)
+            {
+                <h1 class="h3 mb-3 font-weight-normal">Editar ciudad</h1>
+            }
+            else
+            {
+                <h1 class="h3 mb-3 font-weight-normal">Agregar ciudad</h1>
+            }
+            <!-- City -->
+            <label for="inputName" class="sr-only mt-3 ">Nombre</label>
+            <input id="inputName" type="text" class="mt-3 form-control" placeholder="Nombre" required autofocus="" @bind="city.Name">
+            <div class="d-block text-right">
+                <button class="mt-2 text-white btn-lg bg-orange-dark" type="button" value="Cancel" @onclick="Cancel">Cancelar</button>
+                <button class="mt-2 text-white btn-lg bg-orange" type="submit" value="Save" @onclick="SaveCity">Confirmar</button>
+            </div>
+            @if (isError)
+            {
+                <div class="alert alert-danger mt-2">
+                    @error
+                </div>
+            } 
+        </EditForm>
+    </div>
+</div>
+
+<Modal @ref="modal">
+    <Title>
+        ¡Se guardó con éxito!
+    </Title>
+    <Body>
+        <p>
+            La ciudad @city.Name se guardó con éxito.
+        </p>
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick='() => NavigationManager.NavigateTo("/admin")'>Cerrar</button>
+    </Footer>
+</Modal>
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    private City city = new City();
+    public string error { get; set; }
+    public bool isError { get; set; }
+    private Modal modal { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(id != 0)
+        {
+            city = await CityService.Get(id);
+            if(city == null)
+            {
+                error = "No se encontró la ciudad";
+                isError = true;
+                city = new City();
+            }
+        }
+    }
+
+    protected async Task SaveCity()
+    {
+        await CityService.Save(city);
+        modal.Open();
+    }
+
+    protected void Cancel()
+    {
+        NavigationManager.NavigateTo("/admin");
+    }
+}

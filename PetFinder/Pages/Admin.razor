@@ -1,4 +1,5 @@
 ﻿@page "/admin"
+@inject ICityService CityService 
 
 <section class="container-fluid bg-orange-dark">
     <div class="row">
@@ -28,22 +29,23 @@
         <div class="col-12 col-md-6 mt-4">
             <ul class="list-group">
                 <li class="list-group-item bg-orange text-white m-0">Ciudades</li>
-                <!-- {foreach from=$cities item=city} -->
-                <li class="list-group-item d-flex align-items-center">
-                    <div class="col-6 text-left">Tandil</div>
-                    <div class="col-6 text-right">
-                        <a href="#" class="btn bg-gray text-white">Editar</a>
-                        <a href="#" class="btn bg-red text-white">Eliminar</a>
-                    </div>
-                </li>
-                <li class="list-group-item d-flex align-items-center">
-                    <div class="col-6 text-left">Tres Arroyos</div>
-                    <div class="col-6 text-right">
-                        <a href="#" class="btn bg-gray text-white">Editar</a>
-                        <a href="#" class="btn bg-red text-white">Eliminar</a>
-                    </div>
-                </li>
-                <!-- {/foreach} -->
+                @if (cities == null)
+                {
+                    <li class="list-group-item d-flex align-items-center">Cargando...</li>
+                }
+                else
+                {
+                    @foreach (var city in cities)
+                    {
+                        <li class="list-group-item d-flex align-items-center">
+                            <div class="col-6 text-left">@city.Name</div>
+                            <div class="col-6 text-right">
+                                <a href="editar-ciudad/@city.Id" class="btn bg-gray text-white">Editar</a>
+                                <button type="button" value="Delete" class="btn bg-red text-white" @onclick="() => DeleteCity(city)">Eliminar</button>
+                            </div>
+                        </li>
+                    }
+                }
             </ul>
         </div>
         <div class="col-12 col-md-6 mt-4">
@@ -74,6 +76,51 @@
     <h1>Acá van las mascotas TODO</h1>
 </section>
 
-@code {
+<Modal @ref="confirmationModal">
+    <Title>
+        Eliminar
+    </Title>
+    <Body>
+        <p>
+            ¿Está seguro que desea eliminar?
+        </p>
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cancelar</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => confirmationModal.Confirm()">Confirmar</button>
+    </Footer>
+</Modal>
 
+@code {
+    public IEnumerable<City> cities { get; set; }
+    public string Message { get; set; }
+    private Modal confirmationModal { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            cities = await CityService.GetAll();
+        }
+        catch (Exception e)
+        {
+            Message = e.Message;
+        }
+    }
+
+    private void DeleteCity(City city)
+    {
+        confirmationModal.isWarning = true;
+        confirmationModal.Open();
+        confirmationModal.OnConfirm(async () =>
+        {
+            bool result = await CityService.Delete(city.Id);
+            if (result)
+            {
+                //Actualizo la lista con la db
+                cities = await CityService.GetAll();
+                StateHasChanged();
+            }
+        });
+    }
 }
