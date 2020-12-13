@@ -10,5 +10,6 @@ namespace PetFinder.Models
     {
         public PetFinderContext(DbContextOptions<PetFinderContext> options) : base(options) { }
         public DbSet<AnimalType> AnimalTypes { get; set; }
+        public DbSet<City> Cities { get; set; }
     }
 }

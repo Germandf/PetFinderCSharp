@@ -1,4 +1,6 @@
 ﻿@page "/admin"
+@inject ICityService CityService
+@inject IAnimalTypeService AnimalTypeService
 
 <section class="container-fluid bg-orange-dark">
     <div class="row">
@@ -28,43 +30,45 @@
         <div class="col-12 col-md-6 mt-4">
             <ul class="list-group">
                 <li class="list-group-item bg-orange text-white m-0">Ciudades</li>
-                <!-- {foreach from=$cities item=city} -->
-                <li class="list-group-item d-flex align-items-center">
-                    <div class="col-6 text-left">Tandil</div>
-                    <div class="col-6 text-right">
-                        <a href="#" class="btn bg-gray text-white">Editar</a>
-                        <a href="#" class="btn bg-red text-white">Eliminar</a>
-                    </div>
-                </li>
-                <li class="list-group-item d-flex align-items-center">
-                    <div class="col-6 text-left">Tres Arroyos</div>
-                    <div class="col-6 text-right">
-                        <a href="#" class="btn bg-gray text-white">Editar</a>
-                        <a href="#" class="btn bg-red text-white">Eliminar</a>
-                    </div>
-                </li>
-                <!-- {/foreach} -->
+                @if (cities == null)
+                {
+                    <li class="list-group-item d-flex align-items-center">Cargando...</li>
+                }
+                else
+                {
+                    @foreach (var city in cities)
+                    {
+                        <li class="list-group-item d-flex align-items-center">
+                            <div class="col-6 text-left">@city.Name</div>
+                            <div class="col-6 text-right">
+                                <a href="editar-ciudad/@city.Id" class="btn bg-gray text-white">Editar</a>
+                                <button type="button" value="Delete" class="btn bg-red text-white" @onclick="() => DeleteCity(city)">Eliminar</button>
+                            </div>
+                        </li>
+                    }
+                }
             </ul>
         </div>
         <div class="col-12 col-md-6 mt-4">
             <ul class="list-group">
                 <li class="list-group-item  bg-orange text-white m-0">Tipo de animal</li>
-                <!-- {foreach from=$animaltypes item=animaltype} -->
-                <li class="list-group-item d-flex align-items-center">
-                    <div class="col-6 text-left">Perro</div>
-                    <div class="col-6 text-right">
-                        <a href="#" class="btn bg-gray text-white">Editar</a>
-                        <a href="#" class="btn bg-red text-white">Eliminar</a>
-                    </div>
-                </li>
-                <li class="list-group-item d-flex align-items-center">
-                    <div class="col-6 text-left">Gato</div>
-                    <div class="col-6 text-right">
-                        <a href="#" class="btn bg-gray text-white">Editar</a>
-                        <a href="#" class="btn bg-red text-white">Eliminar</a>
-                    </div>
-                </li>
-                <!-- {/foreach} -->
+                @if (animalTypes == null)
+                {
+                    <li class="list-group-item d-flex align-items-center">Cargando...</li>
+                }
+                else
+                {
+                    @foreach (var animalType in animalTypes)
+                    {
+                        <li class="list-group-item d-flex align-items-center">
+                            <div class="col-6 text-left">@animalType.Name</div>
+                            <div class="col-6 text-right">
+                                <button type="button" value="Delete" class="btn bg-red text-white" @onclick="() => DeleteAnimalType(animalType)">Eliminar</button>
+                                <a href="editar-tipo-de-animal/@animalType.Id" class="btn bg-gray text-white">Editar</a>
+                            </div>
+                        </li>
+                    }
+                }
             </ul>
         </div>
     </div>
@@ -74,6 +78,69 @@
     <h1>Acá van las mascotas TODO</h1>
 </section>
 
-@code {
+<Modal @ref="confirmationModal">
+    <Title>
+        Eliminar
+    </Title>
+    <Body>
+        <p>
+            ¿Está seguro que desea eliminar?
+        </p>
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cancelar</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => confirmationModal.Confirm()">Confirmar</button>
+    </Footer>
+</Modal>
 
+@code {
+    public IEnumerable<City> cities { get; set; }
+    public IEnumerable<AnimalType> animalTypes  { get; set; }
+
+    public string Message { get; set; }
+    private Modal confirmationModal { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            cities = await CityService.GetAll();
+            animalTypes = await AnimalTypeService.GetAll();
+        }
+        catch (Exception e)
+        {
+            Message = e.Message;
+        }
+    }
+
+    private void DeleteAnimalType(AnimalType animalType)
+    {
+        confirmationModal.isWarning = true;
+        confirmationModal.Open();
+        confirmationModal.OnConfirm(async () =>
+        {
+            bool result = await AnimalTypeService.Delete(animalType.Id);
+            if (result)
+            {
+                //Actualizo la lista con la db
+                animalTypes = await AnimalTypeService.GetAll();
+                StateHasChanged();
+            }
+        });
+    }
+    private void DeleteCity(City city)
+    {
+        confirmationModal.isWarning = true;
+        confirmationModal.Open();
+        confirmationModal.OnConfirm(async () =>
+        {
+            bool result = await CityService.Delete(city.Id);
+            if (result)
+            {
+                //Actualizo la lista con la db
+                cities = await CityService.GetAll();
+                StateHasChanged();
+            }
+        });
+    }
 }

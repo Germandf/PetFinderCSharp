@@ -47,7 +47,7 @@
         </p>
     </Body>
     <Footer>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modal.Close()">Cerrar</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick='() => Navigator.NavigateTo("/admin")'>Cerrar</button>
     </Footer>
 </Modal>
 
@@ -67,7 +67,7 @@
     {
         if (id != 0)
         {
-            currAnimalType = await animalTypeService.GetAnimalType(id);
+            currAnimalType = await animalTypeService.Get(id);
             if (currAnimalType == null)
             {
                 error = "El tipo de animal no existe";
