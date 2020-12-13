@@ -1,0 +1,103 @@
+﻿@page "/agregar-tipo-de-animal"
+@page "/editar-tipo-de-animal/{id:int}"
+
+@inject NavigationManager Navigator;
+
+@inject IAnimalTypeService animalTypeService
+<div class="row">
+    <div class="col-12 mt-5 text-center">
+        <EditForm Model="@currAnimalType" class="form-signin text-left shadow rounded">
+           
+            <h1 class="h3 mb-3 font-weight-normal">
+                @if (isEditing)
+                {
+                    <span> Editar tipo de animal</span>
+                }
+                else
+                {
+                    <span> Agregar nuevo tipo de animal</span>
+                }
+            </h1>
+            <label for="inputName" class="sr-only mt-3 ">Nombre</label>
+            <input id="inputName" type="text" class="mt-3 form-control"
+                   placeholder="Nombre" required autofocus="" name="name"
+                   @bind="currAnimalType.Name">
+            <div class="d-block text-right">
+                <button class="mt-2  text-white btn-lg bg-orange" type="submit" @onclick="Save">Confirmar</button>
+            </div>
+
+            @if (isError)
+            {
+                <div class="alert alert-danger mt-2">
+                    @error
+                </div>
+            }
+
+        </EditForm>
+    </div>
+</div>
+
+<Modal @ref="modal">
+    <Title>
+         ¡ Se guardo con exito !
+    </Title>
+    <Body>
+        <p>
+            El tipo de animal se guardo con exito.
+        </p>
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => modal.Close()">Cerrar</button>
+    </Footer>
+</Modal>
+
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+    private Modal modal { get; set; }
+    private string error { get; set; }
+    private bool isError { get; set;  }
+    private bool isEditing  { get; set; }
+
+    private AnimalType currAnimalType = new AnimalType();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (id != 0)
+        {
+            currAnimalType = await animalTypeService.GetAnimalType(id);
+            if (currAnimalType == null)
+            {
+                error = "El tipo de animal no existe";
+                isError = true;
+                //currAnimalType = new AnimalType();
+                Navigator.NavigateTo("/admin");
+            }
+            else
+            {
+                isEditing = true;
+            }
+        }
+
+    }
+
+    protected async Task Save()
+    {
+        var saveResult = await animalTypeService.Save(currAnimalType);
+
+        if (saveResult)
+        {
+            modal.Open();
+            currAnimalType = new AnimalType();
+        }
+        else
+        {
+            error = "Ocurrió un error al guardar";
+
+        }
+    }
+
+
+}
