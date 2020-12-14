@@ -31,7 +31,7 @@ namespace PetFinderTests
             City city = CreateCity("Tres Arroyos");
             CityService cityService = new CityService(context);
 
-            await cityService.Insert(city);
+            await cityService.Save(city);
             // Deberia insertarse
             Assert.Equal<City>(city, context.Cities.Find(city.Id));
         }
@@ -46,7 +46,7 @@ namespace PetFinderTests
             // No deberia insertarse ya que no tiene nombre
             await Assert.ThrowsAsync<DbUpdateException>(async () =>
             {
-                await cityService.Insert(city);
+                await cityService.Save(city);
             });
         }
 
@@ -58,11 +58,11 @@ namespace PetFinderTests
             City city2 = CreateCity("Tres Arroyos");
             CityService cityService = new CityService(context);
 
-            await cityService.Insert(city1);
+            await cityService.Save(city1);
             // No deberia insertarse ya que existe una ciudad con el mismo nombre
             await Assert.ThrowsAsync<CityAlreadyExistsException>(async () =>
             {
-                await cityService.Insert(city2);
+                await cityService.Save(city2);
             });
         }
 
@@ -86,7 +86,7 @@ namespace PetFinderTests
             City city = CreateCity("Tres Arroyos");
             CityService cityService = new CityService(context);
 
-            await cityService.Insert(city);
+            await cityService.Save(city);
             city.Name = "Edited mock";
             await cityService.Save(city);
             int numberOfCities = await context.Cities.CountAsync();
@@ -102,7 +102,7 @@ namespace PetFinderTests
             City city = CreateCity("Tres Arroyos");
             CityService cityService = new CityService(context);
 
-            await cityService.Insert(city);
+            await cityService.Save(city);
             await cityService.Delete(city.Id);
             int numberOfCities = await context.Cities.CountAsync();
 

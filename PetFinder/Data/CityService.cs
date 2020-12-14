@@ -35,34 +35,25 @@ namespace PetFinder.Data
 
         public async Task<bool> Insert(City city)
         {
-            if (IsValidName(city.Name))
-            {
-                if (await IsNotRepeated(city.Name))
-                {
-                    _context.Cities.Add(city);
-                    return await _context.SaveChangesAsync() > 0;
-                }
-                else
-                {
-                    throw new CityAlreadyExistsException("Ya existe una ciudad con ese nombre");
-                }
-            }
-            else
-            {
-                throw new DbUpdateException("Asegúrese de insertar un nombre y que sea menor a 35 caracteres");
-            }
+            _context.Cities.Add(city);
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> Save(City city)
         {
-            if (city.Id > 0)
+            if (IsValidName(city.Name))
             {
-                return await Update(city);
+                if (await IsNotRepeated(city.Name))
+                {
+                    if (city.Id > 0)
+                    {
+                        return await Update(city);
+                    }
+                    return await Insert(city);
+                }
+                throw new CityAlreadyExistsException("Ya existe una ciudad con ese nombre");
             }
-            else
-            {
-                return await Insert(city);
-            }
+            throw new DbUpdateException("Asegúrese de insertar un nombre y que sea menor a 35 caracteres");
         }
 
         public async Task<bool> Update(City city)
