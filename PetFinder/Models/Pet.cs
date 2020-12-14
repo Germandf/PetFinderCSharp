@@ -19,8 +19,8 @@ namespace PetFinder.Models
         public int? UserId { get; set; }
         public byte Found { get; set; }
 
-        public virtual AnimalType AnimalType { get; set; }
-        public virtual City City { get; set; }
-        public virtual Gender Gender { get; set; }
+        public AnimalType AnimalType { get; set; }
+        public City City { get; set; }
+        public Gender Gender { get; set; }
     }
 }
