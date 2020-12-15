@@ -85,6 +85,17 @@
 
     protected async Task Save()
     {
+
+
+        if (await animalTypeService.IsRepeated(currAnimalType.Name))
+        {
+            isError = true;
+            error = "Ya existe el tipo de animal";
+
+            StateHasChanged();
+            return;
+        }
+
         var saveResult = await animalTypeService.Save(currAnimalType);
 
         if (saveResult)

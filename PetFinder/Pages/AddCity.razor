@@ -46,6 +46,7 @@
     </Footer>
 </Modal>
 
+
 @code {
     [Parameter]
     public int id { get; set; }
@@ -71,8 +72,19 @@
 
     protected async Task SaveCity()
     {
-        await CityService.Save(city);
-        modal.Open();
+        if (await CityService.IsNotRepeated(city.Name))
+        {
+            await CityService.Save(city);
+            modal.Open();
+        }
+        else
+        {
+            isError = true;
+            error = "Ya existe la ciudad";
+
+            StateHasChanged();
+            return;
+        }
     }
 
     protected void Cancel()
