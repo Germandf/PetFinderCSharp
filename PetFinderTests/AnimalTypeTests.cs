@@ -10,10 +10,10 @@ using Xunit;
 
 namespace PetFinderTests
 {
-    public class AnimalTypesTests
+    public class AnimalTypeTests
     {
         private PetFinderDbContextFactory dbContextFactory { get; set; }
-        public AnimalTypesTests()
+        public AnimalTypeTests()
         {
             dbContextFactory = new PetFinderDbContextFactory();
         }
@@ -33,6 +33,7 @@ namespace PetFinderTests
                 await animalTypeService.Save(animalTypeRepeated);
             });
         }
+
         [Fact]
         public async Task ShouldUpdateAsync()
         {
@@ -48,6 +49,7 @@ namespace PetFinderTests
             // Deberia haber una sola ciudad ya que editamos la misma que insertamos
             Assert.Equal<int>(1, numberOfAnimalTypes);
         }
+
         [Fact]
         public async Task ShouldAddAsync()
         {
@@ -64,6 +66,7 @@ namespace PetFinderTests
             // Deberia haber una sola ciudad ya que editamos la misma que insertamos
             Assert.Equal<int>(2, numberOfAnimalTypes);
         }
+
         [Fact]
         public void ShouldBeInvalidName()
         {
