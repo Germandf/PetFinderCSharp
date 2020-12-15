@@ -3,6 +3,7 @@ using PetFinder.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace PetFinder.Data
@@ -50,6 +51,11 @@ namespace PetFinder.Data
 
         public async Task<bool> Save(AnimalType animalType)
         {
+            if (await IsRepeated(animalType.Name))
+            {
+                throw new AnimalTypeAlreadyExistsException("Ya existe el tipo de animal");
+                return false;
+            }
             if(animalType.Id > 0)
             {
                 //El tipo de animal existe por lo tanto debemos hacer un update 
@@ -57,5 +63,37 @@ namespace PetFinder.Data
             }
             return await Insert(animalType);
         }
+        public bool IsValidName(string name) { 
+
+            if (name == null) return false;
+            if(name.Length <= 0 || name.Length > 35) return false;
+            
+            // Checkeo que sean caracteres de a - Z con espacios
+            var match = Regex.Match(name, "^[a-zA-Z ]+$");
+            if (!match.Success) return false;
+
+            return true;
+        }
+
+        public async Task<bool> IsRepeated(string name)
+        {
+            var existingAnimalTypeCount = await Task.Run(() => _context.AnimalTypes.Count(a => a.Name == name));
+
+            if (existingAnimalTypeCount > 0 ) 
+            {
+                return true;
+            }
+            return false;
+           
+        }
+    }
+    [Serializable]
+    public class AnimalTypeAlreadyExistsException : Exception
+    {
+        public AnimalTypeAlreadyExistsException() : base() { }
+        public AnimalTypeAlreadyExistsException(string message) : base(message) { }
+        public AnimalTypeAlreadyExistsException(string message, Exception inner) : base(message, inner) { }
+        protected AnimalTypeAlreadyExistsException(System.Runtime.Serialization.SerializationInfo info,
+            System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
     }
 }

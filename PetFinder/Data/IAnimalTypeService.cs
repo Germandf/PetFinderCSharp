@@ -14,6 +14,7 @@ namespace PetFinder.Data
         Task<bool> Update(AnimalType animalType);
         Task<bool> Delete(int id );
         Task<bool> Save(AnimalType animalType);
+        Task<bool> IsRepeated(string name);
 
 
     }
