@@ -22,5 +22,13 @@ namespace PetFinder.Models
         public DbSet<Gender> Genders { get; set; }
         public DbSet<Pet> Pets { get; set; }
 
+        // Creo los generos por defecto ya que no disponen de un CRUD
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            var gender1 = new Gender() { Id = 1, Name = "Macho" };
+            var gender2 = new Gender() { Id = 2, Name = "Hembra" };
+            modelBuilder.Entity<Gender>().HasData(new Gender[] { gender1, gender2});
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

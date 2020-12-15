@@ -10,15 +10,14 @@ using PetFinder.Models;
 namespace PetFinder.Migrations
 {
     [DbContext(typeof(PetFinderContext))]
-    [Migration("20201213221525_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20201214214909_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .UseIdentityColumns()
-                .HasAnnotation("Relational:Collation", "Latin1_General_CI_AI")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("ProductVersion", "5.0.1");
 
@@ -30,9 +29,7 @@ namespace PetFinder.Migrations
                         .UseIdentityColumn();
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -47,9 +44,7 @@ namespace PetFinder.Migrations
                         .UseIdentityColumn();
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(35)
-                        .HasColumnType("nvarchar(35)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -64,14 +59,11 @@ namespace PetFinder.Migrations
                         .UseIdentityColumn();
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(11)
-                        .HasColumnType("nvarchar(11)")
-                        .HasColumnName("name");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Gender");
+                    b.ToTable("Genders");
                 });
 
             modelBuilder.Entity("PetFinder.Models.Pet", b =>
@@ -88,11 +80,10 @@ namespace PetFinder.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Date")
-                        .HasColumnType("date");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<byte>("Found")
                         .HasColumnType("tinyint");
@@ -101,19 +92,13 @@ namespace PetFinder.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
-                        .HasMaxLength(15)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(15)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Photo")
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int");
@@ -126,7 +111,7 @@ namespace PetFinder.Migrations
 
                     b.HasIndex("GenderId");
 
-                    b.ToTable("Pet");
+                    b.ToTable("Pets");
                 });
 
             modelBuilder.Entity("PetFinder.Models.Pet", b =>
@@ -134,19 +119,19 @@ namespace PetFinder.Migrations
                     b.HasOne("PetFinder.Models.AnimalType", "AnimalType")
                         .WithMany("Pets")
                         .HasForeignKey("AnimalTypeId")
-                        .HasConstraintName("FK_Pet_AnimalType")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PetFinder.Models.City", "City")
                         .WithMany("Pets")
                         .HasForeignKey("CityId")
-                        .HasConstraintName("FK_Pet_City")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("PetFinder.Models.Gender", "Gender")
                         .WithMany("Pets")
                         .HasForeignKey("GenderId")
-                        .HasConstraintName("FK_Pet_Gender")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("AnimalType");
