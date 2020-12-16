@@ -54,7 +54,6 @@ namespace PetFinder.Data
             if (await IsRepeated(animalType.Name))
             {
                 throw new AnimalTypeAlreadyExistsException("Ya existe el tipo de animal");
-                return false;
             }
             if(animalType.Id > 0)
             {

@@ -1,61 +1,156 @@
 ﻿@page "/agregar-mascota"
+@page "/editar-mascota/{id:int}"
+@inject IPetService PetService
+@inject ICityService CityService
+@inject IAnimalTypeService AnimalTypeService
+@inject IGenderService GenderService
+@inject NavigationManager NavigationManager
 
-<!-- Si estamos editando, tomamos los valores de la DB. En el caso de los selects, seleccionamos por defecto el que sea igual al asignado a la mascota (si esta editando) -->
 <div class="row">
     <div class="col-12 mt-5 text-center">
-        <form id="addPetForm" method="post" enctype="multipart/form-data" action="insertar-mascota" class="form-signin text-left shadow rounded">
+        <EditForm Model="@pet" id="addPetForm" class="form-signin text-left shadow rounded">
             <!-- Muestra el titulo correspondiente -->
-            <h1 class="h3 mb-3 font-weight-normal">Añadir mascota</h1>
+            @if (id != 0 && isError == false)
+            {
+                <h1 class="h3 mb-3 font-weight-normal">Añadir mascota</h1>
+            }
+            else
+            {
+                <h1 class="h3 mb-3 font-weight-normal">Editar mascota</h1>
+            }
             <!-- Pet -->
             <label for="inputName" class="sr-only mt-3 ">Nombre</label>
-            <input id="inputName" type="text" class="mt-3 form-control" placeholder="Nombre" required autofocus="" name="name">
+            <input id="inputName" type="text" class="mt-3 form-control" placeholder="Nombre" required autofocus="" name="name" @bind="pet.Name">
             <!-- City -->
             <label for="inputCity" class="sr-only mt-3 ">Ciudad</label>
-            <select id="inputCity" class="d-inline form-control mt-3" name="city">
-                <option value="none" selected disabled hidden>Ciudad</option>
-                <option value="{$city->id}">{$city->name}</option>
+            <select id="inputCity" class="d-inline form-control mt-3" name="city" @bind="pet.CityId">
+                @if (cities == null)
+                {
+                    <option value="">Loading...</option>
+                }
+                else
+                {
+                    <option value="none" selected disabled hidden>Ciudad</option>
+                    @foreach (City city in cities)
+                    {
+
+                        <option value="@city.Id">@city.Name</option>
+                    }
+                }
             </select>
             <!-- Pet Type -->
             <label for="inputAnimalType" class="sr-only mt-3 ">Tipo de animal</label>
-            <select id="inputAnimalType" class="d-inline form-control mt-3" required name="animalType">
-                <option value="none" selected disabled hidden>Tipo de mascota</option>
-                <option value="{$animalType->id}">{$animalType->name}</option>
+            <select id="inputAnimalType" class="d-inline form-control mt-3" required name="animalType" @bind="pet.AnimalTypeId">
+                @if (animalTypes == null)
+                {
+                    <option value="">Loading...</option>
+                }
+                else
+                {
+                    <option value="none" selected disabled hidden>Tipo de mascota</option>
+                    @foreach (AnimalType animalType in animalTypes)
+                    {
+                        <option value="@animalType.Id">@animalType.Name</option>
+                    }
+                }
             </select>
             <!-- Gender -->
             <label for="inputGenderType" class="sr-only mt-3 ">Genero</label>
-            <select id="inputGenderType" class="d-inline form-control mt-3" required name="gender">
-                <option value="none" selected disabled hidden>Genero</option>
-                <option value="{$gender->id}">{$gender->name}</option>
+            <select id="inputGenderType" class="d-inline form-control mt-3" required name="gender" @bind="pet.GenderId">
+                @if (genders == null)
+                {
+                    <option value="">Loading...</option>
+                }
+                else
+                {
+                    <option value="none" selected disabled hidden>Genero</option>
+                    @foreach (Gender gender in genders)
+                    {
+                        <option value="@gender.Id">@gender.Name</option>
+                    }
+                }
             </select>
             <!-- Lost Date -->
             <label for="inputDateTime" class="sr-only mt-3 ">Fecha de extravio</label>
-            <input id="inputDateTime" required type="date" class="mt-3 form-control" placeholder="Fecha de extravio" autofocus="" name="date">
+            <input id="inputDateTime" required type="date" class="mt-3 form-control" placeholder="Fecha de extravio" autofocus="" name="date" @bind="pet.Date">
             <!-- Phone Number -->
             <label for="inputPhone" class="sr-only mt-3 ">Teléfono</label>
-            <input id="inputPhone" type="number" class="mt-3 form-control" placeholder="Teléfono" required autofocus="" name="phone">
+            <input id="inputPhone" type="number" class="mt-3 form-control" placeholder="Teléfono" required autofocus="" name="phone" @bind="pet.PhoneNumber">
             <!-- Photo -->
             <div class="input-group mt-3">
                 <div class="custom-file">
-                    <input type="file" required class="custom-file-input" id="photo" name="photo">
+                    <input type="file" required class="custom-file-input" id="photo" name="photo" @bind="pet.Photo">
                     <label class="custom-file-label" for="photo">Elegir foto</label>
                 </div>
                 <img src="" class="w-100 mt-2" id="loadedPhoto">
             </div>
             <!-- Description -->
             <label for="inputDescription" class="sr-only mt-3 ">Descripción</label>
-            <textarea id="inputDescription" required type="text" class="mt-3 form-control" placeholder="Descripción" autofocus="" name="description" maxlength="200"></textarea>
+            <textarea id="inputDescription" required type="text" class="mt-3 form-control" placeholder="Descripción" autofocus="" name="description" maxlength="200" @bind="pet.Description"></textarea>
             <div class="d-block text-right">
-                <button class="mt-2  text-white btn-lg bg-orange" type="submit">Confirmar</button>
+                <button class="mt-2 text-white btn-lg bg-orange-dark" type="button" value="Cancel" @onclick="Cancel">Cancelar</button>
+                <button class="mt-2 text-white btn-lg bg-orange" type="submit" value="Save" @onclick="SavePet">Confirmar</button>
             </div>
-            <div class="alert alert-danger mt-2">
-                Error
-            </div>
-        </form>
+            @if (isError)
+            {
+                <div class="alert alert-danger mt-2">
+                    @error
+                </div>
+            }
+        </EditForm>
     </div>
 </div>
 <!-- Script para detectar cambio de foto -->
 <!-- <script src="js/addpetform.js"></script> -->
 
 @code {
+    [Parameter]
+    public int id { get; set; }
 
+    private Pet pet = new Pet();
+    public string error { get; set; }
+    public bool isError { get; set; }
+    private Modal modal { get; set; }
+
+    private IEnumerable<City> cities;
+    private IEnumerable<AnimalType> animalTypes;
+    private IEnumerable<Gender> genders;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (id != 0)
+        {
+            pet = await PetService.Get(id);
+            if (pet == null)
+            {
+                error = "No se encontró la mascota";
+                isError = true;
+                pet = new Pet();
+            }
+        }
+        cities = await CityService.GetAll();
+        animalTypes = await AnimalTypeService.GetAll();
+        genders = await GenderService.GetAll();
+    }
+
+    protected async Task SavePet()
+    {
+        if (PetService.IsValidName(pet.Name))
+        {
+            await PetService.Save(pet);
+            modal.Open();
+        }
+        else
+        {
+            isError = true;
+            error = "El nombre de la mascota debe ser menor a 20 caracteres";
+            StateHasChanged();
+            return;
+        }
+    }
+
+    protected void Cancel()
+    {
+        NavigationManager.NavigateTo("/mis-mascotas");
+    }
 }

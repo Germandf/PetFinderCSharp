@@ -41,6 +41,8 @@ namespace PetFinder
             services.AddScoped<IAnimalTypeService, AnimalTypeService>();
             services.AddAuthorizationCore();
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+            services.AddScoped<IGenderService, GenderService>();
+            services.AddScoped<IPetService, PetService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

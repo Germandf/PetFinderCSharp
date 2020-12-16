@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace PetFinder.Data
 {
-    interface ICityService
+    interface IGenderService
     {
-        Task<IEnumerable<City>> GetAll();
-        Task<City> Get(int id);
-        Task<bool> Insert(City city);
-        Task<bool> Update(City city);
+        Task<IEnumerable<Gender>> GetAll();
+        Task<Gender> Get(int id);
+        Task<bool> Insert(Gender gender);
+        Task<bool> Update(Gender gender);
         Task<bool> Delete(int id);
-        Task<bool> Save(City city);
+        Task<bool> Save(Gender gender);
         bool IsValidName(string name);
         Task<bool> IsNotRepeated(string name);
     }

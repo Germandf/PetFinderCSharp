@@ -1,13 +1,12 @@
 ﻿@page "/agregar-tipo-de-animal"
 @page "/editar-tipo-de-animal/{id:int}"
-
-@inject NavigationManager Navigator;
-
+@inject NavigationManager Navigator
 @inject IAnimalTypeService animalTypeService
+
 <div class="row">
     <div class="col-12 mt-5 text-center">
         <EditForm Model="@currAnimalType" class="form-signin text-left shadow rounded">
-           
+            <!-- Muestra el titulo correspondiente -->
             <h1 class="h3 mb-3 font-weight-normal">
                 @if (isEditing)
                 {
@@ -25,14 +24,12 @@
             <div class="d-block text-right">
                 <button class="mt-2  text-white btn-lg bg-orange" type="submit" @onclick="Save">Confirmar</button>
             </div>
-
             @if (isError)
             {
                 <div class="alert alert-danger mt-2">
                     @error
                 </div>
             }
-
         </EditForm>
     </div>
 </div>
@@ -59,9 +56,7 @@
     private string error { get; set; }
     private bool isError { get; set;  }
     private bool isEditing  { get; set; }
-
     private AnimalType currAnimalType = new AnimalType();
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -80,18 +75,14 @@
                 isEditing = true;
             }
         }
-
     }
 
     protected async Task Save()
     {
-
-
         if (await animalTypeService.IsRepeated(currAnimalType.Name))
         {
             isError = true;
             error = "Ya existe el tipo de animal";
-
             StateHasChanged();
             return;
         }
@@ -109,6 +100,4 @@
 
         }
     }
-
-
 }
