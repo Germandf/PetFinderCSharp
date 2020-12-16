@@ -34,9 +34,6 @@ namespace PetFinder
                .AddEntityFrameworkStores<PetFinderContext>();
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddDbContext<PetFinderContext>(options =>
-                    options.UseSqlServer(Environment.GetEnvironmentVariable("SQLServerPetfinder"))
-                  );
             services.AddScoped<ICityService, CityService>();
             services.AddScoped<IAnimalTypeService, AnimalTypeService>();
             services.AddAuthorizationCore();
