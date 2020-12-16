@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.7.1" />
     <PackageReference Include="Verify.Bunit" Version="6.4.0" />

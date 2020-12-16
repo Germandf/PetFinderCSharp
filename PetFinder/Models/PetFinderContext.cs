@@ -1,12 +1,13 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 #nullable disable
 
 namespace PetFinder.Models
 {
-    public partial class PetFinderContext : DbContext
+    public partial class PetFinderContext : IdentityDbContext
     {
         public PetFinderContext()
         {
