@@ -309,6 +309,18 @@ namespace BlazorApp4.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Pets");
+
+            migrationBuilder.DropTable(
+                name: "AnimalTypes");
+
+            migrationBuilder.DropTable(
+                name: "Cities");
+
+            migrationBuilder.DropTable(
+                name: "Genders");
         }
     }
 }
