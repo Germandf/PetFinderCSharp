@@ -30,9 +30,15 @@ namespace PetFinder.Data
 
         public async Task<IEnumerable<Pet>> GetAll()
         {
-            return await _context.Pets.ToListAsync();
+            return await _context.Pets.Include(pet => pet.AnimalType )
+                .Include(pet => pet.City).
+                Include(pet => pet.Gender).
+                ToListAsync();
         }
 
+
+
+ 
         public async Task<bool> Insert(Pet pet)
         {
             _context.Pets.Add(pet);

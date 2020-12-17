@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30711.63
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetFinder", "PetFinder\PetFinder.csproj", "{A17AEEC4-7E98-4C39-B84A-0309C7A47523}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetFinderTests", "PetFinderTests\PetFinderTests.csproj", "{1A3327DE-CE96-44AE-A47A-3C254CFC3537}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetFinderTests", "PetFinderTests\PetFinderTests.csproj", "{1A3327DE-CE96-44AE-A47A-3C254CFC3537}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

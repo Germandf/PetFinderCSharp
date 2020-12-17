@@ -6,11 +6,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PetFinder.Areas.Identity;
+
 using PetFinder.Data;
 using PetFinder.Models;
 using System;
 using Microsoft.AspNetCore.Identity.UI;
+using Microsoft.AspNetCore.Components.Server;
+using prueba.Areas.Identity;
+using PetFinder.Helpers;
 
 namespace PetFinder
 {
@@ -30,8 +33,13 @@ namespace PetFinder
             services.AddDbContext<PetFinderContext>(options =>
                     options.UseSqlServer(Environment.GetEnvironmentVariable("SQLServerPetfinder"))
                   );
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-               .AddEntityFrameworkStores<PetFinderContext>();
+            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+               .AddEntityFrameworkStores<PetFinderContext>().
+               AddErrorDescriber<IdentityErrorHelper>();//.AddRoles<IdentityRole>();
+
+            services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+
+           
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddDbContext<PetFinderContext>(options =>
@@ -39,10 +47,10 @@ namespace PetFinder
                   );
             services.AddScoped<ICityService, CityService>();
             services.AddScoped<IAnimalTypeService, AnimalTypeService>();
-            services.AddAuthorizationCore();
-            services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+
             services.AddScoped<IGenderService, GenderService>();
             services.AddScoped<IPetService, PetService>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,10 +70,14 @@ namespace PetFinder
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
-            app.UseRouting();
+     
 
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllers();
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
             });
