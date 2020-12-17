@@ -27,6 +27,8 @@ namespace BlazorApp4.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
+                    Name= table.Column<string>(maxLength: 256, nullable: true),
+                    Surname = table.Column<string>(maxLength: 256, nullable: true),
                     UserName = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
                     Email = table.Column<string>(maxLength: 256, nullable: true),

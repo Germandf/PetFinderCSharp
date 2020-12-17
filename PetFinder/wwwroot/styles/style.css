@@ -272,3 +272,10 @@ body .bg-red {
     display: inline-block;
     margin: 100px auto;
 }
+
+
+.validation-summary-errors {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}

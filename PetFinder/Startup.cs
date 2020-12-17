@@ -12,8 +12,8 @@ using PetFinder.Models;
 using System;
 using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Components.Server;
-using prueba.Areas.Identity;
-using PetFinder.Helpers;
+using PetFinder.Areas.Identity;
+using PetFinder.Areas.Identity.Helper;
 
 namespace PetFinder
 {
@@ -33,13 +33,22 @@ namespace PetFinder
             services.AddDbContext<PetFinderContext>(options =>
                     options.UseSqlServer(Environment.GetEnvironmentVariable("SQLServerPetfinder"))
                   );
-            services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
-               .AddEntityFrameworkStores<PetFinderContext>().
-               AddErrorDescriber<IdentityErrorHelper>();//.AddRoles<IdentityRole>();
+            services.AddDefaultIdentity<ApplicationUser>(options => 
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
+                options.Password.RequiredLength = 8;
+                options.Password.RequiredUniqueChars = 0;
 
-            services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
+            }).AddEntityFrameworkStores<PetFinderContext>().AddClaimsPrincipalFactory<CustomUserClaimsPrincipalFactory>();//.AddRoles<IdentityRole>();
 
-           
+
+            services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
+            services.AddScoped<SignInManager<ApplicationUser>, SignInManager<ApplicationUser>>();
+
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddDbContext<PetFinderContext>(options =>

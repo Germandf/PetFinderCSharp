@@ -1,40 +1,52 @@
 ﻿@page
+
+@using Microsoft.AspNetCore.Identity
 @model LoginModel
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 
 
-<section class="container">
-    <div class="row">
-        <div class="col-12 mt-5 text-center">
-            <form id="account" method="post" class="form-signin text-left shadow rounded">
-                <h1 class="h3 mb-3 font-weight-normal">Iniciar sesión</h1>
+@if (!SignInManager.IsSignedIn(User))
+{
+    <section class="container">
+        <div class="row">
+            <div class="col-12 mt-5 text-center">
+                <form id="account" method="post" class="form-signin text-left shadow rounded">
+                    <h1 class="h3 mb-3 font-weight-normal">Iniciar sesión</h1>
 
-                <label asp-for="Input.Email" class="sr-only mt-3"></label>
-                <input asp-for="Input.Email" class="mt-3 form-control" placeholder="Email" required="" autofocus="" />
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    <label asp-for="Input.Email" class="sr-only mt-3"></label>
+                    <input asp-for="Input.Email" class="mt-3 form-control" placeholder="Email" required="" autofocus="" />
+                    <span asp-validation-for="Input.Email" class="text-danger"></span>
 
-                <label asp-for="Input.Password" class="sr-only mt-3 "></label>
-                <input asp-for="Input.Password" class="mt-3 form-control" placeholder="Contraseña" required="" />
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    <label asp-for="Input.Password" class="sr-only mt-3 "></label>
+                    <input asp-for="Input.Password" class="mt-3 form-control" placeholder="Contraseña" required="" />
+                    <span asp-validation-for="Input.Password" class="text-danger"></span>
 
-                <div class="checkbox mb-3 mt-3">
-                    <label asp-for="Input.RememberMe">
-                        <input type="checkbox" asp-for="Input.RememberMe" />
-                        Recuerdame
-                    </label>
-                </div>
-                <div class="d-block text-right">
-                    <button class="mt-2 text-white btn-lg bg-orange-dark rounded border-none" type="submit">Iniciar</button>
-                </div>
-                <div asp-validation-summary="All">
-                    <span class="alert-danger-">Usuario o contraseña incorrecto</span>
-                </div>
+                    <div class="checkbox mb-3 mt-3">
+                        <label asp-for="Input.RememberMe">
+                            <input type="checkbox" asp-for="Input.RememberMe" />
+                            Recuerdame
+                        </label>
+                    </div>
+                    <div class="d-block text-right">
+                        <button class="mt-2 text-white btn-lg bg-orange-dark rounded border-none" type="submit">Iniciar</button>
+                    </div>
+                    <div asp-validation-summary="All" class="alert ">
+                    </div>
 
-            </form>
+                </form>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
+
+}
+else
+{
+    Response.Redirect("/");
+}
 
 
-    @section Scripts {
-        <partial name="_ValidationScriptsPartial" />
-    }
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
