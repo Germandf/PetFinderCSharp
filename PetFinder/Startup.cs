@@ -45,15 +45,11 @@ namespace PetFinder
 
             }).AddEntityFrameworkStores<PetFinderContext>().AddClaimsPrincipalFactory<CustomUserClaimsPrincipalFactory>();//.AddRoles<IdentityRole>();
 
-
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
             services.AddScoped<SignInManager<ApplicationUser>, SignInManager<ApplicationUser>>();
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
-            services.AddDbContext<PetFinderContext>(options =>
-                    options.UseSqlServer(Environment.GetEnvironmentVariable("SQLServerPetfinder"))
-                  );
             services.AddScoped<ICityService, CityService>();
             services.AddScoped<IAnimalTypeService, AnimalTypeService>();
 

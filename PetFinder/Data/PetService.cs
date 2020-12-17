@@ -25,20 +25,22 @@ namespace PetFinder.Data
 
         public async Task<Pet> Get(int id)
         {
-            return await _context.Pets.FindAsync(id);
+            return await _context.Pets.
+                Include(p => p.AnimalType).
+                Include(p => p.City).
+                Include(p => p.Gender).
+                FirstOrDefaultAsync(i => i.Id == id);
         }
 
         public async Task<IEnumerable<Pet>> GetAll()
         {
-            return await _context.Pets.Include(pet => pet.AnimalType )
-                .Include(pet => pet.City).
-                Include(pet => pet.Gender).
+            return await _context.Pets.
+                Include(p => p.AnimalType).
+                Include(p => p.City).
+                Include(p => p.Gender).
                 ToListAsync();
         }
 
-
-
- 
         public async Task<bool> Insert(Pet pet)
         {
             _context.Pets.Add(pet);

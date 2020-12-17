@@ -1,11 +1,22 @@
 ﻿@page "/"
+@inject IPetService PetService
 
 <section class="container">
     <div class="row justify-content-center">
         <h1 class="mt-4 mb-4 mt-md-5 mb-md-5 lastPetsTitle">Últimas mascotas perdidas</h1>
     </div>
     <div class="row">
-        <p>Aquí van las mascotas</p>
+        @if (pets == null)
+        {
+            <h2>Loading...</h2>
+        }
+        else
+        {
+            @foreach (Pet pet in pets)
+            {
+                <PetCard pet="pet"></PetCard>
+            }
+        }
     </div>
     <div class="mb-3 text-right">
         <p>Aquí van los botones de paginación</p>
@@ -13,5 +24,10 @@
 </section>
 
 @code {
+    private IEnumerable<Pet> pets { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        pets = await PetService.GetAll();
+    }
 }

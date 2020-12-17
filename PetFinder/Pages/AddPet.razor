@@ -100,6 +100,21 @@
         </EditForm>
     </div>
 </div>
+
+<Modal @ref="modal">
+    <Title>
+        ¡Se guardó con éxito!
+    </Title>
+    <Body>
+        <p>
+            @pet.Name fué agregado a nuestra base de datos. ¡Mucha suerte!
+        </p>
+    </Body>
+    <Footer>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick='() => NavigationManager.NavigateTo("/mis-mascotas")'>Cerrar</button>
+    </Footer>
+</Modal>
+
 <!-- Script para detectar cambio de foto -->
 <!-- <script src="js/addpetform.js"></script> -->
 
