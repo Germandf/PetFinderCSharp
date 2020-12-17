@@ -70,6 +70,26 @@ namespace PetFinderTests
         }
 
         [Fact]
+        public async Task ShouldObtainCity()
+        {
+            PetFinderContext context = dbContextFactory.CreateContext();
+            Pet pet = CreatePet("Toto", 1, 1, 1, new DateTime(2015, 12, 25), "2983458324", "photo_url", "description", 1, 0);
+            City city = CreateCity("Tres Arroyos");
+            AnimalType animalType = CreateAnimalType("Gato");
+            PetService petService = new PetService(context);
+            CityService cityService = new CityService(context);
+            AnimalTypeService animalTypeService = new AnimalTypeService(context);
+
+            await cityService.Save(city);
+            await animalTypeService.Save(animalType);
+            await petService.Save(pet);
+
+            Pet petObtained = await petService.Get(pet.Id);
+            // Deberia insertarse
+            Assert.Equal<City>(city, petObtained.City);
+        }
+
+        [Fact]
         public async Task ShouldBeMissingDataAsync()
         {
             PetFinderContext context = dbContextFactory.CreateContext();
