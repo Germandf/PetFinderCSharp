@@ -1,6 +1,7 @@
 ﻿@page "/admin"
 @inject ICityService CityService
 @inject IAnimalTypeService AnimalTypeService
+@inject IPetService PetService
 
 <section class="container-fluid bg-orange-dark">
     <div class="row">
@@ -75,7 +76,25 @@
 </section>
 
 <section class="container">
-    <h1>Acá van las mascotas TODO</h1>
+    <div class="row justify-content-center">
+        <h1 class="mt-4 mb-4 mt-md-5 mb-md-5 lastPetsTitle">Últimas mascotas perdidas</h1>
+    </div>
+    <div class="row">
+        @if (pets == null)
+        {
+            <h2>Loading...</h2>
+        }
+        else
+        {
+            @foreach (Pet pet in pets)
+            {
+                <PetCard pet="pet"></PetCard>
+            }
+        }
+    </div>
+    <div class="mb-3 text-right">
+        <p>Aquí van los botones de paginación</p>
+    </div>
 </section>
 
 <Modal @ref="confirmationModal">
@@ -94,10 +113,11 @@
 </Modal>
 
 @code {
-    public IEnumerable<City> cities { get; set; }
-    public IEnumerable<AnimalType> animalTypes  { get; set; }
+    private IEnumerable<City> cities { get; set; }
+    private IEnumerable<AnimalType> animalTypes { get; set; }
+    private IEnumerable<Pet> pets { get; set; }
 
-    public string Message { get; set; }
+    private string Message { get; set; }
     private Modal confirmationModal { get; set; }
 
     protected override async Task OnInitializedAsync()
@@ -106,6 +126,7 @@
         {
             cities = await CityService.GetAll();
             animalTypes = await AnimalTypeService.GetAll();
+            pets = await PetService.GetAll();
         }
         catch (Exception e)
         {
