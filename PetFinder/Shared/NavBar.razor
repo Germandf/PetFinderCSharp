@@ -6,7 +6,6 @@
 @inject UserManager<ApplicationUser> UserManager
 
 
-
 <nav class="navbar navbar-expand-lg navbar-dark bg-gray sticky-top">
     <a class="navbar-brand" href="/">PetFinder</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -14,14 +13,11 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-            <!--
-            {if isset($smarty.session.ID_USER)}
-            {if isset($smarty.session.PERMISSION_USER) && $smarty.session.PERMISSION_USER == 1}
-            -->
-            <li class="nav-item"><a class="nav-link" href="admin">Admin</a></li>
-            <!-- {/if} -->
+
+            <AuthorizeView Roles="@ApplicationUserService.ROLE_ADMIN">
+                <li class="nav-item"><a class="nav-link" href="admin">Admin</a></li>
+            </AuthorizeView>
             <li class="nav-item"><a class="nav-link" href="mis-mascotas">Mis Mascotas</a></li>
-            <!-- {/if} -->
             <li class="nav-item"><a class="nav-link" href="sobre-nosotros">Acerca de</a></li>
         </ul>
         <ul class="navbar-nav mr-right">
@@ -29,7 +25,7 @@
             <CascadingAuthenticationState>
                 <AuthorizeView>
                     <Authorized>
-                        <li class="nav-item nav-link">¡Hola, @context.User.Identity.GetUserFirstname() !</li>
+                        <li class="nav-item nav-link">¡Hola, @context.User.Identity.GetUserFirstname()!</li>
                         <li class="nav-item">
                             <form method="post" action="Identity/Account/LogOut">
                                 <button type="submit" class="nav-link btn btn-link">Salir</button>

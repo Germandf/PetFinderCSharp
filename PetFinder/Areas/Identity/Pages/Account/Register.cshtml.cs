@@ -8,12 +8,15 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using PetFinder.Areas.Identity;
+using PetFinder.Data;
+using PetFinder.Models;
 
 namespace PetFinder.Areas.Identity.Pages.Account
 {
@@ -24,17 +27,23 @@ namespace PetFinder.Areas.Identity.Pages.Account
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly PetFinderContext _context;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender,
+            PetFinderContext context,
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _context = context;
+            _roleManager = roleManager;
         }
 
         [BindProperty]
@@ -109,6 +118,23 @@ namespace PetFinder.Areas.Identity.Pages.Account
                     }
                     else
                     {
+
+
+                        var RoleResult = await _roleManager.FindByNameAsync(ApplicationUserService.ROLE_ADMIN);
+                        if (RoleResult == null)
+                        {
+                            // Create ADMINISTRATION_ROLE Role
+                            await _roleManager.CreateAsync(new IdentityRole(ApplicationUserService.ROLE_ADMIN));
+                        }
+                        RoleResult = await _roleManager.FindByNameAsync(ApplicationUserService.ROLE_USER);
+                        if (RoleResult == null)
+                        {
+                            // Create ADMINISTRATION_ROLE Role
+                            await _roleManager.CreateAsync(new IdentityRole(ApplicationUserService.ROLE_USER));
+                        }
+
+                        _userManager.AddToRoleAsync(user, ApplicationUserService.ROLE_USER);
+
                         await _signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
                     }

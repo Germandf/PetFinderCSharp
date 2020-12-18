@@ -19,6 +19,7 @@ namespace PetFinder.Models
         {
         }
 
+        public DbSet<ApplicationUser> AspNetUsers { get; set; }
         public DbSet<AnimalType> AnimalTypes { get; set; }
         public DbSet<City> Cities { get; set; }
         public DbSet<Gender> Genders { get; set; }

@@ -8,7 +8,7 @@ namespace PetFinder.Data
 {
     interface IAnimalTypeService
     {
-        Task<IEnumerable<Models.AnimalType>> GetAll();
+        Task<IEnumerable<AnimalType>> GetAll();
         Task<AnimalType> Get(int Id);
         Task<bool> Insert(AnimalType animalType);
         Task<bool> Update(AnimalType animalType);

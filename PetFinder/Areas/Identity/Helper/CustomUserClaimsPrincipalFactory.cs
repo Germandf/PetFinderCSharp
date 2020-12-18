@@ -8,11 +8,13 @@ using System.Threading.Tasks;
 
 namespace PetFinder.Areas.Identity.Helper
 {
-    public class CustomUserClaimsPrincipalFactory : UserClaimsPrincipalFactory<ApplicationUser>
+    public class CustomUserClaimsPrincipalFactory : UserClaimsPrincipalFactory<ApplicationUser, IdentityRole>
     {
-        public CustomUserClaimsPrincipalFactory(UserManager<ApplicationUser> userManager,
+        public CustomUserClaimsPrincipalFactory(
+            UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
             IOptions<IdentityOptions> optionsAccessor)
-            : base(userManager, optionsAccessor)
+            : base(userManager, roleManager, optionsAccessor)
         {
         }
 

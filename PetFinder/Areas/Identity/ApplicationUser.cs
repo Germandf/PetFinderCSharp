@@ -16,6 +16,19 @@ namespace PetFinder.Areas.Identity
 
         public string Surname { get; set; }
 
+        private bool admin { get; set; }
+
+        public bool isAdmin()
+        {
+            return this.admin; 
+        }
+
+        public bool setAdmin(bool admin)
+        {
+            return this.admin = admin;
+
+        }
+
     }
 
 }

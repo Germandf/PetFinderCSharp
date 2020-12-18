@@ -3,116 +3,127 @@
 @inject IAnimalTypeService AnimalTypeService
 @inject IPetService PetService
 
-<section class="container-fluid bg-orange-dark">
-    <div class="row">
-        <div class="col-12 mt-3 mb-3">
-            <a href="agregar-mascota" class="btn bg-orange text-white mr-2 mt-1">
-                <span><i class="fa fa-paw"></i></span>
-                <span>Añadir mascota perdida</span>
-            </a>
-            <a href="agregar-ciudad" class="btn bg-orange text-white mr-2 mt-1">
-                <span><i class="fa fa-city"></i></span>
-                <span>Añadir ciudad</span>
-            </a>
-            <a href="agregar-tipo-de-animal" class="btn bg-orange text-white mr-2 mt-1">
-                <span><i class="fa fa-feather"></i></span>
-                <span>Añadir tipo de animal</span>
-            </a>
-            <a href="usuarios" class="btn bg-orange text-white mr-2 mt-1">
-                <span><i class="fa fa-users"></i></span>
-                <span>Tabla de usuarios</span>
-            </a>
-        </div>
-    </div>
-</section>
+<AuthorizeView Roles="@ApplicationUserService.ROLE_ADMIN">
+    <Authorized>
+        <section class="container-fluid bg-orange-dark">
+            <div class="row">
+                <div class="col-12 mt-3 mb-3">
+                    <a href="agregar-mascota" class="btn bg-orange text-white mr-2 mt-1">
+                        <span><i class="fa fa-paw"></i></span>
+                        <span>Añadir mascota perdida</span>
+                    </a>
+                    <a href="agregar-ciudad" class="btn bg-orange text-white mr-2 mt-1">
+                        <span><i class="fa fa-city"></i></span>
+                        <span>Añadir ciudad</span>
+                    </a>
+                    <a href="agregar-tipo-de-animal" class="btn bg-orange text-white mr-2 mt-1">
+                        <span><i class="fa fa-feather"></i></span>
+                        <span>Añadir tipo de animal</span>
+                    </a>
+                    <a href="usuarios" class="btn bg-orange text-white mr-2 mt-1">
+                        <span><i class="fa fa-users"></i></span>
+                        <span>Tabla de usuarios</span>
+                    </a>
+                </div>
+            </div>
+        </section>
 
-<section class="container">
-    <div class="row">
-        <div class="col-12 col-md-6 mt-4">
-            <ul class="list-group">
-                <li class="list-group-item bg-orange text-white m-0">Ciudades</li>
-                @if (cities == null)
+        <section class="container">
+            <div class="row">
+                <div class="col-12 col-md-6 mt-4">
+                    <ul class="list-group">
+                        <li class="list-group-item bg-orange text-white m-0">Ciudades</li>
+                        @if (cities == null)
+                        {
+                            <li class="list-group-item d-flex align-items-center">Cargando...</li>
+                        }
+                        else
+                        {
+                            @foreach (var city in cities)
+                            {
+                                <li class="list-group-item d-flex align-items-center">
+                                    <div class="col-6 text-left">@city.Name</div>
+                                    <div class="col-6 text-right">
+                                        <a href="editar-ciudad/@city.Id" class="btn bg-gray text-white">Editar</a>
+                                        <button type="button" value="Delete" class="btn bg-red text-white" @onclick="() => DeleteCity(city)">Eliminar</button>
+                                    </div>
+                                </li>
+                            }
+                        }
+                    </ul>
+                </div>
+                <div class="col-12 col-md-6 mt-4">
+                    <ul class="list-group">
+                        <li class="list-group-item  bg-orange text-white m-0">Tipo de animal</li>
+                        @if (animalTypes == null)
+                        {
+                            <li class="list-group-item d-flex align-items-center">Cargando...</li>
+                        }
+                        else
+                        {
+                            @foreach (var animalType in animalTypes)
+                            {
+                                <li class="list-group-item d-flex align-items-center">
+                                    <div class="col-6 text-left">@animalType.Name</div>
+                                    <div class="col-6 text-right">
+                                        <button type="button" value="Delete" class="btn bg-red text-white" @onclick="() => DeleteAnimalType(animalType)">Eliminar</button>
+                                        <a href="editar-tipo-de-animal/@animalType.Id" class="btn bg-gray text-white">Editar</a>
+                                    </div>
+                                </li>
+                            }
+                        }
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section class="container">
+            <div class="row justify-content-center">
+                <h1 class="mt-4 mb-4 mt-md-5 mb-md-5 lastPetsTitle">Últimas mascotas perdidas</h1>
+            </div>
+            <div class="row">
+                @if (pets == null)
                 {
-                    <li class="list-group-item d-flex align-items-center">Cargando...</li>
+                    <h2>Loading...</h2>
                 }
                 else
                 {
-                    @foreach (var city in cities)
+                    @foreach (Pet pet in pets)
                     {
-                        <li class="list-group-item d-flex align-items-center">
-                            <div class="col-6 text-left">@city.Name</div>
-                            <div class="col-6 text-right">
-                                <a href="editar-ciudad/@city.Id" class="btn bg-gray text-white">Editar</a>
-                                <button type="button" value="Delete" class="btn bg-red text-white" @onclick="() => DeleteCity(city)">Eliminar</button>
-                            </div>
-                        </li>
+                        <PetCard pet="pet"></PetCard>
                     }
                 }
-            </ul>
-        </div>
-        <div class="col-12 col-md-6 mt-4">
-            <ul class="list-group">
-                <li class="list-group-item  bg-orange text-white m-0">Tipo de animal</li>
-                @if (animalTypes == null)
-                {
-                    <li class="list-group-item d-flex align-items-center">Cargando...</li>
-                }
-                else
-                {
-                    @foreach (var animalType in animalTypes)
-                    {
-                        <li class="list-group-item d-flex align-items-center">
-                            <div class="col-6 text-left">@animalType.Name</div>
-                            <div class="col-6 text-right">
-                                <button type="button" value="Delete" class="btn bg-red text-white" @onclick="() => DeleteAnimalType(animalType)">Eliminar</button>
-                                <a href="editar-tipo-de-animal/@animalType.Id" class="btn bg-gray text-white">Editar</a>
-                            </div>
-                        </li>
-                    }
-                }
-            </ul>
-        </div>
-    </div>
-</section>
+            </div>
+            <div class="mb-3 text-right">
+                <p>Aquí van los botones de paginación</p>
+            </div>
+        </section>
+        <Modal @ref="confirmationModal">
+            <Title>
+                Eliminar
+            </Title>
+            <Body>
+                <p>
+                    ¿Está seguro que desea eliminar?
+                </p>
+            </Body>
+            <Footer>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cancelar</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => confirmationModal.Confirm()">Confirmar</button>
+            </Footer>
+        </Modal>
+    </Authorized>
+    <NotAuthorized>
+        <Error>
+            <Message> No tiene permisos para acceder a esta página</Message>
+        </Error>
+    </NotAuthorized>
 
-<section class="container">
-    <div class="row justify-content-center">
-        <h1 class="mt-4 mb-4 mt-md-5 mb-md-5 lastPetsTitle">Últimas mascotas perdidas</h1>
-    </div>
-    <div class="row">
-        @if (pets == null)
-        {
-            <h2>Loading...</h2>
-        }
-        else
-        {
-            @foreach (Pet pet in pets)
-            {
-                <PetCard pet="pet"></PetCard>
-            }
-        }
-    </div>
-    <div class="mb-3 text-right">
-        <p>Aquí van los botones de paginación</p>
-    </div>
-</section>
-
-<Modal @ref="confirmationModal">
-    <Title>
-        Eliminar
-    </Title>
-    <Body>
-        <p>
-            ¿Está seguro que desea eliminar?
-        </p>
-    </Body>
-    <Footer>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cancelar</button>
-        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => confirmationModal.Confirm()">Confirmar</button>
-    </Footer>
-</Modal>
+    
+</AuthorizeView>
 
 @code {
+
     private IEnumerable<City> cities { get; set; }
     private IEnumerable<AnimalType> animalTypes { get; set; }
     private IEnumerable<Pet> pets { get; set; }
