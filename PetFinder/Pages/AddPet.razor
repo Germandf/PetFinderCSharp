@@ -4,6 +4,7 @@
 @inject ICityService CityService
 @inject IAnimalTypeService AnimalTypeService
 @inject IGenderService GenderService
+@inject IFileService FileService
 @inject NavigationManager NavigationManager
 
 <AuthorizeView>
@@ -78,14 +79,21 @@
                     <!-- Phone Number -->
                     <label for="inputPhone" class="sr-only mt-3 ">Teléfono</label>
                     <input id="inputPhone" type="number" class="mt-3 form-control" placeholder="Teléfono" required autofocus="" name="phone" @bind="pet.PhoneNumber">
-                    <!-- Photo -->
+                    <!-- Photo 
                     <div class="input-group mt-3">
                         <div class="custom-file">
                             <input type="file" required class="custom-file-input" id="photo" name="photo" @bind="pet.Photo">
                             <label class="custom-file-label" for="photo">Elegir foto</label>
                         </div>
                         <img src="" class="w-100 mt-2" id="loadedPhoto">
-                    </div>
+                    </div>-->
+                    <BlazorInputFile.InputFile OnChange="@HandleFileSelected" />
+                    @if(file != null)
+                    {
+                        <p>Name: @file.Name</p>
+                        <p>Size: @file.Size</p>
+                        <p>Type: @file.Type</p>
+                    }
                     <!-- Description -->
                     <label for="inputDescription" class="sr-only mt-3 ">Descripción</label>
                     <textarea id="inputDescription" required type="text" class="mt-3 form-control" placeholder="Descripción" autofocus="" name="description" maxlength="200" @bind="pet.Description"></textarea>
@@ -133,8 +141,9 @@
     private IEnumerable<AnimalType> animalTypes;
     private IEnumerable<Gender> genders;
 
-    [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
+    IFileListEntry file;
 
+    [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -148,7 +157,6 @@
 
             NavigationManager.NavigateTo($"Identity/Account/Login?returnUrl={currUri}", forceLoad: true);
         }
-
 
         if (id != 0)
         {
@@ -169,8 +177,19 @@
     {
         if (PetService.IsValidName(pet.Name))
         {
-            await PetService.Save(pet);
-            //modal.Open();
+            if (file != null)
+            {
+                await FileService.UploadAsync(file);
+                await PetService.Save(pet);
+                modal.Open();
+            }
+            else
+            {
+                isError = true;
+                error = "Debe subir una imagen";
+                StateHasChanged();
+                return;
+            }
         }
         else
         {
@@ -179,6 +198,11 @@
             StateHasChanged();
             return;
         }
+    }
+
+    void HandleFileSelected(IFileListEntry[] files)
+    {
+        file = files.FirstOrDefault();
     }
 
     protected void Cancel()

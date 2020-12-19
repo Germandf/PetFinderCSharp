@@ -52,13 +52,15 @@ namespace PetFinder
 
             services.AddRazorPages();
             services.AddServerSideBlazor();
+
             services.AddScoped<ICityService, CityService>();
             services.AddScoped<IAnimalTypeService, AnimalTypeService>();
-
             services.AddScoped<IGenderService, GenderService>();
             services.AddScoped<IPetService, PetService>();
 
             services.AddScoped<IApplicationUserService, ApplicationUserService>();
+
+            services.AddScoped<IFileService, FileService>();
 
         }
 
