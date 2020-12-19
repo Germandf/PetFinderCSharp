@@ -43,7 +43,9 @@ namespace PetFinder
                 options.Password.RequiredLength = 8;
                 options.Password.RequiredUniqueChars = 0;
 
-            }).AddRoles<IdentityRole>().AddEntityFrameworkStores<PetFinderContext>().AddClaimsPrincipalFactory<CustomUserClaimsPrincipalFactory>();
+            }).AddRoles<IdentityRole>().
+            AddEntityFrameworkStores<PetFinderContext>().
+            AddClaimsPrincipalFactory<CustomUserClaimsPrincipalFactory>().AddErrorDescriber<AppErrorDescriber>();
 
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
             services.AddScoped<SignInManager<ApplicationUser>, SignInManager<ApplicationUser>>();
