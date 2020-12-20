@@ -42,7 +42,7 @@
                         }
                     </select>
                     <!-- Pet Type -->
-                    <label for="inputAnimalType" class="sr-only mt-3 ">Tipo de animal</label>
+                    <label for="inputAnimalType" class="sr-only mt-3">Tipo de animal</label>
                     <select id="inputAnimalType" class="d-inline form-control mt-3" required name="animalType" @bind="pet.AnimalTypeId">
                         @if (animalTypes == null)
                         {
@@ -58,7 +58,7 @@
                         }
                     </select>
                     <!-- Gender -->
-                    <label for="inputGenderType" class="sr-only mt-3 ">Genero</label>
+                    <label for="inputGenderType" class="sr-only mt-3">Genero</label>
                     <select id="inputGenderType" class="d-inline form-control mt-3" required name="gender" @bind="pet.GenderId">
                         @if (genders == null)
                         {
@@ -74,26 +74,27 @@
                         }
                     </select>
                     <!-- Lost Date -->
-                    <label for="inputDateTime" class="sr-only mt-3 ">Fecha de extravio</label>
+                    <label for="inputDateTime" class="sr-only mt-3">Fecha de extravio</label>
                     <input id="inputDateTime" required type="date" class="mt-3 form-control" placeholder="Fecha de extravio" autofocus="" name="date" @bind="pet.Date">
                     <!-- Phone Number -->
-                    <label for="inputPhone" class="sr-only mt-3 ">Teléfono</label>
+                    <label for="inputPhone" class="sr-only mt-3">Teléfono</label>
                     <input id="inputPhone" type="number" class="mt-3 form-control" placeholder="Teléfono" required autofocus="" name="phone" @bind="pet.PhoneNumber">
-                    <!-- Photo 
+                    <!-- Photo -->
                     <div class="input-group mt-3">
                         <div class="custom-file">
-                            <input type="file" required class="custom-file-input" id="photo" name="photo" @bind="pet.Photo">
-                            <label class="custom-file-label" for="photo">Elegir foto</label>
+                            <BlazorInputFile.InputFile OnChange="@HandleFileSelected" class="custom-file-input" id="photo" name="photo" />
+                            <label class="custom-file-label" for="photo">
+                                @if (file == null)
+                                {
+                                    <span>Elegir foto</span>
+                                }
+                                else
+                                {
+                                    <span>Foto: @file.Name</span>
+                                }
+                            </label>
                         </div>
-                        <img src="" class="w-100 mt-2" id="loadedPhoto">
-                    </div>-->
-                    <BlazorInputFile.InputFile OnChange="@HandleFileSelected" />
-                    @if(file != null)
-                    {
-                        <p>Name: @file.Name</p>
-                        <p>Size: @file.Size</p>
-                        <p>Type: @file.Type</p>
-                    }
+                    </div>
                     <!-- Description -->
                     <label for="inputDescription" class="sr-only mt-3 ">Descripción</label>
                     <textarea id="inputDescription" required type="text" class="mt-3 form-control" placeholder="Descripción" autofocus="" name="description" maxlength="200" @bind="pet.Description"></textarea>
