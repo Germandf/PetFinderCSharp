@@ -15,15 +15,17 @@ namespace PetFinder.Data
         {
             _environment = environment;
         }
-        public async Task UploadAsync(IFileListEntry fileEntry)
+        public async Task<string> UploadAsync(IFileListEntry fileEntry)
         {
-            var path = Path.Combine(_environment.ContentRootPath, "Upload", fileEntry.Name);
+            var myUniqueFileName = string.Format(@"{0}.png", Guid.NewGuid());
+            var path = Path.Combine(_environment.ContentRootPath, "wwwroot/images", myUniqueFileName);
             var ms = new MemoryStream();
             await fileEntry.Data.CopyToAsync(ms);
             using (FileStream file = new FileStream(path, FileMode.Create, FileAccess.Write))
             {
                 ms.WriteTo(file);
             }
+            return myUniqueFileName;
         }
     }
 }

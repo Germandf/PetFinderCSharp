@@ -8,6 +8,6 @@ namespace PetFinder.Data
 {
     interface IFileService
     {
-        Task UploadAsync(IFileListEntry file);
+        Task<string> UploadAsync(IFileListEntry file);
     }
 }

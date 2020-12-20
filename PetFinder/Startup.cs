@@ -14,6 +14,8 @@ using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Components.Server;
 using PetFinder.Areas.Identity;
 using PetFinder.Areas.Identity.Helper;
+using Microsoft.Extensions.FileProviders;
+using System.IO;
 
 namespace PetFinder
 {
@@ -80,8 +82,6 @@ namespace PetFinder
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
-     
 
             app.UseRouting();
             app.UseAuthentication();

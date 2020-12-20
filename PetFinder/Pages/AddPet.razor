@@ -15,11 +15,11 @@
                     <!-- Muestra el titulo correspondiente -->
                     @if (id != 0 && isError == false)
                     {
-                        <h1 class="h3 mb-3 font-weight-normal">Añadir mascota</h1>
+                        <h1 class="h3 mb-3 font-weight-normal">Editar mascota</h1>
                     }
                     else
                     {
-                        <h1 class="h3 mb-3 font-weight-normal">Editar mascota</h1>
+                        <h1 class="h3 mb-3 font-weight-normal">Agregar mascota</h1>
                     }
                     <!-- Pet -->
                     <label for="inputName" class="sr-only mt-3 ">Nombre</label>
@@ -179,7 +179,7 @@
         {
             if (file != null)
             {
-                await FileService.UploadAsync(file);
+                pet.Photo = await FileService.UploadAsync(file);
                 await PetService.Save(pet);
                 modal.Open();
             }
