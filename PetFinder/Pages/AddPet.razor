@@ -1,11 +1,15 @@
 ﻿@page "/agregar-mascota"
 @page "/editar-mascota/{id:int}"
+@using Microsoft.AspNetCore.Identity
+@using PetFinder.Areas.Identity;
+
 @inject IPetService PetService
 @inject ICityService CityService
 @inject IAnimalTypeService AnimalTypeService
 @inject IGenderService GenderService
 @inject IFileService FileService
 @inject NavigationManager NavigationManager
+@inject UserManager<ApplicationUser> userManager;
 
 <AuthorizeView>
     <Authorized>
@@ -126,7 +130,7 @@
             </Footer>
         </Modal>
     </Authorized>
- 
+
 </AuthorizeView>
 
 @code {
@@ -137,6 +141,8 @@
     public string error { get; set; }
     public bool isError { get; set; }
     private Modal modal { get; set; }
+
+    private string userId;
 
     private IEnumerable<City> cities;
     private IEnumerable<AnimalType> animalTypes;
@@ -150,6 +156,8 @@
     {
         base.OnInitialized();
         var user = (await AuthStat).User;
+        userId = userManager.GetUserId(user);
+
         if (!user.Identity.IsAuthenticated) //Si no está autenticado redirigimos
         {
             string currUri = NavigationManager.Uri;
@@ -180,6 +188,7 @@
         {
             if (file != null)
             {
+                pet.UserId = userId;
                 pet.Photo = await FileService.UploadAsync(file);
                 await PetService.Save(pet);
                 modal.Open();
