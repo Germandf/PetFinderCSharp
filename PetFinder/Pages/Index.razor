@@ -6,22 +6,20 @@
     <div class="row justify-content-center">
         <h1 class="mt-4 mb-4 mt-md-5 mb-md-5 lastPetsTitle">Últimas mascotas perdidas</h1>
     </div>
-    <div class="row">
-        @if (pets == null)
-        {
-            <h2>Loading...</h2>
-        }
-        else
-        {
+    @if (pets == null)
+    {
+        <h2>Loading...</h2>
+    }
+    else
+    {
+        <div class="row">
             @foreach (Pet pet in pets)
             {
                 <PetCard pet="pet"></PetCard>
             }
-        }
-    </div>
-    <div class="mb-3 text-right">
-        <p>Aquí van los botones de paginación</p>
-    </div>
+        </div>
+        <PaginationButtons record="@record" pageSize="@pageSize" petsCount="@pets.Count()" isHome="true"></PaginationButtons>
+    }
 </section>
 
 @code {
@@ -31,9 +29,18 @@
 
     private IEnumerable<Pet> pets { get; set; }
 
-    protected override async Task OnInitializedAsync()
+    private string Message { get; set; }
+
+    protected override async Task OnParametersSetAsync()
     {
-        pets = await PetService.GetAll();
-        pets = pets.Skip(record).Take(pageSize).ToList();
+        try
+        {
+            pets = await PetService.GetAll();
+            pets = pets.Skip(record).Take(pageSize).ToList();
+        }
+        catch (Exception e)
+        {
+            Message = e.Message;
+        }
     }
 }

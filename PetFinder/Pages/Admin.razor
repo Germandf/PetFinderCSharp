@@ -90,26 +90,24 @@
             <div class="row justify-content-center">
                 <h1 class="mt-4 mb-4 mt-md-5 mb-md-5 lastPetsTitle">Últimas mascotas perdidas</h1>
             </div>
-            <div class="row">
-                @if (pets == null)
-                {
-                    <div class="w-100 text-center">
-                        <div class="spinner-border large-spinner" role="status">
-                            <span class="sr-only">Loading...</span>
-                        </div>
+            @if (pets == null)
+            {
+                <div class="w-100 text-center">
+                    <div class="spinner-border large-spinner" role="status">
+                        <span class="sr-only">Loading...</span>
                     </div>
-                }
-                else
-                {
+                </div>
+            }
+            else
+            {
+                <div class="row">
                     @foreach (Pet pet in pets)
                     {
                         <PetCard pet="pet"></PetCard>
                     }
-                }
-            </div>
-            <div class="mb-3 text-right">
-                <p>Aquí van los botones de paginación</p>
-            </div>
+                </div>
+                <PaginationButtons record="@record" pageSize="@pageSize" petsCount="@pets.Count()" isAdmin="true"></PaginationButtons>
+            }
         </section>
 
         <Modal @ref="confirmationModal">
@@ -153,6 +151,17 @@
         {
             cities = await CityService.GetAll();
             animalTypes = await AnimalTypeService.GetAll();
+        }
+        catch (Exception e)
+        {
+            Message = e.Message;
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
             pets = await PetService.GetAll();
             pets = pets.Skip(record).Take(pageSize).ToList();
         }
@@ -171,8 +180,8 @@
             bool result = await AnimalTypeService.Delete(animalType.Id);
             if (result)
             {
-            //Actualizo la lista con la db
-            animalTypes = await AnimalTypeService.GetAll();
+                //Actualizo la lista con la db
+                animalTypes = await AnimalTypeService.GetAll();
                 StateHasChanged();
             }
         });
@@ -186,8 +195,8 @@
             bool result = await CityService.Delete(city.Id);
             if (result)
             {
-            //Actualizo la lista con la db
-            cities = await CityService.GetAll();
+                //Actualizo la lista con la db
+                cities = await CityService.GetAll();
                 StateHasChanged();
             }
         });
