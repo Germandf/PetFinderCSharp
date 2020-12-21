@@ -3,17 +3,17 @@
     {
         if (isHome)
         {
-            <a href="home/@(record - 12)" class="btn bg-gray text-white">Anteriores</a>
-            <a href="home" class="btn bg-gray text-white">Portada</a>
+            <a href="/@(record - pageSize)" class="btn bg-gray text-white">Anteriores</a>
+            <a href="" class="btn bg-gray text-white">Portada</a>
         }
         else if (isMyPets)
         {
-            <a href="mis-mascotas/@(record - 12)" class="btn bg-gray text-white">Anteriores</a>
+            <a href="mis-mascotas/@(record - pageSize)" class="btn bg-gray text-white">Anteriores</a>
             <a href="mis-mascotas" class="btn bg-gray text-white">Portada</a>
         }
         else if (isAdmin)
         {
-            <a href="admin/@(record - 12)" class="btn bg-gray text-white">Anteriores</a>
+            <a href="admin/@(record - pageSize)" class="btn bg-gray text-white">Anteriores</a>
             <a href="admin" class="btn bg-gray text-white">Portada</a>
         }
     }
@@ -21,15 +21,15 @@
     {
         if (isHome)
         {
-            <a href="home/@(record + 12)" class="btn bg-gray text-white">Siguientes</a>
+            <a href="/@(record + pageSize)" class="btn bg-gray text-white">Siguientes</a>
         }
         else if (isMyPets)
         {
-            <a href="mis-mascotas/@(record + 12)" class="btn bg-gray text-white">Siguientes</a>
+            <a href="mis-mascotas/@(record + pageSize)" class="btn bg-gray text-white">Siguientes</a>
         }
         else if (isAdmin)
         {
-            <a href="admin/@(record + 12)" class="btn bg-gray text-white">Siguientes</a>
+            <a href="admin/@(record + pageSize)" class="btn bg-gray text-white">Siguientes</a>
         }
     }
 </div>
@@ -41,8 +41,10 @@
     public int pageSize { get; set; }
     [Parameter]
     public int petsCount { get; set; }
-
+    [Parameter]
     public bool isHome { get; set; }
+    [Parameter]
     public bool isMyPets { get; set; }
+    [Parameter]
     public bool isAdmin { get; set; }
 }
