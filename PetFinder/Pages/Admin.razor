@@ -1,4 +1,5 @@
 ﻿@page "/admin"
+@page "/admin/{record:int}"
 @inject ICityService CityService
 @inject IAnimalTypeService AnimalTypeService
 @inject IPetService PetService
@@ -98,6 +99,7 @@
                 <p>Aquí van los botones de paginación</p>
             </div>
         </section>
+
         <Modal @ref="confirmationModal">
             <Title>
                 Eliminar
@@ -113,16 +115,18 @@
             </Footer>
         </Modal>
     </Authorized>
+
     <NotAuthorized>
         <Error>
             <Message> No tiene permisos para acceder a esta página</Message>
         </Error>
     </NotAuthorized>
-
-    
 </AuthorizeView>
 
 @code {
+    [Parameter]
+    public int record { get; set; }
+    private int pageSize = 3;
 
     private IEnumerable<City> cities { get; set; }
     private IEnumerable<AnimalType> animalTypes { get; set; }
@@ -138,6 +142,7 @@
             cities = await CityService.GetAll();
             animalTypes = await AnimalTypeService.GetAll();
             pets = await PetService.GetAll();
+            pets = pets.Skip(record).Take(pageSize).ToList();
         }
         catch (Exception e)
         {

@@ -1,4 +1,5 @@
 ﻿@page "/"
+@page "/{record:int}"
 @inject IPetService PetService
 
 <section class="container">
@@ -24,10 +25,15 @@
 </section>
 
 @code {
+    [Parameter]
+    public int record { get; set; }
+    private int pageSize = 3;
+
     private IEnumerable<Pet> pets { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         pets = await PetService.GetAll();
+        pets = pets.Skip(record).Take(pageSize).ToList();
     }
 }
