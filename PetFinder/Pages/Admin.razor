@@ -119,7 +119,7 @@
         </Error>
     </NotAuthorized>
 
-    
+
 </AuthorizeView>
 
 @code {
@@ -154,8 +154,8 @@
             bool result = await AnimalTypeService.Delete(animalType.Id);
             if (result)
             {
-                //Actualizo la lista con la db
-                animalTypes = await AnimalTypeService.GetAll();
+            //Actualizo la lista con la db
+            animalTypes = await AnimalTypeService.GetAll();
                 StateHasChanged();
             }
         });
@@ -169,8 +169,8 @@
             bool result = await CityService.Delete(city.Id);
             if (result)
             {
-                //Actualizo la lista con la db
-                cities = await CityService.GetAll();
+            //Actualizo la lista con la db
+            cities = await CityService.GetAll();
                 StateHasChanged();
             }
         });
