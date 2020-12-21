@@ -184,6 +184,30 @@
 
     protected async Task SavePet()
     {
+        if(pet.GenderId == 0)
+        {
+            isError = true;
+            error = "Debe especificar un genero";
+            StateHasChanged();
+            return;
+        }
+
+        if(pet.AnimalTypeId == 0)
+        {
+            isError = true;
+            error = "Debe especificar un tipo de animal";
+            StateHasChanged();
+            return;
+        }
+
+        if (pet.CityId == 0)
+        {
+            isError = true;
+            error = "Debe especificar una ciudad";
+            StateHasChanged();
+            return;
+        }
+
         if (PetService.IsValidName(pet.Name))
         {
             if (file != null)
