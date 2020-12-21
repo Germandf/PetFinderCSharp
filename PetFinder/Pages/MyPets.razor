@@ -1,4 +1,9 @@
 ﻿@page "/mis-mascotas"
+@using Microsoft.AspNetCore.Identity
+@using PetFinder.Areas.Identity;
+
+@inject IPetService PetService
+@inject UserManager<ApplicationUser> userManager
 
 <section class="container-fluid bg-orange-dark">
     <div class="row">
@@ -15,10 +20,56 @@
         <h1 class="mt-4 mb-4 mt-md-5 mb-md-5 lastPetsTitle">Mis mascotas perdidas</h1>
     </div>
     <div class="row">
-        <p class="lastPetsTitle">Aún no tienes mascotas perdidas, ¿acabás de perder una? Lo sentimos, ¡agrégala a PetFinder para advertir al resto!</p>
+
+        @if (pets == null)
+        {
+
+            @if (isLoading)
+            {
+                <div class="w-100 text-center">
+                    <div class="spinner-border large-spinner" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <p class="lastPetsTitle">Aún no tienes mascotas perdidas, ¿acabás de perder una? Lo sentimos, ¡agrégala a PetFinder para advertir al resto!</p>
+            }
+
+        }
+        else
+        {
+            @foreach (Pet pet in pets)
+            {
+                <PetCard pet="pet"></PetCard>
+            }
+        }
+    </div>
+    <div class="mb-3 text-right">
+        <p>Aquí van los botones de paginación</p>
     </div>
 </section>
 
 @code {
+    [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
 
+    private IEnumerable<Pet> pets { get; set; }
+    private string Message { get; set; }
+    private Boolean isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var user = (await AuthStat).User;
+            var userId = userManager.GetUserId(user);
+            pets = await PetService.GetAllByUser(userId);
+        }
+        catch (Exception e)
+        {
+            Message = e.Message;
+        }
+        isLoading = false;
+    }
 }

@@ -40,6 +40,10 @@ namespace PetFinder.Data
                 Include(p => p.Gender).
                 ToListAsync();
         }
+        public async Task<IEnumerable<Pet>> GetAllByUser(string UserId)
+        {
+            return await _context.Pets.Where(p => p.UserId == UserId). ToListAsync();
+        }
 
         public async Task<bool> Insert(Pet pet)
         {

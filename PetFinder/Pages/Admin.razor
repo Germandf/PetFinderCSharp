@@ -36,7 +36,11 @@
                         <li class="list-group-item bg-orange text-white m-0">Ciudades</li>
                         @if (cities == null)
                         {
-                            <li class="list-group-item d-flex align-items-center">Cargando...</li>
+                            <div class="w-100 text-center mt-3">
+                                <div class="spinner-border" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
                         }
                         else
                         {
@@ -58,7 +62,11 @@
                         <li class="list-group-item  bg-orange text-white m-0">Tipo de animal</li>
                         @if (animalTypes == null)
                         {
-                            <li class="list-group-item d-flex align-items-center">Cargando...</li>
+                            <div class="w-100 text-center mt-3">
+                                <div class="spinner-border" role="status">
+                                    <span class="sr-only">Loading...</span>
+                                </div>
+                            </div>
                         }
                         else
                         {
@@ -85,14 +93,18 @@
             <div class="row">
                 @if (pets == null)
                 {
-                    <h2>Loading...</h2>
+                    <div class="w-100 text-center">
+                        <div class="spinner-border large-spinner" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>
                 }
                 else
                 {
-                    @foreach (Pet pet in pets)
-                    {
-                        <PetCard pet="pet"></PetCard>
-                    }
+                @foreach (Pet pet in pets)
+                {
+                    <PetCard pet="pet"></PetCard>
+                }
                 }
             </div>
             <div class="mb-3 text-right">
@@ -159,8 +171,8 @@
             bool result = await AnimalTypeService.Delete(animalType.Id);
             if (result)
             {
-                //Actualizo la lista con la db
-                animalTypes = await AnimalTypeService.GetAll();
+            //Actualizo la lista con la db
+            animalTypes = await AnimalTypeService.GetAll();
                 StateHasChanged();
             }
         });
@@ -174,8 +186,8 @@
             bool result = await CityService.Delete(city.Id);
             if (result)
             {
-                //Actualizo la lista con la db
-                cities = await CityService.GetAll();
+            //Actualizo la lista con la db
+            cities = await CityService.GetAll();
                 StateHasChanged();
             }
         });

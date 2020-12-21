@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PetFinder.Areas.Identity;
+using System;
 using System.Collections.Generic;
 
 #nullable disable
@@ -16,11 +17,13 @@ namespace PetFinder.Models
         public string PhoneNumber { get; set; }
         public string Photo { get; set; }
         public string Description { get; set; }
-        public int? UserId { get; set; }
+        public string UserId { get; set; }
         public byte Found { get; set; }
 
         public virtual AnimalType AnimalType { get; set; }
         public virtual City City { get; set; }
         public virtual Gender Gender { get; set; }
+        public virtual ApplicationUser User { get; set; }
+
     }
 }
