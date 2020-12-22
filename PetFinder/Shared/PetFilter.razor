@@ -1,30 +1,58 @@
-﻿<section class="container-fluid bg-orange-dark ">
+﻿@inject ICityService CityService
+@inject IAnimalTypeService AnimalTypeService
+@inject IGenderService GenderService
+
+<section class="container-fluid bg-orange-dark ">
     <form id="petFilterForm" action="filtrar" method="get" class="row">
         <!-- City -->
         <div class="col-12 col-md-auto">
             <select id="inputCity" class="d-inline form-control mt-3" name="city">
-                <option value="none" selected disabled hidden>Ciudad</option>
-                <!-- {foreach from=$cities item=city} -->
-                <option value="{$city->id}">{$city->name}</option>
-                <!-- {/foreach} -->
+                @if (cities == null)
+                {
+                    <option value="none" selected disabled hidden>Loading...</option>
+                }
+                else
+                {
+                    <option value="none" selected disabled hidden>Ciudad</option>
+                    foreach(City city in cities)
+                    {
+                        <option value="@city.Id">@city.Name</option>
+                    }  
+                }
             </select>
         </div>
         <!-- Animal Type -->
         <div class="col-12 col-md-auto">
             <select id="inputAnimalType" class="d-inline form-control mt-3" name="animalType">
-                <option value="none" selected disabled hidden>Tipo de mascota</option>
-                <!-- {foreach from=$animaltypes item=animaltype} -->
-                <option value="{$animaltype->id}">{$animaltype->name}</option>
-                <!-- {/foreach} -->
+                @if (animalTypes == null)
+                {
+                    <option value="none" selected disabled hidden>Loading...</option>
+                }
+                else
+                {
+                    <option value="none" selected disabled hidden>Tipo de mascota</option>
+                    foreach (AnimalType animalType in animalTypes)
+                    {
+                        <option value="@animalType.Id">@animalType.Name</option>
+                    }
+                }
             </select>
         </div>
         <!-- Gender -->
         <div class="col-12 col-md-auto">
             <select id="inputGender" class="d-inline form-control mt-3" name="gender">
-                <option value="none" selected disabled hidden>Género</option>
-                <!-- {foreach from=$genders item=gender} -->
-                <option value="{$gender->id}">{$gender->name}</option>
-                <!-- {/foreach} -->
+                @if (genders == null)
+                {
+                    <option value="none" selected disabled hidden>Loading...</option>
+                }
+                else
+                {
+                    <option value="none" selected disabled hidden>Género</option>
+                    foreach (Gender gender in genders)
+                    {
+                        <option value="@gender.Id">@gender.Name</option>
+                    }
+                }
             </select>
         </div>
         <!-- Name or Description -->
@@ -39,5 +67,10 @@
 </section>
 
 @code {
-
+    [Parameter]
+    public IEnumerable<City> cities { get; set; }
+    [Parameter]
+    public IEnumerable<AnimalType> animalTypes { get; set; }
+    [Parameter]
+    public IEnumerable<Gender> genders { get; set; }
 }
