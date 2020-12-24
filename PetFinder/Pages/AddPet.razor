@@ -10,6 +10,8 @@
 @inject IFileService FileService
 @inject NavigationManager NavigationManager
 @inject UserManager<ApplicationUser> userManager;
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
 
 <AuthorizeView>
     <Authorized>
@@ -109,7 +111,12 @@
                     @if (isError)
                     {
                         <div class="alert alert-danger mt-2">
-                            @error
+                            <ul>
+                                @foreach (string error in errorsSaving)
+                                {
+                                    <li>@error</li>
+                                }
+                            </ul>
                         </div>
                     }
                 </EditForm>
@@ -138,6 +145,7 @@
     public int id { get; set; }
 
     private Pet pet = new Pet();
+    private List<string> errorsSaving = new List<string>();
     public string error { get; set; }
     public bool isError { get; set; }
     private Modal modal { get; set; }
@@ -155,10 +163,11 @@
     protected override async Task OnInitializedAsync()
     {
         base.OnInitialized();
-        var user = (await AuthStat).User;
-        userId = userManager.GetUserId(user);
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userClaims = authState.User;
+        userId = userManager.GetUserId(userClaims);
 
-        if (!user.Identity.IsAuthenticated) //Si no está autenticado redirigimos
+        if (!userClaims.Identity.IsAuthenticated) //Si no está autenticado redirigimos
         {
             string currUri = NavigationManager.Uri;
             string baseUri = NavigationManager.BaseUri;
@@ -176,6 +185,16 @@
                 isError = true;
                 pet = new Pet();
             }
+            else
+            {
+                if (!await PetService.currUserCanEdit(pet))
+                {
+                    error = "No podes editar está mascota.";
+                    isError = true;
+                    pet = new Pet();
+                }
+            }
+
         }
         cities = await CityService.GetAll();
         animalTypes = await AnimalTypeService.GetAll();
@@ -184,54 +203,33 @@
 
     protected async Task SavePet()
     {
-        if(pet.GenderId == 0)
-        {
-            isError = true;
-            error = "Debe especificar un genero";
-            StateHasChanged();
-            return;
-        }
+        isError = false;
+        errorsSaving = new List<string>();
+        string photoUrl = await FileService.UploadAsync(file);
 
-        if(pet.AnimalTypeId == 0)
+        if (photoUrl == null)
         {
+            error = "No se pudo subir la imagen al servidor.";
             isError = true;
-            error = "Debe especificar un tipo de animal";
             StateHasChanged();
-            return;
         }
-
-        if (pet.CityId == 0)
+        else
         {
-            isError = true;
-            error = "Debe especificar una ciudad";
-            StateHasChanged();
-            return;
-        }
-
-        if (PetService.IsValidName(pet.Name))
-        {
-            if (file != null)
+            pet.Photo = photoUrl;
+            bool result = await PetService.Save(pet, errorsSaving);
+            if (result)
             {
-                pet.UserId = userId;
-                pet.Photo = await FileService.UploadAsync(file);
-                await PetService.Save(pet);
                 modal.Open();
             }
             else
             {
                 isError = true;
-                error = "Debe subir una imagen";
+                error = "Ocurrio un error al guardar la mascota";
                 StateHasChanged();
-                return;
             }
         }
-        else
-        {
-            isError = true;
-            error = "El nombre de la mascota debe ser menor a 20 caracteres";
-            StateHasChanged();
-            return;
-        }
+
+
     }
 
     void HandleFileSelected(IFileListEntry[] files)

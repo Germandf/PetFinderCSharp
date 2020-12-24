@@ -10,6 +10,7 @@ namespace PetFinder.Data
 {
     public class FileService : IFileService
     {
+        public static readonly List<string> ImageTypes = new List<string> { "image/jpg", "image/jpeg", "image/png" };
         private readonly IWebHostEnvironment _environment;
         public FileService(IWebHostEnvironment environment)
         {
@@ -17,15 +18,29 @@ namespace PetFinder.Data
         }
         public async Task<string> UploadAsync(IFileListEntry fileEntry)
         {
-            var myUniqueFileName = string.Format(@"{0}.png", Guid.NewGuid());
-            var path = Path.Combine(_environment.ContentRootPath, "wwwroot/images", myUniqueFileName);
-            var ms = new MemoryStream();
-            await fileEntry.Data.CopyToAsync(ms);
-            using (FileStream file = new FileStream(path, FileMode.Create, FileAccess.Write))
+
+            if(fileEntry == null)
             {
-                ms.WriteTo(file);
+                return null;
             }
-            return myUniqueFileName;
+            string fileType = fileEntry.Type;
+
+            if (ImageTypes.Contains(fileType))
+            {
+                string fileExtension = fileType.Replace("image/", string.Empty);
+                var myUniqueFileName = string.Format(@"{0}.{1}", Guid.NewGuid(), fileExtension);
+
+                var path = Path.Combine(_environment.ContentRootPath, "wwwroot/images", myUniqueFileName);
+                var ms = new MemoryStream();
+                await fileEntry.Data.CopyToAsync(ms);
+                using (FileStream file = new FileStream(path, FileMode.Create, FileAccess.Write))
+                {
+                    ms.WriteTo(file);
+                }
+                return myUniqueFileName;
+            }
+
+            return null;
         }
     }
 }

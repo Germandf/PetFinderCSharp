@@ -4,6 +4,9 @@
 @using PetFinder.Areas.Identity;
 @inject IPetService PetService
 @inject UserManager<ApplicationUser> userManager
+@inject IApplicationUserService applicationUserService
+@inject NavigationManager NavigationManager
+@inject AuthenticationStateProvider AuthenticationStateProvider
 
 <section class="container-fluid bg-orange-dark">
     <div class="row">
@@ -39,7 +42,7 @@
         <div class="row">
             @foreach (Pet pet in pets)
             {
-                <PetCard pet="pet"></PetCard>
+                <PetCard pet="pet" user="user"></PetCard>
             }
         </div>
         <PaginationButtons record="@record" pageSize="@pageSize" petsCount="@pets.Count()" isMyPets="true"></PaginationButtons>
@@ -56,7 +59,26 @@
     private IEnumerable<Pet> pets { get; set; }
     private string Message { get; set; }
     private Boolean isLoading { get; set; }
+    private ApplicationUser user { get; set; }
 
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userClaims = authState.User;
+        if (!userClaims.Identity.IsAuthenticated) //Si no está autenticado redirigimos
+        {
+            string currUri = NavigationManager.Uri;
+            string baseUri = NavigationManager.BaseUri;
+            currUri = currUri.Replace(baseUri, "/");
+
+            NavigationManager.NavigateTo($"Identity/Account/Login?returnUrl={currUri}", forceLoad: true);
+        }
+        else
+        {
+            user = await applicationUserService.GetCurrent();
+        }
+    }
     protected override async Task OnParametersSetAsync()
     {
         isLoading = true;

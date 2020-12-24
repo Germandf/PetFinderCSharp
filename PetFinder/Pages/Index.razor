@@ -1,6 +1,9 @@
 ﻿@page "/"
 @page "/{record:int}"
+@using PetFinder.Areas.Identity;
+
 @inject IPetService PetService
+@inject IApplicationUserService applicationUserService
 
 <section class="container">
     <div class="row justify-content-center">
@@ -15,7 +18,7 @@
         <div class="row">
             @foreach (Pet pet in pets)
             {
-                <PetCard pet="pet"></PetCard>
+                <PetCard pet="pet" user="user"></PetCard>
             }
         </div>
         <PaginationButtons record="@record" pageSize="@pageSize" petsCount="@pets.Count()" isHome="true"></PaginationButtons>
@@ -23,14 +26,18 @@
 </section>
 
 @code {
-    [Parameter]
+        [Parameter]
     public int record { get; set; }
     private int pageSize = 12;
 
     private IEnumerable<Pet> pets { get; set; }
 
     private string Message { get; set; }
-
+    private ApplicationUser user { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        user = await applicationUserService.GetCurrent();
+    }
     protected override async Task OnParametersSetAsync()
     {
         try

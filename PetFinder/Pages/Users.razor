@@ -91,10 +91,7 @@
 
         private async Task Downgrade(ApplicationUser user)
         {
-
-            await userManager.AddToRoleAsync(user, "Normal");
-            await userManager.RemoveFromRoleAsync(user, "Administrator");
-
+            await aplicationUserService.Downgrade(user.Id);
             users = await aplicationUserService.GetAll();
             StateHasChanged();
 
@@ -102,9 +99,7 @@
         private async Task Upgrade(ApplicationUser user)
         {
 
-            await userManager.RemoveFromRoleAsync(user, "Normal");
-            await userManager.AddToRoleAsync(user, "Administrator");
-
+            await aplicationUserService.Upgrade(user.Id);
             users = await aplicationUserService.GetAll();
             StateHasChanged();
         }
@@ -134,6 +129,7 @@
                     users = await aplicationUserService.GetAll();
                     StateHasChanged();
                 }
+
             });
         }
 

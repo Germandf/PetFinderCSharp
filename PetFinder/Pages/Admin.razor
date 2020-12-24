@@ -1,8 +1,11 @@
 ﻿@page "/admin"
 @page "/admin/{record:int}"
+@using PetFinder.Areas.Identity;
+
 @inject ICityService CityService
 @inject IAnimalTypeService AnimalTypeService
 @inject IPetService PetService
+@inject IApplicationUserService applicationUserService
 
 <AuthorizeView Roles="@ApplicationUserService.ROLE_ADMIN">
     <Authorized>
@@ -103,7 +106,7 @@
                 <div class="row">
                     @foreach (Pet pet in pets)
                     {
-                        <PetCard pet="pet"></PetCard>
+                        <PetCard pet="pet"  user="user"></PetCard>
                     }
                 </div>
                 <PaginationButtons record="@record" pageSize="@pageSize" petsCount="@pets.Count()" isAdmin="true"></PaginationButtons>
@@ -145,8 +148,12 @@
     private string Message { get; set; }
     private Modal confirmationModal { get; set; }
 
+    private ApplicationUser user { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
+        user = await applicationUserService.GetCurrent();
+
         try
         {
             cities = await CityService.GetAll();
@@ -195,8 +202,8 @@
             bool result = await CityService.Delete(city.Id);
             if (result)
             {
-                //Actualizo la lista con la db
-                cities = await CityService.GetAll();
+            //Actualizo la lista con la db
+            cities = await CityService.GetAll();
                 StateHasChanged();
             }
         });

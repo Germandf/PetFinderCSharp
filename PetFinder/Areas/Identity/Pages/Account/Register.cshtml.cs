@@ -130,7 +130,7 @@ namespace PetFinder.Areas.Identity.Pages.Account
 
                         await _userManager.AddToRoleAsync(user, ApplicationUserService.ROLE_USER);
 
-                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        await _signInManager.SignInAsync(user, isPersistent: true);
                         return LocalRedirect(returnUrl);
                     }
                 }

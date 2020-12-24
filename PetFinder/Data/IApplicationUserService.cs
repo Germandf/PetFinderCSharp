@@ -9,10 +9,12 @@ using System.Threading.Tasks;
 
 namespace PetFinder.Data
 {
-    interface IApplicationUserService
+    public interface IApplicationUserService
     {
 
         Task<IEnumerable<ApplicationUser>> GetAll();
-       
+        Task<bool> Downgrade(string userId);
+        Task<bool> Upgrade(string userId);
+        Task<ApplicationUser> GetCurrent();
     }
 }

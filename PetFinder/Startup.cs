@@ -33,7 +33,8 @@ namespace PetFinder
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<PetFinderContext>(options =>
-                    options.UseSqlServer(Environment.GetEnvironmentVariable("SQLServerPetfinder"))
+                    options.UseSqlServer(Environment.GetEnvironmentVariable("SQLServerPetfinder")),
+                    ServiceLifetime.Transient
                   );
             services.AddDefaultIdentity<ApplicationUser>(options => 
             {
@@ -47,7 +48,8 @@ namespace PetFinder
 
             }).AddRoles<IdentityRole>().
             AddEntityFrameworkStores<PetFinderContext>().
-            AddClaimsPrincipalFactory<CustomUserClaimsPrincipalFactory>().AddErrorDescriber<AppErrorDescriber>();
+            AddClaimsPrincipalFactory<CustomUserClaimsPrincipalFactory>().
+            AddErrorDescriber<AppErrorDescriber>();
 
             services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
             services.AddScoped<SignInManager<ApplicationUser>, SignInManager<ApplicationUser>>();
@@ -63,6 +65,7 @@ namespace PetFinder
             services.AddScoped<IApplicationUserService, ApplicationUserService>();
 
             services.AddScoped<IFileService, FileService>();
+            services.AddHttpContextAccessor();
 
         }
 

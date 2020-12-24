@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PetFinder.Areas.Identity;
 using PetFinder.Models;
@@ -17,13 +18,58 @@ namespace PetFinder.Data
 
         private readonly PetFinderContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ApplicationUserService(PetFinderContext context, UserManager<ApplicationUser> userManager)
+        public ApplicationUserService(PetFinderContext context, 
+            UserManager<ApplicationUser> userManager,
+            IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _userManager = userManager;
+            _httpContextAccessor = httpContextAccessor;
         }
 
+        public async Task<bool> Downgrade(String userId)
+        {
+            ApplicationUser user = await _userManager.FindByIdAsync(userId);
+
+            IdentityResult resultRemoveRole = await _userManager.AddToRoleAsync(user, "Normal");
+            if (resultRemoveRole.Succeeded)
+            {
+                IdentityResult resultAdd = await _userManager.RemoveFromRoleAsync(user, "Administrator");
+                return resultAdd.Succeeded;
+            }
+            return false;
+        }
+        public async Task<bool> Upgrade(String userId)
+        {
+            ApplicationUser user = await _userManager.FindByIdAsync(userId);
+
+            IdentityResult resultAdd = await _userManager.RemoveFromRoleAsync(user, "Normal");
+            if (resultAdd.Succeeded)
+            {
+                IdentityResult resultRemoveRole = await _userManager.AddToRoleAsync(user, "Administrator");
+                return resultRemoveRole.Succeeded;
+            }
+            return false;
+        }
+        public async Task<ApplicationUser> GetCurrent()
+        {
+            ApplicationUser currUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+
+            if(currUser == null)
+            {
+                return null;
+            }
+
+            if (await _userManager.IsInRoleAsync(currUser, ApplicationUserService.ROLE_ADMIN))
+            {
+                currUser.setAdmin(true);
+            }
+
+            return currUser;
+
+        }
         public async Task<IEnumerable<ApplicationUser>> GetAll()
         {
 

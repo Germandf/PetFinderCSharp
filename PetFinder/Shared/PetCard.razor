@@ -1,11 +1,12 @@
-﻿<div class="col-12 mb-3 col-md-6 col-xl-4">
-    <div class="card shadow">
-        @if (pet == null)
-        {
-            <p>Loading...</p>
-        }
-        else
-        {
+﻿@using Microsoft.AspNetCore.Identity
+@using PetFinder.Areas.Identity;
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IPetService petService;
+
+@if (pet != null && pet.Found == 0)
+{
+    <div class="col-12 mb-3 col-md-6 col-xl-4">
+        <div class="card shadow">
             <a href="ver/@pet.Id"><img class="card-img-top imgPetCard" src="/images/@pet.Photo"></a>
             <div class="card-body">
                 <h3 class="card-title">@pet.Name</h3>
@@ -14,24 +15,99 @@
                     <li class="list-group-item pl-0">El día: @pet.Date</li>
                     <li class="list-group-item pl-0">Animal: @pet.AnimalType.Name</li>
                 </ul>
+
                 <div class="text-right">
                     <a href="ver/#" class="btn bg-orange text-white">Ver más</a>
-                    <!-- {if isset($smarty.session.ID_USER) && ($pet->userId == $smarty.session.ID_USER || $smarty.session.PERMISSION_USER == 1)} -->
-                    <a href="editar/#" class="btn bg-orange-dark text-white">Editar</a>
-                    <a href="encontrar/#" class="btn bg-orange-dark text-white">Lo encontré</a>
-                    <!-- {/if} -->
-                </div>
-                <!-- {if isset($smarty.session.ID_USER) && $smarty.session.PERMISSION_USER == 1} -->
-                <div class="text-right">
-                    <a href="eliminar/#" class="btn bg-red text-white mt-1">Eliminar</a>
-                </div>
-                <!-- {/if} -->
-            </div>
-        }
-    </div>
-</div>
+                    <AuthorizeView>
+                        <Authorized>
+                            @if (user.isAdmin() || pet.UserId == user.Id)
+                            {
+                                <a href="editar-mascota/@pet.Id" class="btn bg-orange-dark text-white ml-1">Editar</a>
+                                <button @onclick="() => setFound()" class=" btn bg-orange-dark text-white mt-1">Lo encontre</button>
 
+                                <button @onclick="() => Delete()" class="btn bg-red text-white mt-1">Eliminar</button>
+                            }
+                        </Authorized>
+                    </AuthorizeView>
+                </div>
+                <span>
+                </span>
+
+            </div>
+        </div>
+    </div>
+}
+<Modal @ref="confirmationModal">
+    <Title>
+        Eliminar
+    </Title>
+    <Body>
+        <p>
+            ¿Está seguro que desea eliminar?
+        </p>
+    </Body>
+    <Footer>
+
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cancelar</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => confirmationModal.Confirm()">Confirmar</button>
+    </Footer>
+</Modal>
+<Modal @ref="errorModal">
+    <Title>
+        Error
+    </Title>
+    <Body>
+        <p>
+            Ocurrio un error al realizar el cambio
+        </p>
+    </Body>
+    <Footer>
+
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">cerrar</button>
+    </Footer>
+</Modal>
 @code {
     [Parameter]
-    public Pet pet { get; set; }
+    public Pet pet { get; set; } = null!;
+
+    [Parameter]
+    public ApplicationUser user { get; set; } = null!;
+
+
+    private Modal confirmationModal = new Modal();
+    private Modal errorModal = new Modal();
+
+    private async Task setFound()
+    {
+        bool result = await petService.SetFound(pet.Id);
+        if (result)
+        {
+            StateHasChanged();
+        }
+        else
+        {
+            errorModal.Open();
+        }
+    }
+
+    private void Delete()
+    {
+        confirmationModal.OnConfirm(async () =>
+        {
+            bool result = await petService.Delete(pet.Id);
+            if (result)
+            {
+                pet = null;
+                StateHasChanged();
+            }
+            else
+            {
+                errorModal.Open();
+            }
+
+        });
+
+        confirmationModal.Open();
+    }
+
 }
