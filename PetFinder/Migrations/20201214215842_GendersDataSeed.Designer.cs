@@ -112,7 +112,7 @@ namespace PetFinder.Migrations
                     b.Property<string>("Photo")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("UserId")
+                    b.Property<string?>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

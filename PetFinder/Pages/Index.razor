@@ -1,10 +1,14 @@
 ﻿@page "/"
 @page "/{record:int}"
+@inject ICityService CityService
+@inject IAnimalTypeService AnimalTypeService
+@inject IGenderService GenderService
 @using PetFinder.Areas.Identity;
 
 @inject IPetService PetService
 @inject IApplicationUserService applicationUserService
 
+<PetFilter cities="cities" animalTypes="animalTypes" genders="genders"></PetFilter>
 <section class="container">
     <div class="row justify-content-center">
         <h1 class="mt-4 mb-4 mt-md-5 mb-md-5 lastPetsTitle">Últimas mascotas perdidas</h1>
@@ -26,16 +30,24 @@
 </section>
 
 @code {
-        [Parameter]
+    [Parameter]
     public int record { get; set; }
     private int pageSize = 12;
+    private ApplicationUser user { get; set; }
 
+    private IEnumerable<City> cities;
+    private IEnumerable<AnimalType> animalTypes;
+    private IEnumerable<Gender> genders;
     private IEnumerable<Pet> pets { get; set; }
 
     private string Message { get; set; }
-    private ApplicationUser user { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
+        base.OnInitialized();
+        cities = await CityService.GetAll();
+        animalTypes = await AnimalTypeService.GetAll();
+        genders = await GenderService.GetAll();
         user = await applicationUserService.GetCurrent();
     }
     protected override async Task OnParametersSetAsync()
