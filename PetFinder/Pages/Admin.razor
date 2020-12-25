@@ -1,7 +1,6 @@
 ﻿@page "/admin"
 @page "/admin/{record:int}"
 @using PetFinder.Areas.Identity;
-
 @inject ICityService CityService
 @inject IAnimalTypeService AnimalTypeService
 @inject IPetService PetService
@@ -39,11 +38,11 @@
                         <li class="list-group-item bg-orange text-white m-0">Ciudades</li>
                         @if (cities == null)
                         {
-                            <div class="w-100 text-center mt-3">
+                            <li class="w-100 text-center mt-3">
                                 <div class="spinner-border" role="status">
                                     <span class="sr-only">Loading...</span>
                                 </div>
-                            </div>
+                            </li>
                         }
                         else
                         {
@@ -65,11 +64,11 @@
                         <li class="list-group-item  bg-orange text-white m-0">Tipo de animal</li>
                         @if (animalTypes == null)
                         {
-                            <div class="w-100 text-center mt-3">
+                            <li class="w-100 text-center mt-3">
                                 <div class="spinner-border" role="status">
                                     <span class="sr-only">Loading...</span>
                                 </div>
-                            </div>
+                            </li>
                         }
                         else
                         {
@@ -106,7 +105,7 @@
                 <div class="row">
                     @foreach (Pet pet in pets)
                     {
-                        <PetCard pet="pet"  user="user"></PetCard>
+                        <PetCard pet="pet" user="user"></PetCard>
                     }
                 </div>
                 <PaginationButtons record="@record" pageSize="@pageSize" petsCount="@pets.Count()" isAdmin="true"></PaginationButtons>
@@ -202,8 +201,8 @@
             bool result = await CityService.Delete(city.Id);
             if (result)
             {
-            //Actualizo la lista con la db
-            cities = await CityService.GetAll();
+                //Actualizo la lista con la db
+                cities = await CityService.GetAll();
                 StateHasChanged();
             }
         });
