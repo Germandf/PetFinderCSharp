@@ -15,7 +15,6 @@
                     <li class="list-group-item pl-0">El día: @pet.Date</li>
                     <li class="list-group-item pl-0">Animal: @pet.AnimalType.Name</li>
                 </ul>
-
                 <div class="text-right">
                     <a href="ver/#" class="btn bg-orange text-white">Ver más</a>
                     <AuthorizeView>
@@ -24,15 +23,14 @@
                             {
                                 <a href="editar-mascota/@pet.Id" class="btn bg-orange-dark text-white ml-1">Editar</a>
                                 <button @onclick="() => setFound()" class=" btn bg-orange-dark text-white mt-1">Lo encontre</button>
-
+                            }
+                            @if (user.isAdmin())
+                            {
                                 <button @onclick="() => Delete()" class="btn bg-red text-white mt-1">Eliminar</button>
                             }
                         </Authorized>
                     </AuthorizeView>
                 </div>
-                <span>
-                </span>
-
             </div>
         </div>
     </div>
@@ -47,32 +45,30 @@
         </p>
     </Body>
     <Footer>
-
         <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cancelar</button>
         <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => confirmationModal.Confirm()">Confirmar</button>
     </Footer>
 </Modal>
+
 <Modal @ref="errorModal">
     <Title>
         Error
     </Title>
     <Body>
         <p>
-            Ocurrio un error al realizar el cambio
+            Ocurrió un error al realizar el cambio
         </p>
     </Body>
     <Footer>
-
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">cerrar</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cerrar</button>
     </Footer>
 </Modal>
+
 @code {
     [Parameter]
     public Pet pet { get; set; } = null!;
-
     [Parameter]
     public ApplicationUser user { get; set; } = null!;
-
 
     private Modal confirmationModal = new Modal();
     private Modal errorModal = new Modal();
@@ -104,10 +100,7 @@
             {
                 errorModal.Open();
             }
-
         });
-
         confirmationModal.Open();
     }
-
 }
