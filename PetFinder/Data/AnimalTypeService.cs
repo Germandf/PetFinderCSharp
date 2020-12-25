@@ -74,16 +74,14 @@ namespace PetFinder.Data
             return true;
         }
 
-        public async Task<bool> IsRepeated(string name)
+        public async Task<bool> IsRepeated(string serializedName)
         {
-            var existingAnimalTypeCount = await Task.Run(() => _context.AnimalTypes.Count(a => a.Name == name));
-
+            var existingAnimalTypeCount = await Task.Run(() => _context.AnimalTypes.Count(a => a.SerializedName == serializedName));
             if (existingAnimalTypeCount > 0 ) 
             {
                 return true;
             }
             return false;
-           
         }
     }
     [Serializable]

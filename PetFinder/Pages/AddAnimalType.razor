@@ -87,7 +87,8 @@
 
             protected async Task Save()
             {
-                if (await animalTypeService.IsRepeated(currAnimalType.Name))
+                currAnimalType.SerializedName = currAnimalType.Name.ToUpper().Replace(" ", "");
+                if (await animalTypeService.IsRepeated(currAnimalType.SerializedName))
                 {
                     isError = true;
                     error = "Ya existe el tipo de animal";

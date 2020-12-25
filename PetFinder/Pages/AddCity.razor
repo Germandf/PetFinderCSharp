@@ -79,7 +79,8 @@
 
     protected async Task SaveCity()
     {
-        if (await CityService.IsNotRepeated(city.Name))
+        city.SerializedName = city.Name.ToUpper().Replace(" ", "");
+        if (await CityService.IsNotRepeated(city.SerializedName))
         {
             await CityService.Save(city);
             modal.Open();

@@ -75,18 +75,15 @@ namespace PetFinder.Data
             }
         }
 
-        public async Task<bool> IsNotRepeated(string name)
+        public async Task<bool> IsNotRepeated(string serializedName)
         {
-            var existingCityCount = Task.Run(() => _context.Cities.Count(a => a.Name == name));
+            var existingCityCount = Task.Run(() => _context.Cities.Count(a => a.SerializedName == serializedName));
             int results = await existingCityCount;
             if (results == 0)
             {
                 return true;
             }
-            else
-            {
-                return false;
-            }
+            return false;
         }
     }
 
