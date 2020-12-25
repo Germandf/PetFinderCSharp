@@ -8,13 +8,13 @@ namespace PetFinder.Migrations
         {
             migrationBuilder.InsertData(
                 table: "Genders",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 1, "Macho" });
+                columns: new[] { "Id", "Name", "SerializedName" },
+                values: new object[] { 1, "Macho", "MACHO" });
 
             migrationBuilder.InsertData(
                 table: "Genders",
-                columns: new[] { "Id", "Name" },
-                values: new object[] { 2, "Hembra" });
+                columns: new[] { "Id", "Name", "SerializedName" },
+                values: new object[] { 2, "Hembra", "HEMBRA" });
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

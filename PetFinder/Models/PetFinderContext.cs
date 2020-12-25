@@ -28,8 +28,8 @@ namespace PetFinder.Models
         // Creo los generos por defecto ya que no disponen de un CRUD
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            var gender1 = new Gender() { Id = 1, Name = "Macho" };
-            var gender2 = new Gender() { Id = 2, Name = "Hembra" };
+            var gender1 = new Gender() { Id = 1, Name = "Macho", SerializedName = "MACHO" };
+            var gender2 = new Gender() { Id = 2, Name = "Hembra", SerializedName = "HEMBRA" };
             modelBuilder.Entity<Gender>().HasData(new Gender[] { gender1, gender2});
             base.OnModelCreating(modelBuilder);
         }

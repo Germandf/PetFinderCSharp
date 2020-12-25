@@ -31,6 +31,9 @@ namespace PetFinder.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("SerializedName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("AnimalTypes");
@@ -44,6 +47,9 @@ namespace PetFinder.Migrations
                         .UseIdentityColumn();
 
                     b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SerializedName")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -61,6 +67,9 @@ namespace PetFinder.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("SerializedName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Genders");
@@ -69,12 +78,14 @@ namespace PetFinder.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "Macho"
+                            Name = "Macho",
+                            SerializedName = "MACHO"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "Hembra"
+                            Name = "Hembra",
+                            SerializedName = "HEMBRA"
                         });
                 });
 
