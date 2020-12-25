@@ -60,8 +60,8 @@ namespace PetFinderTests
             Pet pet = new Pet();
             PetService petService = new PetService(context);
             List<string> errors = petService.CheckPet(pet);
-            //Deberia dar 5 errores
-            Assert.Equal<int>(5, errors.Count);
+            //Deberia dar 6 errores
+            Assert.Equal<int>(6, errors.Count);
         }
 
         [Fact]
