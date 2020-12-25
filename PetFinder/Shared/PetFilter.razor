@@ -3,10 +3,10 @@
 @inject IGenderService GenderService
 
 <section class="container-fluid bg-orange-dark ">
-    <form id="petFilterForm" action="filtrar" method="get" class="row">
+    <form id="petFilterForm" class="row">
         <!-- City -->
         <div class="col-12 col-md-auto">
-            <select id="inputCity" class="d-inline form-control mt-3" name="city">
+            <select id="inputCity" class="d-inline form-control mt-3" name="city" @bind="selectedCity.SerializedName">
                 @if (cities == null)
                 {
                     <option value="none" selected disabled hidden>Loading...</option>
@@ -16,14 +16,14 @@
                     <option value="none" selected disabled hidden>Ciudad</option>
                     foreach(City city in cities)
                     {
-                        <option value="@city.Id">@city.Name</option>
+                        <option value="@city.SerializedName">@city.Name</option>
                     }  
                 }
             </select>
         </div>
         <!-- Animal Type -->
         <div class="col-12 col-md-auto">
-            <select id="inputAnimalType" class="d-inline form-control mt-3" name="animalType">
+            <select id="inputAnimalType" class="d-inline form-control mt-3" name="animalType" @bind="selectedAnimalType.SerializedName">
                 @if (animalTypes == null)
                 {
                     <option value="none" selected disabled hidden>Loading...</option>
@@ -33,14 +33,14 @@
                     <option value="none" selected disabled hidden>Tipo de mascota</option>
                     foreach (AnimalType animalType in animalTypes)
                     {
-                        <option value="@animalType.Id">@animalType.Name</option>
+                        <option value="@animalType.SerializedName">@animalType.Name</option>
                     }
                 }
             </select>
         </div>
         <!-- Gender -->
         <div class="col-12 col-md-auto">
-            <select id="inputGender" class="d-inline form-control mt-3" name="gender">
+            <select id="inputGender" class="d-inline form-control mt-3" name="gender" @bind="selectedGender.SerializedName">
                 @if (genders == null)
                 {
                     <option value="none" selected disabled hidden>Loading...</option>
@@ -50,7 +50,7 @@
                     <option value="none" selected disabled hidden>Género</option>
                     foreach (Gender gender in genders)
                     {
-                        <option value="@gender.Id">@gender.Name</option>
+                        <option value="@gender.SerializedName">@gender.Name</option>
                     }
                 }
             </select>
@@ -61,7 +61,10 @@
         </div>
         <!-- Filter -->
         <div class="col-12 col-md-auto d-flex justify-content-center mt-3 mt-md-0">
-            <button type="submit" class="text-white d-inline btn bg-orange mt-md-3 mb-3">Filtrar</button>
+            <a href="filtrar/ciudad-@selectedCity.SerializedName/tipo-@selectedAnimalType.SerializedName/genero-@selectedGender.SerializedName"
+               class="text-white d-inline btn bg-orange mt-md-3 mb-3">
+                Filtrar
+            </a>
         </div>
     </form>
 </section>
@@ -73,4 +76,8 @@
     public IEnumerable<AnimalType> animalTypes { get; set; }
     [Parameter]
     public IEnumerable<Gender> genders { get; set; }
+
+    private City selectedCity = new City();
+    private AnimalType selectedAnimalType = new AnimalType();
+    private Gender selectedGender = new Gender();
 }
