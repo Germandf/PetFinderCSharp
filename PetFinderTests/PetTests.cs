@@ -59,7 +59,7 @@ namespace PetFinderTests
             PetFinderContext context = dbContextFactory.CreateContext();
             Pet pet = new Pet();
             PetService petService = new PetService(context);
-            List<string> errors = petService.checkPet(pet);
+            List<string> errors = petService.CheckPet(pet);
             //Deberia dar 5 errores
             Assert.Equal<int>(5, errors.Count);
         }
@@ -69,14 +69,10 @@ namespace PetFinderTests
         {
             PetFinderContext context = dbContextFactory.CreateContext();
             PetService petService = new PetService(context);
-
             string invalidName = "asdasdasdasdasdasdasd";
             bool isValid = petService.IsValidName(invalidName);
-
             // Deberia ser falso ya que la cadena tiene 21 caracteres, siendo el maximo 20
             Assert.False(isValid);
         }
-
-        
     }
 }

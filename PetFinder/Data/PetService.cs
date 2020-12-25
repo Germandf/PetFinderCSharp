@@ -11,13 +11,13 @@ namespace PetFinder.Data
 {
     public class PetService : IPetService
     {
-        const string ERROR_MISSING_GENDER = "Debe especificar un genero";
-        const string ERROR_MISSING_CITY = "Debe especificar una ciudad";
-        const string ERROR_MISSING_TYPE = "Debe especificar un tipo de animal";
-        const string ERROR_INVALID_NAME = "Asegúrese de insertar un nombre y que sea menor a 20 caracteres";
-        const string ERROR_INVALID_PHOTO = "Ocurrió un error al guardar la foto";
-        const string ERROR_INVALID_USER = "El usuario no puede editar está mascota";
-        const string ERROR_MISSING_PHONE = "Debe indicar un numéro de telefono";
+        const string ERROR_MISSING_GENDER   = "Debe especificar un género";
+        const string ERROR_MISSING_CITY     = "Debe especificar una ciudad";
+        const string ERROR_MISSING_TYPE     = "Debe especificar un tipo de animal";
+        const string ERROR_INVALID_NAME     = "Asegúrese de insertar un nombre y que sea menor a 20 caracteres";
+        const string ERROR_INVALID_PHOTO    = "Ocurrió un error al guardar la foto";
+        const string ERROR_INVALID_USER     = "El usuario no puede editar esta mascota";
+        const string ERROR_MISSING_PHONE    = "Debe indicar un número de teléfono";
 
         private readonly PetFinderContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
@@ -36,44 +36,31 @@ namespace PetFinder.Data
             _applicationUserService = applicationUserService;
         }
 
-        
-
-        public async Task<bool> currUserCanEdit(Pet pet)
+        public async Task<bool> CurrUserCanEdit(Pet pet)
         {
             ApplicationUser currUser = await _applicationUserService.GetCurrent();
-
-            if (currUser == null) {
-                return false;
-            }
+            if (currUser == null) return false; // No esta logeado
 
             bool isAdmin = await _userManager.IsInRoleAsync(currUser, ApplicationUserService.ROLE_ADMIN);
-            if (isAdmin)
-            {
-                return true; //Si es admin puede editar cualquier cosa
-            }
-
-            if(pet.UserId == currUser.Id)
-            {
-                return true;
-            }
-
-            return false; 
+            if (isAdmin) return true; //Si es admin puede editar
+            if(pet.UserId == currUser.Id) return true; // Si es suya puede editar
+            return false; // No puede editar
         }
 
         public async Task<bool> Delete(int id)
         {
-
             var pet = await _context.Pets.FindAsync(id);
-            if (await currUserCanEdit(pet))
+            if (await CurrUserCanEdit(pet))
             {
                 _context.Pets.Remove(pet);
             }
             return await _context.SaveChangesAsync() > 0;
         }
+
         public async Task<bool> SetFound(int id)
         {
             var pet = await _context.Pets.FindAsync(id);
-            if (await currUserCanEdit(pet))
+            if (await CurrUserCanEdit(pet))
             {
                 pet.Found = 1;
                 _context.Entry(pet).State = EntityState.Modified;
@@ -99,6 +86,7 @@ namespace PetFinder.Data
                 Where(p=> p.Found == 0).
                 ToListAsync();
         }
+
         public async Task<IEnumerable<Pet>> GetAllByUser(string UserId)
         {
             return await _context.Pets.Where(p => p.UserId == UserId).ToListAsync();
@@ -123,47 +111,28 @@ namespace PetFinder.Data
             }
         }
 
-        public List<string> checkPet(Pet pet)
+        public List<string> CheckPet(Pet pet)
         {
             List<string> errorMessages = new List<string>();
             if (pet.GenderId == 0)
-            {
                 errorMessages.Add(ERROR_MISSING_GENDER);
-            }
-
             if (pet.AnimalTypeId == 0)
-            {
                 errorMessages.Add(ERROR_MISSING_TYPE);
-            }
-
             if (pet.CityId == 0)
-            {
                 errorMessages.Add(ERROR_MISSING_CITY);
-            }
-
             if (String.IsNullOrEmpty(pet.PhoneNumber))
-            {
                 errorMessages.Add(ERROR_MISSING_PHONE);
-            }
-
             if (!IsValidName(pet.Name))
-            {
                 errorMessages.Add(ERROR_INVALID_NAME);
-            }
-
             if (pet.Photo == null)
-            {
                 errorMessages.Add(ERROR_INVALID_PHOTO);
-            }
-
-
             return errorMessages;
         }
+
         public async Task<bool> Save(Pet pet, List<String> errorMessages)
         {
-            errorMessages = checkPet(pet);
+            errorMessages = CheckPet(pet);
             if (errorMessages.Count > 0) return false;
-
             ApplicationUser appUser = await _applicationUserService.GetCurrent();
             if (appUser == null)
             {
@@ -172,13 +141,12 @@ namespace PetFinder.Data
             }
             pet.UserId = appUser.Id;
             if (pet.Id > 0) return await Update(pet, errorMessages);
-
             return await Insert(pet);
         }
 
         public async Task<bool> Update(Pet pet, List<string> errorMessages)
         {
-            if (!await currUserCanEdit(pet))
+            if (!await CurrUserCanEdit(pet))
             {
                 errorMessages.Add(ERROR_INVALID_USER);
                 return false;

@@ -187,9 +187,9 @@
             }
             else
             {
-                if (!await PetService.currUserCanEdit(pet))
+                if (!await PetService.CurrUserCanEdit(pet))
                 {
-                    error = "No podes editar está mascota.";
+                    error = "No podes editar está mascota";
                     isError = true;
                     pet = new Pet();
                 }
@@ -206,10 +206,9 @@
         isError = false;
         errorsSaving = new List<string>();
         string photoUrl = await FileService.UploadAsync(file);
-
         if (photoUrl == null)
         {
-            error = "No se pudo subir la imagen al servidor.";
+            error = "No se pudo subir la imagen al servidor";
             isError = true;
             StateHasChanged();
         }
@@ -228,8 +227,6 @@
                 StateHasChanged();
             }
         }
-
-
     }
 
     void HandleFileSelected(IFileListEntry[] files)

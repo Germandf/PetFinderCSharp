@@ -15,7 +15,7 @@ namespace PetFinder.Data
         Task<bool> Delete(int id);
         Task<bool> Save(Pet pet, List<String> errorMessages);
         Task<IEnumerable<Pet>> GetAllByUser(string UserId);
-        Task<bool> currUserCanEdit(Pet pet);
+        Task<bool> CurrUserCanEdit(Pet pet);
         Task<bool> SetFound(int id);
         bool IsValidName(string name);
     }
