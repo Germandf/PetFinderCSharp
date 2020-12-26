@@ -3,10 +3,9 @@
 @inject ICityService CityService
 @inject IAnimalTypeService AnimalTypeService
 @inject IGenderService GenderService
-@using PetFinder.Areas.Identity;
-
 @inject IPetService PetService
 @inject IApplicationUserService applicationUserService
+@using PetFinder.Areas.Identity;
 
 <PetFilter cities="cities" animalTypes="animalTypes" genders="genders"></PetFilter>
 <section class="container">
@@ -33,8 +32,8 @@
     [Parameter]
     public int record { get; set; }
     private int pageSize = 12;
-    private ApplicationUser user { get; set; }
 
+    private ApplicationUser user { get; set; }
     private IEnumerable<City> cities;
     private IEnumerable<AnimalType> animalTypes;
     private IEnumerable<Gender> genders;
@@ -45,10 +44,10 @@
     protected override async Task OnInitializedAsync()
     {
         base.OnInitialized();
+        user = await applicationUserService.GetCurrent();
         cities = await CityService.GetAll();
         animalTypes = await AnimalTypeService.GetAll();
         genders = await GenderService.GetAll();
-        user = await applicationUserService.GetCurrent();
     }
     protected override async Task OnParametersSetAsync()
     {
