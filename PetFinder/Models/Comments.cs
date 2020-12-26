@@ -8,11 +8,9 @@ namespace PetFinder.Models
 {
     public partial class Comments
     {
-
         public int Id { get; set; }
         public string Message { get; set; }
         public string UserId { get; set; }
         public int PetId { get; set; }
-
     }
 }
