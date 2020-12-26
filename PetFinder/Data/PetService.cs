@@ -5,6 +5,7 @@ using PetFinder.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace PetFinder.Data
@@ -153,6 +154,46 @@ namespace PetFinder.Data
             }
             _context.Entry(pet).State = EntityState.Modified;
             return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<IEnumerable<Pet>> GetAllByFilter(params string[] args)
+        {
+            string city = null, animalType = null, gender = null;
+            foreach (string arg in args)
+            {
+                if(arg == null)
+                {
+                    // Do nothing
+                }
+                else if (arg.Contains("ciudad-"))
+                {
+                    city = arg.Replace("ciudad-", "");
+                    if (city.Length == 0) city = null;
+                }
+                else if (arg.Contains("tipo-"))
+                {
+                    animalType = arg.Replace("tipo-", "");
+                    if (animalType.Length == 0) animalType = null;
+                }
+                else if (arg.Contains("genero-"))
+                {
+                    gender = arg.Replace("genero-", "");
+                    if (gender.Length == 0) gender = null;
+                }
+            }
+            return await SearchByFilter(city, animalType, gender);
+        }
+
+        private async Task<IEnumerable<Pet>> SearchByFilter(string city, string animalType, string gender)
+        {
+            return await _context.Pets.
+                Where(p => p.City.SerializedName == city || city == null).
+                Where(p => p.AnimalType.SerializedName == animalType || animalType == null).
+                Where(p => p.Gender.SerializedName == gender || gender == null).
+                Include(p => p.AnimalType).
+                Include(p => p.City).
+                Include(p => p.Gender).
+                ToListAsync();
         }
     }
 }
