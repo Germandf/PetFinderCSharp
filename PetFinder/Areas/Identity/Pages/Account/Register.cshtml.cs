@@ -62,7 +62,7 @@ namespace PetFinder.Areas.Identity.Pages.Account
             public string Surname { get; set; }
 
             [Required(ErrorMessage = "El email es obligatorio")]
-            [EmailAddress]
+            [EmailAddress(ErrorMessage = "La dirección ingresada no es una dirección de correo electrónico válida.")]
             [Display(Name = "Email")]
             public string Email { get; set; }
 
@@ -128,7 +128,17 @@ namespace PetFinder.Areas.Identity.Pages.Account
                             await _roleManager.CreateAsync(new IdentityRole(ApplicationUserService.ROLE_USER));
                         }
 
-                        await _userManager.AddToRoleAsync(user, ApplicationUserService.ROLE_USER);
+                        if (_userManager.Users.Count() == 1)
+                        {
+                            //si es el primer usuario registrado le asigno el rol admin
+                            await _userManager.AddToRoleAsync(user, ApplicationUserService.ROLE_ADMIN);
+                        }
+                        else
+                        {
+                            await _userManager.AddToRoleAsync(user, ApplicationUserService.ROLE_USER);
+                        }
+
+
 
                         await _signInManager.SignInAsync(user, isPersistent: true);
                         return LocalRedirect(returnUrl);
