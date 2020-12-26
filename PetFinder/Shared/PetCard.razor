@@ -3,7 +3,7 @@
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IPetService petService;
 
-@if (pet != null && pet.Found == 0)
+@if (!isLoading && !ReferenceEquals(null, pet) && pet.Found == 0)
 {
     <div class="col-12 mb-3 col-md-6 col-xl-4">
         <div class="card shadow">
@@ -72,7 +72,14 @@
 
     private Modal confirmationModal = new Modal();
     private Modal errorModal = new Modal();
+    private bool isLoading = true;
 
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        isLoading = false;
+        StateHasChanged();
+    }
     private async Task setFound()
     {
         bool result = await petService.SetFound(pet.Id);

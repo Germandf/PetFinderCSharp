@@ -11,15 +11,24 @@ namespace PetFinder.Data
     public class FileService : IFileService
     {
         public static readonly List<string> ImageTypes = new List<string> { "image/jpg", "image/jpeg", "image/png" };
+        public static readonly string ImagesPath = "wwwroot/images";
         private readonly IWebHostEnvironment _environment;
         public FileService(IWebHostEnvironment environment)
         {
             _environment = environment;
         }
+
+        public void createImagesFolder()
+        {
+            string absolutePath = _environment.ContentRootPath + "/" + ImagesPath; // La ruta absoluta del sitio más la ruta de las imagenes
+            bool exists = Directory.Exists(absolutePath);
+            if (!exists) // Si el directorio no existe lo creo
+                Directory.CreateDirectory(absolutePath);
+        }
         public async Task<string> UploadAsync(IFileListEntry fileEntry)
         {
-
-            if(fileEntry == null)
+            createImagesFolder(); // Creo el directorio donde voy a guardar las imagenes
+            if (fileEntry == null)
             {
                 return null;
             }
