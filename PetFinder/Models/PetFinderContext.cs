@@ -24,6 +24,7 @@ namespace PetFinder.Models
         public DbSet<City> Cities { get; set; }
         public DbSet<Gender> Genders { get; set; }
         public DbSet<Pet> Pets { get; set; }
+        public DbSet<Comments> Comments { get; set; }
 
         // Creo los generos por defecto ya que no disponen de un CRUD
         protected override void OnModelCreating(ModelBuilder modelBuilder)
