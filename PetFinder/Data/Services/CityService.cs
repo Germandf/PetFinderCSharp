@@ -43,15 +43,15 @@ namespace PetFinder.Data
         {
             if (IsValidName(city.Name))
             {
-                if (await IsNotRepeated(city.Name))
+                if (await IsRepeated(city.SerializedName))
                 {
-                    if (city.Id > 0)
-                    {
-                        return await Update(city);
-                    }
-                    return await Insert(city);
+                    throw new CityAlreadyExistsException("Ya existe una ciudad con ese nombre");
                 }
-                throw new CityAlreadyExistsException("Ya existe una ciudad con ese nombre");
+                if (city.Id > 0)
+                {
+                    return await Update(city);
+                }
+                return await Insert(city);
             }
             throw new DbUpdateException("Asegúrese de insertar un nombre y que sea menor a 35 caracteres");
         }
@@ -75,11 +75,10 @@ namespace PetFinder.Data
             }
         }
 
-        public async Task<bool> IsNotRepeated(string serializedName)
+        public async Task<bool> IsRepeated(string serializedName)
         {
-            var existingCityCount = Task.Run(() => _context.Cities.Count(a => a.SerializedName == serializedName));
-            int results = await existingCityCount;
-            if (results == 0)
+            var existingCityCount = await Task.Run(() => _context.Cities.Count(c => c.SerializedName == serializedName));
+            if (existingCityCount > 0)
             {
                 return true;
             }

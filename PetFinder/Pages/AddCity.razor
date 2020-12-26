@@ -80,17 +80,17 @@
     protected async Task SaveCity()
     {
         city.SerializedName = city.Name.ToUpper().Replace(" ", "");
-        if (await CityService.IsNotRepeated(city.SerializedName))
-        {
-            await CityService.Save(city);
-            modal.Open();
-        }
-        else
+        if (await CityService.IsRepeated(city.SerializedName))
         {
             isError = true;
             error = "Ya existe la ciudad";
             StateHasChanged();
             return;
+        }
+        else
+        {
+            await CityService.Save(city);
+            modal.Open();
         }
     }
 

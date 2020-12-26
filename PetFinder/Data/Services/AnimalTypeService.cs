@@ -16,11 +16,11 @@ namespace PetFinder.Data
         {
             _context = context;
         }
+
         public async Task<bool> Delete(int id)
         {
             var animalTypeToDelte = await Get(id);
             _context.Remove(animalTypeToDelte);
-
             //Nos devuelve cuantas lineas elimino si elimino más que 0 quiere decir que elimino ok
             return await _context.SaveChangesAsync() > 0; 
         }
@@ -45,13 +45,12 @@ namespace PetFinder.Data
         {
             //Le decimos a la DB que el animalType fue modificado
             _context.Entry(animalType).State = EntityState.Modified;
-
             return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<bool> Save(AnimalType animalType)
         {
-            if (await IsRepeated(animalType.Name))
+            if (await IsRepeated(animalType.SerializedName))
             {
                 throw new AnimalTypeAlreadyExistsException("Ya existe el tipo de animal");
             }
@@ -62,28 +61,27 @@ namespace PetFinder.Data
             }
             return await Insert(animalType);
         }
-        public bool IsValidName(string name) { 
 
+        public bool IsValidName(string name) { 
             if (name == null) return false;
             if(name.Length <= 0 || name.Length > 35) return false;
-            
             // Checkeo que sean caracteres de a - Z con espacios
             var match = Regex.Match(name, "^[a-zA-Z ]+$");
             if (!match.Success) return false;
-
             return true;
         }
 
         public async Task<bool> IsRepeated(string serializedName)
         {
             var existingAnimalTypeCount = await Task.Run(() => _context.AnimalTypes.Count(a => a.SerializedName == serializedName));
-            if (existingAnimalTypeCount > 0 ) 
+            if (existingAnimalTypeCount > 0)
             {
                 return true;
             }
             return false;
         }
     }
+
     [Serializable]
     public class AnimalTypeAlreadyExistsException : Exception
     {
