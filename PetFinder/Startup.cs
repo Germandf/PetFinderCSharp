@@ -16,7 +16,6 @@ using PetFinder.Areas.Identity;
 using PetFinder.Areas.Identity.Helper;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
-using Microsoft.OpenApi.Models;
 
 namespace PetFinder
 {
@@ -69,11 +68,7 @@ namespace PetFinder
             services.AddHttpContextAccessor();
 
             services.AddControllers();
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "PetFinder API", Version = "v1" });
-            });
-
+   
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,8 +77,6 @@ namespace PetFinder
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TodoApi v1"));
             }
             else
             {
