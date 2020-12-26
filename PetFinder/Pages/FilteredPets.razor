@@ -1,17 +1,77 @@
 ﻿@page "/filtrar"
+@page "/filtrar/{filter1}"
+@page "/filtrar/{filter1}/{record:int}"
+@page "/filtrar/{filter1}/{filter2}"
+@page "/filtrar/{filter1}/{filter2}/{record:int}"
+@page "/filtrar/{filter1}/{filter2}/{filter3}"
+@page "/filtrar/{filter1}/{filter2}/{filter3}/{record:int}"
+@inject ICityService CityService
+@inject IAnimalTypeService AnimalTypeService
+@inject IGenderService GenderService
+@inject IPetService PetService
+@inject IApplicationUserService applicationUserService
+@using PetFinder.Areas.Identity;
 
+<PetFilter cities="cities" animalTypes="animalTypes" genders="genders"></PetFilter>
 <section class="container">
     <div class="row justify-content-center">
         <h1 class="mt-5 mb-4 lastPetsTitle">Mascotas filtradas</h1>
     </div>
-    <div class="row">
-        <p>Aquí van las mascotas</p>
-    </div>
-    <div class="mb-3 text-right">
-        <p>Aquí van los botones de paginación</p>
-    </div>
+    @if (pets == null)
+    {
+        <h2>Loading...</h2>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (Pet pet in pets)
+            {
+                <PetCard pet="pet" user="user"></PetCard>
+            }
+        </div>
+        <PaginationButtons record="@record" pageSize="@pageSize" petsCount="@pets.Count()" isHome="true"></PaginationButtons>
+    }
 </section>
 
 @code {
+    [Parameter]
+    public int record { get; set; }
+    private int pageSize = 12;
 
+    [Parameter]
+    public string filter1 { get; set; }
+    [Parameter]
+    public string filter2 { get; set; }
+    [Parameter]
+    public string filter3 { get; set; }
+
+    private ApplicationUser user { get; set; }
+    private IEnumerable<City> cities;
+    private IEnumerable<AnimalType> animalTypes;
+    private IEnumerable<Gender> genders;
+    private IEnumerable<Pet> pets { get; set; }
+
+    private string Message { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        base.OnInitialized();
+        user = await applicationUserService.GetCurrent();
+        cities = await CityService.GetAll();
+        animalTypes = await AnimalTypeService.GetAll();
+        genders = await GenderService.GetAll();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        try
+        {
+            pets = await PetService.GetAllByFilter(filter1, filter2, filter3);
+            pets = pets.Skip(record).Take(pageSize).ToList();
+        }
+        catch (Exception e)
+        {
+            Message = e.Message;
+        }
+    }
 }

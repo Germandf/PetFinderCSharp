@@ -9,15 +9,16 @@
             <select id="inputCity" class="d-inline form-control mt-3" name="city" @bind="selectedCity.SerializedName">
                 @if (cities == null)
                 {
-                    <option value="none" selected disabled hidden>Loading...</option>
+                    <option selected disabled hidden>Loading...</option>
                 }
                 else
                 {
-                    <option value="none" selected disabled hidden>Ciudad</option>
-                    foreach(City city in cities)
+                    <option selected disabled hidden>Ciudad</option>
+                    <option value="">Todas</option>
+                    foreach (City city in cities)
                     {
                         <option value="@city.SerializedName">@city.Name</option>
-                    }  
+                    }
                 }
             </select>
         </div>
@@ -26,11 +27,12 @@
             <select id="inputAnimalType" class="d-inline form-control mt-3" name="animalType" @bind="selectedAnimalType.SerializedName">
                 @if (animalTypes == null)
                 {
-                    <option value="none" selected disabled hidden>Loading...</option>
+                    <option selected disabled hidden>Loading...</option>
                 }
                 else
                 {
-                    <option value="none" selected disabled hidden>Tipo de mascota</option>
+                    <option selected disabled hidden>Tipo de mascota</option>
+                    <option value="">Todos</option>
                     foreach (AnimalType animalType in animalTypes)
                     {
                         <option value="@animalType.SerializedName">@animalType.Name</option>
@@ -43,11 +45,12 @@
             <select id="inputGender" class="d-inline form-control mt-3" name="gender" @bind="selectedGender.SerializedName">
                 @if (genders == null)
                 {
-                    <option value="none" selected disabled hidden>Loading...</option>
+                    <option selected disabled hidden>Loading...</option>
                 }
                 else
                 {
-                    <option value="none" selected disabled hidden>Género</option>
+                    <option selected disabled hidden>Género</option>
+                    <option value="">Ambos</option>
                     foreach (Gender gender in genders)
                     {
                         <option value="@gender.SerializedName">@gender.Name</option>
