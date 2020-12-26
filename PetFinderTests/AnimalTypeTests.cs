@@ -13,9 +13,18 @@ namespace PetFinderTests
     public class AnimalTypeTests
     {
         private PetFinderDbContextFactory dbContextFactory { get; set; }
+
         public AnimalTypeTests()
         {
             dbContextFactory = new PetFinderDbContextFactory();
+        }
+
+        public AnimalType CreateAnimalType(string name)
+        {
+            var auxAnimalType = new AnimalType();
+            auxAnimalType.Name = name;
+            auxAnimalType.SerializedName = auxAnimalType.Name.ToUpper().Replace(" ", "");
+            return auxAnimalType;
         }
 
         [Fact]
@@ -43,6 +52,7 @@ namespace PetFinderTests
 
             await animalTypeService.Save(animalType);
             animalType.Name = "Edited mock";
+            animalType.SerializedName = "EDITEDMOCK";
             await animalTypeService.Save(animalType);
             int numberOfAnimalTypes = await context.AnimalTypes.CountAsync();
 
@@ -102,13 +112,6 @@ namespace PetFinderTests
             bool isValid = cityService.IsValidName(invalidName);
 
             Assert.True(isValid);
-        }
-
-        public AnimalType CreateAnimalType(string name)
-        {
-            var auxAnimalType = new AnimalType();
-            auxAnimalType.Name = name;
-            return auxAnimalType;
         }
     }
 }

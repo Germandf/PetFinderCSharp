@@ -15,6 +15,6 @@ namespace PetFinder.Data
         Task<bool> Delete(int id);
         Task<bool> Save(City city);
         bool IsValidName(string name);
-        Task<bool> IsNotRepeated(string name);
+        Task<bool> IsRepeated(string name);
     }
 }

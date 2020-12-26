@@ -21,6 +21,7 @@ namespace PetFinderTests
         {
             var auxCity = new City();
             auxCity.Name = name;
+            auxCity.SerializedName = auxCity.Name.ToUpper().Replace(" ", "");
             return auxCity;
         }
 
@@ -88,6 +89,7 @@ namespace PetFinderTests
 
             await cityService.Save(city);
             city.Name = "Edited mock";
+            city.SerializedName = "EDITEDMOCK";
             await cityService.Save(city);
             int numberOfCities = await context.Cities.CountAsync();
 
