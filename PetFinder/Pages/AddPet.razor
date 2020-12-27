@@ -206,11 +206,10 @@
     {
         isError = false;
         errorsSaving = new List<string>();
-        GenericResult<string> resultImageUpoad = await FileService.UploadAsync(file);
-
-        if (resultImageUpoad.Success)
+        GenericResult<string> resultImageUpload = await FileService.UploadAsync(file);
+        if (resultImageUpload.Success)
         {
-            pet.Photo = resultImageUpoad.value;
+            pet.Photo = resultImageUpload.value;
             GenericResult result = await PetService.Save(pet);
             if (result.Success)
             {
@@ -226,11 +225,10 @@
         else
         {
             isError = true;
-            errorsSaving = resultImageUpoad.Errors;
+            errorsSaving = resultImageUpload.Errors;
             StateHasChanged();
         }
     }
-
 
     void HandleFileSelected(IFileListEntry[] files)
     {

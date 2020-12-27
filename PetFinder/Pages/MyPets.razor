@@ -62,7 +62,6 @@
     private Boolean isLoading { get; set; }
     private ApplicationUser user { get; set; }
 
-
     protected override async Task OnInitializedAsync()
     {
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
@@ -80,6 +79,7 @@
             user = await applicationUserService.GetCurrent();
         }
     }
+
     protected override async Task OnParametersSetAsync()
     {
         isLoading = true;
