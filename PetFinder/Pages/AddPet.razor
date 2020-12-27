@@ -2,6 +2,7 @@
 @page "/editar-mascota/{id:int}"
 @using Microsoft.AspNetCore.Identity
 @using PetFinder.Areas.Identity;
+@using PetFinder.Helpers;
 
 @inject IPetService PetService
 @inject ICityService CityService
@@ -205,29 +206,31 @@
     {
         isError = false;
         errorsSaving = new List<string>();
-        string photoUrl = await FileService.UploadAsync(file);
-        if (photoUrl == null)
+        GenericResult<string> resultImageUpoad = await FileService.UploadAsync(file);
+
+        if (resultImageUpoad.Success)
         {
-            error = "No se pudo subir la imagen al servidor";
-            isError = true;
-            StateHasChanged();
-        }
-        else
-        {
-            pet.Photo = photoUrl;
-            bool result = await PetService.Save(pet, errorsSaving);
-            if (result)
+            pet.Photo = resultImageUpoad.value;
+            GenericResult result = await PetService.Save(pet);
+            if (result.Success)
             {
                 modal.Open();
             }
             else
             {
                 isError = true;
-                error = "Ocurrio un error al guardar la mascota";
+                errorsSaving = result.Errors;
                 StateHasChanged();
             }
         }
+        else
+        {
+            isError = true;
+            errorsSaving = resultImageUpoad.Errors;
+            StateHasChanged();
+        }
     }
+
 
     void HandleFileSelected(IFileListEntry[] files)
     {

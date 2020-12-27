@@ -1,4 +1,6 @@
-﻿using PetFinder.Models;
+﻿using PetFinder.Areas.Identity;
+using PetFinder.Helpers;
+using PetFinder.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,13 +9,14 @@ using System.Threading.Tasks;
 namespace PetFinder.Data
 {
     interface IPetService
-    {
+    {   
+        
         Task<IEnumerable<Pet>> GetAll();
         Task<Pet> Get(int id);
         Task<bool> Insert(Pet pet);
-        Task<bool> Update(Pet pet, List<string> errorMessages);
+        Task<GenericResult> Update(Pet pet);
         Task<bool> Delete(int id);
-        Task<bool> Save(Pet pet, List<String> errorMessages);
+        Task<GenericResult> Save(Pet pet);
         Task<IEnumerable<Pet>> GetAllByUser(string UserId);
         Task<IEnumerable<Pet>> GetAllByFilter(params string[] args);
         Task<bool> CurrUserCanEdit(Pet pet);

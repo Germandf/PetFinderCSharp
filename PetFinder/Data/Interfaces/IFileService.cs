@@ -1,4 +1,5 @@
 ﻿using BlazorInputFile;
+using PetFinder.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,6 @@ namespace PetFinder.Data
 {
     interface IFileService
     {
-        Task<string> UploadAsync(IFileListEntry file);
+        Task<GenericResult<string>> UploadAsync(IFileListEntry file);
     }
 }
