@@ -195,7 +195,6 @@
                     pet = new Pet();
                 }
             }
-
         }
         cities = await CityService.GetAll();
         animalTypes = await AnimalTypeService.GetAll();
@@ -206,29 +205,19 @@
     {
         isError = false;
         errorsSaving = new List<string>();
-        GenericResult<string> resultImageUpoad = await FileService.UploadAsync(file);
 
-        if (resultImageUpoad.Success)
+        GenericResult result = await PetService.Save(pet, file);
+        if (result.Success)
         {
-            pet.Photo = resultImageUpoad.value;
-            GenericResult result = await PetService.Save(pet);
-            if (result.Success)
-            {
-                modal.Open();
-            }
-            else
-            {
-                isError = true;
-                errorsSaving = result.Errors;
-                StateHasChanged();
-            }
+            modal.Open();
         }
         else
         {
             isError = true;
-            errorsSaving = resultImageUpoad.Errors;
+            errorsSaving = result.Errors;
             StateHasChanged();
         }
+        
     }
 
 

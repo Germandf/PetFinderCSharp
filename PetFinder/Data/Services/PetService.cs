@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using BlazorInputFile;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PetFinder.Areas.Identity;
 using PetFinder.Helpers;
@@ -16,25 +17,26 @@ namespace PetFinder.Data
         const string ERROR_MISSING_CITY     = "Debe especificar una ciudad";
         const string ERROR_MISSING_TYPE     = "Debe especificar un tipo de animal";
         const string ERROR_INVALID_NAME     = "Asegúrese de insertar un nombre y que sea menor a 20 caracteres";
-        const string ERROR_INVALID_PHOTO    = "Ocurrió un error al guardar la foto";
+        const string ERROR_INVALID_PHOTO    = "Debe elegir un tipo de imagen valida";
         const string ERROR_INVALID_USER     = "El usuario no puede editar esta mascota";
         const string ERROR_MISSING_PHONE    = "Debe indicar un número de teléfono";
         const string ERROR_SAVING           = "Ocurrió un error al guardar el usuario";
         private readonly PetFinderContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IApplicationUserService _applicationUserService;
-
+        private readonly IFileService _fileService;
         public PetService(PetFinderContext context)
         {
             _context = context;
         }
         public PetService(PetFinderContext context,
                           IApplicationUserService applicationUserService,
-                          UserManager<ApplicationUser> userManager)
+                          UserManager<ApplicationUser> userManager, IFileService fileService)
         {
             _context = context;
             _userManager = userManager;
             _applicationUserService = applicationUserService;
+            _fileService = fileService;
         }
 
         public async Task<bool> CurrUserCanEdit(Pet pet)
@@ -130,30 +132,43 @@ namespace PetFinder.Data
                 errorMessages.Add(ERROR_MISSING_PHONE);
             if (!IsValidName(pet.Name))
                 errorMessages.Add(ERROR_INVALID_NAME);
-            if (pet.Photo == null)
+            if (pet.Photo == null )
                 errorMessages.Add(ERROR_INVALID_PHOTO);
             return errorMessages;
         }
 
-        public async Task<GenericResult> Save(Pet pet)
+        public async Task<GenericResult> Save(Pet pet, IFileListEntry photo)
         {
             GenericResult result = new GenericResult();
-            result.Errors.AddRange(CheckPet(pet)); // Si devuelve errores lo agrego
 
             ApplicationUser appUser = await _applicationUserService.GetCurrent();
-            if (appUser == null) result.AddError(ERROR_INVALID_USER);
-            
+            if (appUser == null)
+            {
+                result.AddError(ERROR_INVALID_USER);
+                return result;
+            }
 
-            if (result.Success) {
-                pet.UserId = appUser.Id;
+            pet.UserId = appUser.Id;
 
-                if (pet.Id > 0) return await Update(pet);
+            if (photo != null) // Puede ser que la imagen sea nula porque estemos editando y no cambiamos la foto
+            {
+                GenericResult<string> resultImage  = (await _fileService.UploadAsync(photo));
+                if (resultImage.Success) pet.Photo = resultImage.value; // Si la imagen se subio bien le asignamos la url a la mascota
+                else result.AddRange(resultImage.Errors);
+            }
+            result.Errors.AddRange(CheckPet(pet)); // Si devuelve errores lo 
 
-                if (! await Insert(pet)) // Si ocurrió un error un error al guardar el usuario
+            if (result.Success) // Si no hay errores guardo o actualizo
+            {
+                // Si estamos editando
+                if (pet.Id > 0) result.AddRange((await Update(pet)).Errors);
+                else
                 {
-                    result.AddError(ERROR_SAVING);
+                    if (!await Insert(pet)) result.AddError(ERROR_SAVING);
                 }
             }
+        
+            
 
             return result;
             

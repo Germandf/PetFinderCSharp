@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace PetFinder.Data
 {
-    interface IFileService
+    public interface IFileService
     {
         Task<GenericResult<string>> UploadAsync(IFileListEntry file);
     }
