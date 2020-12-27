@@ -23,11 +23,13 @@ namespace PetFinder.Helpers
         {
             Errors.AddRange(range);
         }
+
         public void AddError(string error)
         {
             this.Errors.Add(error);
         }
     }
+
     public class GenericResult<T>: GenericResult
     {
         public T value { get; set; }

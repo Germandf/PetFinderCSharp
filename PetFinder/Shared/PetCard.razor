@@ -34,35 +34,36 @@
             </div>
         </div>
     </div>
-}
-<Modal @ref="confirmationModal">
-    <Title>
-        Eliminar
-    </Title>
-    <Body>
-        <p>
-            ¿Está seguro que desea eliminar?
-        </p>
-    </Body>
-    <Footer>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cancelar</button>
-        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => confirmationModal.Confirm()">Confirmar</button>
-    </Footer>
-</Modal>
 
-<Modal @ref="errorModal">
-    <Title>
-        Error
-    </Title>
-    <Body>
-        <p>
-            Ocurrió un error al realizar el cambio
-        </p>
-    </Body>
-    <Footer>
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cerrar</button>
-    </Footer>
-</Modal>
+    <Modal @ref="confirmationModal">
+        <Title>
+            Eliminar
+        </Title>
+        <Body>
+            <p>
+                ¿Está seguro que desea eliminar?
+            </p>
+        </Body>
+        <Footer>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cancelar</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => confirmationModal.Confirm()">Confirmar</button>
+        </Footer>
+    </Modal>
+
+    <Modal @ref="errorModal">
+        <Title>
+            Error
+        </Title>
+        <Body>
+            <p>
+                Ocurrió un error al realizar el cambio
+            </p>
+        </Body>
+        <Footer>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cerrar</button>
+        </Footer>
+    </Modal>
+}
 
 @code {
     [Parameter]
