@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PetFinder.Areas.Identity;
+using PetFinder.Helpers;
 using PetFinder.Models;
 using System;
 using System.Collections.Generic;
@@ -18,7 +19,7 @@ namespace PetFinder.Data
         const string ERROR_INVALID_PHOTO    = "Ocurrió un error al guardar la foto";
         const string ERROR_INVALID_USER     = "El usuario no puede editar esta mascota";
         const string ERROR_MISSING_PHONE    = "Debe indicar un número de teléfono";
-
+        const string ERROR_SAVING           = "Ocurrió un error al guardar el usuario";
         private readonly PetFinderContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IApplicationUserService _applicationUserService;
@@ -89,7 +90,12 @@ namespace PetFinder.Data
 
         public async Task<IEnumerable<Pet>> GetAllByUser(string UserId)
         {
-            return await _context.Pets.Where(p => p.UserId == UserId).ToListAsync();
+            return await _context.Pets.
+                Include(p => p.AnimalType).
+                Include(p => p.City).
+                Include(p => p.Gender).
+                Where(p=> p.Found == 0 && p.UserId == UserId).
+                ToListAsync();
         }
 
         public async Task<bool> Insert(Pet pet)
@@ -129,30 +135,43 @@ namespace PetFinder.Data
             return errorMessages;
         }
 
-        public async Task<bool> Save(Pet pet, List<String> errorMessages)
+        public async Task<GenericResult> Save(Pet pet)
         {
-            errorMessages = CheckPet(pet);
-            if (errorMessages.Count > 0) return false;
+            GenericResult result = new GenericResult();
+            result.Errors.AddRange(CheckPet(pet)); // Si devuelve errores lo agrego
+
             ApplicationUser appUser = await _applicationUserService.GetCurrent();
-            if (appUser == null)
-            {
-                errorMessages.Add(ERROR_INVALID_USER);
-                return false;
+            if (appUser == null) result.AddError(ERROR_INVALID_USER);
+            
+
+            if (result.Success) {
+                pet.UserId = appUser.Id;
+
+                if (pet.Id > 0) return await Update(pet);
+
+                if (! await Insert(pet)) // Si ocurrió un error un error al guardar el usuario
+                {
+                    result.AddError(ERROR_SAVING);
+                }
             }
-            pet.UserId = appUser.Id;
-            if (pet.Id > 0) return await Update(pet, errorMessages);
-            return await Insert(pet);
+
+            return result;
+            
         }
 
-        public async Task<bool> Update(Pet pet, List<string> errorMessages)
+        public async Task<GenericResult> Update(Pet pet)
         {
-            if (!await CurrUserCanEdit(pet))
+            GenericResult result = new GenericResult();
+
+            if (await CurrUserCanEdit(pet))
             {
-                errorMessages.Add(ERROR_INVALID_USER);
-                return false;
+                _context.Entry(pet).State = EntityState.Modified;
+                if (await _context.SaveChangesAsync() > 0) return result;
+                else result.AddError(ERROR_SAVING);
             }
-            _context.Entry(pet).State = EntityState.Modified;
-            return await _context.SaveChangesAsync() > 0;
+            else result.AddError(ERROR_INVALID_USER);
+
+            return result;
         }
 
         public async Task<IEnumerable<Pet>> GetAllByFilter(params string[] args)
