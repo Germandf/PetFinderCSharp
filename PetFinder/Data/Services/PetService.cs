@@ -157,7 +157,7 @@ namespace PetFinder.Data
                 if (resultImage.Success) pet.Photo = resultImage.value; // Si la imagen se subio bien le asignamos la url a la mascota
                 else result.AddRange(resultImage.Errors);
             }
-            result.Errors.AddRange(CheckPet(pet)); // Si devuelve errores lo 
+            result.Errors.AddRange(CheckPet(pet)); // Si devuelve errores los agrego para mostrarlos
 
             if (result.Success) // Si no hay errores guardo o actualizo
             {

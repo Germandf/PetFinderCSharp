@@ -16,5 +16,6 @@ namespace PetFinder.Data
         Task<bool> Downgrade(string userId);
         Task<bool> Upgrade(string userId);
         Task<ApplicationUser> GetCurrent();
+        Task<ApplicationUser> getById(string Id);
     }
 }

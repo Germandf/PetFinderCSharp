@@ -89,5 +89,9 @@ namespace PetFinder.Data
             return users;
         }
 
+        public async Task<ApplicationUser> getById(string Id)
+        {
+            return await _context.AspNetUsers.FindAsync(Id);
+        }
     }
 }
