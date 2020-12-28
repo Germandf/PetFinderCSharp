@@ -80,6 +80,19 @@ namespace PetFinder.Data
             }
             return false;
         }
+
+        public async Task<bool> HasNoPetsAssociated(AnimalType animalType)
+        {
+            var petsFromThisAnimalType = await _context.Pets.
+                Include(p => p.AnimalType).
+                Where(p => p.AnimalType.SerializedName == animalType.SerializedName).
+                ToListAsync();
+            if (petsFromThisAnimalType.Count() == 0)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 
     [Serializable]

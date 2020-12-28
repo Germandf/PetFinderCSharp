@@ -84,6 +84,19 @@ namespace PetFinder.Data
             }
             return false;
         }
+
+        public async Task<bool> HasNoPetsAssociated(City city)
+        {
+            var petsFromThisCity = await _context.Pets.
+                Include(p => p.City).
+                Where(p => p.City.SerializedName == city.SerializedName).
+                ToListAsync();
+            if(petsFromThisCity.Count() == 0)
+            {
+                return true;
+            }
+            return false;
+        }
     }
 
     [Serializable]
