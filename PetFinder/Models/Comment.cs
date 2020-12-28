@@ -6,7 +6,7 @@ using System.Collections.Generic;
 
 namespace PetFinder.Models
 {
-    public partial class Comments
+    public partial class Comment
     {
         public int Id { get; set; }
         public string Message { get; set; }
