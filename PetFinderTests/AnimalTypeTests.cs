@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PetFinder.Data;
+using PetFinder.Helpers;
 using PetFinder.Models;
 using System;
 using System.Collections.Generic;
@@ -36,11 +37,9 @@ namespace PetFinderTests
             AnimalTypeService animalTypeService = new AnimalTypeService(context);
 
             await animalTypeService.Save(animalType);
+            GenericResult result = await animalTypeService.Save(animalTypeRepeated);
             // No deberia insertarse ya que existe una ciudad con el mismo nombre
-            await Assert.ThrowsAsync<AnimalTypeAlreadyExistsException>(async () =>
-            {
-                await animalTypeService.Save(animalTypeRepeated);
-            });
+            Assert.False(result.Success);
         }
 
         [Fact]
@@ -52,7 +51,6 @@ namespace PetFinderTests
 
             await animalTypeService.Save(animalType);
             animalType.Name = "Edited mock";
-            animalType.SerializedName = "EDITEDMOCK";
             await animalTypeService.Save(animalType);
             int numberOfAnimalTypes = await context.AnimalTypes.CountAsync();
 

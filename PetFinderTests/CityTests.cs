@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PetFinder.Data;
+using PetFinder.Helpers;
 using PetFinder.Models;
 using System;
 using System.Collections.Generic;
@@ -45,26 +46,24 @@ namespace PetFinderTests
             CityService cityService = new CityService(context);
 
             // No deberia insertarse ya que no tiene nombre
-            await Assert.ThrowsAsync<DbUpdateException>(async () =>
-            {
-                await cityService.Save(city);
-            });
+            GenericResult result = await cityService.Save(city);
+            // No deberia insertarse ya que existe una ciudad con el mismo nombre
+            Assert.False(result.Success);
         }
 
         [Fact]
         public async Task ShouldNotSaveWithSameName()
         {
             PetFinderContext context = dbContextFactory.CreateContext();
-            City city1 = CreateCity("Tres Arroyos");
-            City city2 = CreateCity("Tres Arroyos");
+            City city = CreateCity("Tres Arroyos");
+            City cityRepeated = CreateCity("Tres Arroyos");
             CityService cityService = new CityService(context);
 
-            await cityService.Save(city1);
+            await cityService.Save(city);
             // No deberia insertarse ya que existe una ciudad con el mismo nombre
-            await Assert.ThrowsAsync<CityAlreadyExistsException>(async () =>
-            {
-                await cityService.Save(city2);
-            });
+            GenericResult result = await cityService.Save(cityRepeated);
+            // No deberia insertarse ya que existe una ciudad con el mismo nombre
+            Assert.False(result.Success);
         }
 
         [Fact]

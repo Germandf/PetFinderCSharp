@@ -59,7 +59,7 @@ namespace PetFinder.Data
             if (IsValidName(animalType.Name))
             {
                 animalType.SerializedName = animalType.Name.ToUpper().Replace(" ", "");
-                if (await IsRepeated(animalType.SerializedName))
+                if (await IsRepeated(animalType.SerializedName) && animalType.Id == 0)// Si estamos repitiendo y no estamos editando
                 {
                     //Devolver result con mensaje de error
                     result.AddError(REPEATED_ANIMAL_TYPE_ERROR);
@@ -73,7 +73,7 @@ namespace PetFinder.Data
                             result.AddError(SAVING_ERROR);
                         }
                     }
-                    if (!await Insert(animalType)) result.AddError(SAVING_ERROR);
+                    else if (!await Insert(animalType)) result.AddError(SAVING_ERROR);
                 }
             }
             else

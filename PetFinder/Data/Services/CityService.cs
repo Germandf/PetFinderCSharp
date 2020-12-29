@@ -49,7 +49,7 @@ namespace PetFinder.Data
             if (IsValidName(city.Name))
             {
                 city.SerializedName = city.Name.ToUpper().Replace(" ", "");
-                if (await IsRepeated(city.SerializedName))
+                if (await IsRepeated(city.SerializedName) && city.Id == 0)
                 {
                     //Devolver result con mensaje de error
                     result.AddError(REPEATED_CITY_ERROR);
@@ -63,7 +63,7 @@ namespace PetFinder.Data
                             result.AddError(SAVING_ERROR);
                         }
                     }
-                    if (!await Insert(city)) result.AddError(SAVING_ERROR);
+                    else if (!await Insert(city)) result.AddError(SAVING_ERROR);
                 }
             }
             else
