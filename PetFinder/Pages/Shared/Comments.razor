@@ -1,0 +1,105 @@
+﻿@using PetFinder.Areas.Identity;
+
+<div class="row">
+    <h3 class="petSubTitle mt-3 mx-4">Comentarios</h3>
+    <section id="comments" class="col-12">
+        @foreach (Comment comment in comments)
+        {
+            <div class="media g-mb-30 media-comment">
+                <div class="media-body shadow g-bg-secondary g-pa-30">
+                    <div class="g-mb-15">
+                        <h3 class="h5 mb-0">
+                            Fulanito
+                        </h3>
+                    </div>
+                    <p>@comment.Message</p>
+                    <p><b>Seguridad de haberlo visto @comment.Rate /5</b></p>
+                    <AuthorizeView>
+                        <Authorized>
+                            <!-- Si es el dueño del comentario o es admin -->
+                            <button class="btn" @onclick="() => deleteComment(comment)">
+                                <i class="text-danger fa fa-trash"></i>
+                            </button>
+                            <!-- /Si es el dueño del comentario o es admin -->
+                        </Authorized>
+                    </AuthorizeView>
+                </div>
+            </div>
+        }
+
+        @if (comments.Count == 0)
+        {
+            <p class="ml-2">No hay comentarios disponibles. Si eres un usuario registrado, eres libre de comentar cuanto quieras.</p>
+        }
+
+
+    </section>
+    <div class="mb-2 col-12">
+    <AuthorizeView>
+        <Authorized>
+            <form id="form-new-comment" class="g-bg-secondary rounded shadow mt-2 w-100 text-left p-2 u-shadow-v18 ">
+                <p class="mt-2">Agregar nuevo comentario... </p>
+                <textarea class="w-100 p-2" type="text" id="message" name="message" maxlength="200"></textarea>
+                <p class="mt-2 mb-2">
+                    <span class="mr-2">¿Que tan seguro estas de haberlo visto? </span> <input type="range" value="1" min="1" max="5" name="rate" id="rate">
+                </p>
+                <input type="submit" value="Comentar" class="btn bg-orange text-white mr-2 mt-1">
+            </form>
+            <Modal @ref="confirmationModal">
+                <Title>
+                    Eliminar
+                </Title>
+                <Body>
+                    <p>
+                        ¿Está seguro que desea eliminar?
+                    </p>
+                </Body>
+                <Footer>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cancelar</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => confirmationModal.Confirm()">Confirmar</button>
+                </Footer>
+            </Modal>
+        </Authorized>
+    </AuthorizeView>
+</div>
+</div>
+
+@code {
+    [Parameter]
+    public int PetId { get; set; }
+
+    public List<Comment> comments = new List<Comment>();
+    private Modal confirmationModal { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        comments.AddRange(generateMockComments());
+
+    }
+
+    private void deleteComment(Comment comment)
+    {
+        confirmationModal.isWarning = true;
+        confirmationModal.Open();
+        confirmationModal.OnConfirm(async () =>
+        {
+            // TO-DO
+        });
+    }
+    private List<Comment> generateMockComments()
+    {
+        List<Comment> mockComments = new List<Comment>();
+        Random random = new Random();
+        for (int f = 0; f < 10; f++)
+        {
+            Comment aux = new Comment();
+            aux.Id = f;
+            aux.Message = "Mock message N " + f;
+            aux.PetId = PetId;
+            aux.UserId = "123123";
+            aux.Rate = random.Next(1, 6);
+            mockComments.Add(aux);
+        }
+        return mockComments;
+    }
+}

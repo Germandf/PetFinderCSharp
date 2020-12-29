@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetFinder", "PetFinder\PetF
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetFinderTests", "PetFinderTests\PetFinderTests.csproj", "{1A3327DE-CE96-44AE-A47A-3C254CFC3537}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PetFinderApi", "PetFinderApi\PetFinderApi.csproj", "{4C01CDBE-48C9-42D2-BC76-EB767B7E3C06}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PetFinderApi", "PetFinderApi\PetFinderApi.csproj", "{4C01CDBE-48C9-42D2-BC76-EB767B7E3C06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

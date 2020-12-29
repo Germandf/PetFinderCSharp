@@ -1,6 +1,7 @@
 ﻿@page "/ver/{id:int}"
 @using Microsoft.AspNetCore.Identity
 @using PetFinder.Areas.Identity;
+@using PetFinder.Pages.Shared;
 
 @inject IPetService PetService
 @inject IApplicationUserService userService;
@@ -60,12 +61,7 @@
             </div>
         </div>
     }
-    <div class="row">
-        <h3 class="petSubTitle mt-3 mx-4">Comentarios</h3>
-        <div class="mb-2 col-12">
-            <p>Aquí van los comentarios</p>
-        </div>
-    </div>
+    <Comments PetId="id"></Comments>
 </section>
 
 @code {
