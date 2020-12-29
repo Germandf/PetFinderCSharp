@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PetFinder.Helpers;
 using PetFinder.Models;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,9 @@ namespace PetFinder.Data
     public class CityService : ICityService
     {
         private readonly PetFinderContext _context;
+        public const string INVALID_NAME_ERROR = "El nombre ingresado no corresponde a un nombre valido";
+        public const string REPEATED_CITY_ERROR = "Ya existe la ciudad";
+        public const string SAVING_ERROR = "Ocurrio un error al guardar";
 
         public CityService(PetFinderContext context)
         {
@@ -39,21 +43,34 @@ namespace PetFinder.Data
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> Save(City city)
+        public async Task<GenericResult> Save(City city)
         {
+            GenericResult result = new GenericResult();
             if (IsValidName(city.Name))
             {
+                city.SerializedName = city.Name.ToUpper().Replace(" ", "");
                 if (await IsRepeated(city.SerializedName))
                 {
-                    throw new CityAlreadyExistsException("Ya existe una ciudad con ese nombre");
+                    //Devolver result con mensaje de error
+                    result.AddError(REPEATED_CITY_ERROR);
                 }
-                if (city.Id > 0)
+                if (result.Success)
                 {
-                    return await Update(city);
+                    if (city.Id > 0 )
+                    {
+                        if (!await Update(city))
+                        {
+                            result.AddError(SAVING_ERROR);
+                        }
+                    }
+                    if (!await Insert(city)) result.AddError(SAVING_ERROR);
                 }
-                return await Insert(city);
             }
-            throw new DbUpdateException("Asegúrese de insertar un nombre y que sea menor a 35 caracteres");
+            else
+            {
+                result.AddError(INVALID_NAME_ERROR);
+            }
+            return result;
         }
 
         public async Task<bool> Update(City city)
@@ -79,6 +96,19 @@ namespace PetFinder.Data
         {
             var existingCityCount = await Task.Run(() => _context.Cities.Count(c => c.SerializedName == serializedName));
             if (existingCityCount > 0)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public async Task<bool> HasNoPetsAssociated(City city)
+        {
+            var petsFromThisCity = await _context.Pets.
+                Include(p => p.City).
+                Where(p => p.City.SerializedName == city.SerializedName).
+                ToListAsync();
+            if(petsFromThisCity.Count() == 0)
             {
                 return true;
             }

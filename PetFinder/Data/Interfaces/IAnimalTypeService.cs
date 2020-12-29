@@ -1,4 +1,5 @@
-﻿using PetFinder.Models;
+﻿using PetFinder.Helpers;
+using PetFinder.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +14,8 @@ namespace PetFinder.Data
         Task<bool> Insert(AnimalType animalType);
         Task<bool> Update(AnimalType animalType);
         Task<bool> Delete(int id );
-        Task<bool> Save(AnimalType animalType);
+        Task<GenericResult> Save(AnimalType animalType);
         Task<bool> IsRepeated(string name);
+        Task<bool> HasNoPetsAssociated(AnimalType animalType);
     }
 }

@@ -52,7 +52,8 @@
                                     <div class="col-6 text-left">@city.Name</div>
                                     <div class="col-6 text-right">
                                         <a href="editar-ciudad/@city.Id" class="btn bg-gray text-white">Editar</a>
-                                        <button type="button" value="Delete" class="btn bg-red text-white" @onclick="() => DeleteCity(city)">Eliminar</button>
+                                        <button type="button" value="Delete" class="btn bg-red text-white" 
+                                                @onclick="async () => await DeleteCity(city)">Eliminar</button>
                                     </div>
                                 </li>
                             }
@@ -77,8 +78,9 @@
                                 <li class="list-group-item d-flex align-items-center">
                                     <div class="col-6 text-left">@animalType.Name</div>
                                     <div class="col-6 text-right">
-                                        <button type="button" value="Delete" class="btn bg-red text-white" @onclick="() => DeleteAnimalType(animalType)">Eliminar</button>
                                         <a href="editar-tipo-de-animal/@animalType.Id" class="btn bg-gray text-white">Editar</a>
+                                        <button type="button" value="Delete" class="btn bg-red text-white" 
+                                                @onclick="async () => await DeleteAnimalType(animalType)">Eliminar</button>
                                     </div>
                                 </li>
                             }
@@ -114,12 +116,11 @@
 
         <Modal @ref="confirmationModal">
             <Title>
-                Eliminar
+                Advertencia
             </Title>
             <Body>
-                <p>
-                    ¿Está seguro que desea eliminar?
-                </p>
+                <p>El item que está a punto de eliminar tiene mascotas asociadas</p>
+                <p>¿Está seguro que desea eliminar?</p>
             </Body>
             <Footer>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cancelar</button>
@@ -177,34 +178,49 @@
         }
     }
 
-    private void DeleteAnimalType(AnimalType animalType)
+    private async Task DeleteAnimalType(AnimalType animalType)
     {
-        confirmationModal.isWarning = true;
-        confirmationModal.Open();
-        confirmationModal.OnConfirm(async () =>
+        bool result = false;
+        if (await AnimalTypeService.HasNoPetsAssociated(animalType))
         {
-            bool result = await AnimalTypeService.Delete(animalType.Id);
-            if (result)
+            result = await AnimalTypeService.Delete(animalType.Id);
+        }
+        else
+        {
+            confirmationModal.isWarning = true;
+            confirmationModal.Open();
+            confirmationModal.OnConfirm(async () =>
             {
-                //Actualizo la lista con la db
-                animalTypes = await AnimalTypeService.GetAll();
-                StateHasChanged();
-            }
-        });
+                result = await AnimalTypeService.Delete(animalType.Id);
+            });
+        }
+        if (result)
+        {
+            animalTypes = await AnimalTypeService.GetAll();
+            StateHasChanged(); // Actualizo la lista
+        }
     }
-    private void DeleteCity(City city)
+
+    private async Task DeleteCity(City city)
     {
-        confirmationModal.isWarning = true;
-        confirmationModal.Open();
-        confirmationModal.OnConfirm(async () =>
+        bool result = false;
+        if (await CityService.HasNoPetsAssociated(city))
         {
-            bool result = await CityService.Delete(city.Id);
-            if (result)
+            result = await CityService.Delete(city.Id);
+        }
+        else
+        {
+            confirmationModal.isWarning = true;
+            confirmationModal.Open();
+            confirmationModal.OnConfirm(async () =>
             {
-                //Actualizo la lista con la db
-                cities = await CityService.GetAll();
-                StateHasChanged();
-            }
-        });
+                result = await CityService.Delete(city.Id);
+            });
+        }
+        if (result)
+        {
+            cities = await CityService.GetAll();
+            StateHasChanged(); // Actualizo la lista
+        }
     }
 }

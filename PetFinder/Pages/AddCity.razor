@@ -1,9 +1,12 @@
 ﻿@page "/agregar-ciudad"
 @page "/editar-ciudad/{id:int}"
+@using PetFinder.Helpers;
+
 @inject ICityService CityService
 @inject NavigationManager NavigationManager
+
 <AuthorizeView Roles="@ApplicationUserService.ROLE_ADMIN">
-    <Authorized >
+    <Authorized>
         <div class="row">
             <div class="col-12 mt-5 text-center">
                 <EditForm Context="editFormContext" Model="@city" id="addcityForm" class="form-signin text-left shadow rounded">
@@ -25,7 +28,12 @@
                     @if (isError)
                     {
                         <div class="alert alert-danger mt-2">
-                            @error
+                            <ul>
+                                @foreach(string error in errorsOnSaving)
+                                {
+                                    <li> @error </li>
+                                }
+                            </ul>
                         </div>
                     }
                 </EditForm>
@@ -59,9 +67,9 @@
     public int id { get; set; }
 
     private City city = new City();
-    public string error { get; set; }
     public bool isError { get; set; }
     private Modal modal { get; set; }
+    private List<string> errorsOnSaving = new List<string>();
 
     protected override async Task OnInitializedAsync()
     {
@@ -70,7 +78,7 @@
             city = await CityService.Get(id);
             if (city == null)
             {
-                error = "No se encontró la ciudad";
+                errorsOnSaving.Add("No se encontro la ciudad");
                 isError = true;
                 city = new City();
             }
@@ -79,18 +87,19 @@
 
     protected async Task SaveCity()
     {
-        city.SerializedName = city.Name.ToUpper().Replace(" ", "");
-        if (await CityService.IsRepeated(city.SerializedName))
+        errorsOnSaving = new List<string>();
+        GenericResult result = await CityService.Save(city);
+
+        if (result.Success)
         {
-            isError = true;
-            error = "Ya existe la ciudad";
-            StateHasChanged();
-            return;
+            modal.Open();
         }
         else
         {
-            await CityService.Save(city);
-            modal.Open();
+            isError = true;
+            errorsOnSaving = result.Errors;
+            StateHasChanged();
+            return;
         }
     }
 
