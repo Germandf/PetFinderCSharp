@@ -9,6 +9,8 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using PetFinder.Models;
+using PetFinderApi.Data.Interfaces;
+using PetFinderApi.Data.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,7 +30,6 @@ namespace PetFinderApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -38,6 +39,7 @@ namespace PetFinderApi
                     options.UseSqlServer(Environment.GetEnvironmentVariable("SQLServerPetfinder")),
                     ServiceLifetime.Transient
                   );
+            services.AddScoped<ICommentService, CommentService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

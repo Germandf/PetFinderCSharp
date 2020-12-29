@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace PetFinderApi.Data.Interfaces
 {
-    interface ICommentService
+    public interface ICommentService
     {
         Task<Comment> Get(int id);
         Task<bool> Insert(Comment comment);
