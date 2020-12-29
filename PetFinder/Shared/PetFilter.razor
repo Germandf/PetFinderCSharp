@@ -1,6 +1,7 @@
 ﻿@inject ICityService CityService
 @inject IAnimalTypeService AnimalTypeService
 @inject IGenderService GenderService
+@inject NavigationManager navigationManager;
 
 <section class="container-fluid bg-orange-dark ">
     <form id="petFilterForm" class="row">
@@ -64,10 +65,9 @@
         </div>
         <!-- Filter -->
         <div class="col-12 col-md-auto d-flex justify-content-center mt-3 mt-md-0">
-            <a href="filtrar/ciudad-@selectedCity.SerializedName/tipo-@selectedAnimalType.SerializedName/genero-@selectedGender.SerializedName"
-               class="text-white d-inline btn bg-orange mt-md-3 mb-3">
+            <button type="button" class="text-white d-inline btn bg-orange mt-md-3 mb-3" @onclick="filtrar">
                 Filtrar
-            </a>
+            </button>
         </div>
     </form>
 </section>
@@ -83,4 +83,26 @@
     private City selectedCity = new City();
     private AnimalType selectedAnimalType = new AnimalType();
     private Gender selectedGender = new Gender();
+
+    private void filtrar()
+    {
+
+        string urlFilter = "/filtrar";
+        if(selectedCity.SerializedName != null)
+        {
+            urlFilter += $"/ciudad-{selectedCity.SerializedName.ToLower()}";
+        }
+        if (selectedAnimalType.SerializedName != null)
+        {
+            urlFilter += $"/tipo-{selectedAnimalType.SerializedName.ToLower()}";
+        }
+        if (selectedGender.SerializedName != null)
+        {
+            urlFilter += $"/genero-{selectedGender.SerializedName.ToLower()}";
+        }
+        if (urlFilter.Length > 0)
+        {
+            navigationManager.NavigateTo(urlFilter);
+        }
+    }
 }

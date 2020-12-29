@@ -184,10 +184,10 @@ namespace PetFinder.Data
             return result;
         }
 
-        public async Task<IEnumerable<Pet>> GetAllByFilter(params string[] args)
+        public async Task<IEnumerable<Pet>> GetAllByFilter(params string[] filters)
         {
             string city = null, animalType = null, gender = null;
-            foreach (string arg in args)
+            foreach (string arg in filters)
             {
                 if(arg == null)
                 {
@@ -195,17 +195,17 @@ namespace PetFinder.Data
                 }
                 else if (arg.Contains("ciudad-"))
                 {
-                    city = arg.Replace("ciudad-", "");
+                    city = arg.Replace("ciudad-", "").ToUpper();
                     if (city.Length == 0) city = null;
                 }
                 else if (arg.Contains("tipo-"))
                 {
-                    animalType = arg.Replace("tipo-", "");
+                    animalType = arg.Replace("tipo-", "").ToUpper();
                     if (animalType.Length == 0) animalType = null;
                 }
                 else if (arg.Contains("genero-"))
                 {
-                    gender = arg.Replace("genero-", "");
+                    gender = arg.Replace("genero-", "").ToUpper();
                     if (gender.Length == 0) gender = null;
                 }
             }

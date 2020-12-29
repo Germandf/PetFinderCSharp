@@ -19,7 +19,7 @@ namespace PetFinder.Data
         Task<bool> Delete(int id);
         Task<GenericResult> Save(Pet pet, IFileListEntry photo);
         Task<IEnumerable<Pet>> GetAllByUser(string UserId);
-        Task<IEnumerable<Pet>> GetAllByFilter(params string[] args);
+        Task<IEnumerable<Pet>> GetAllByFilter(params string[] filters);
         Task<bool> CurrUserCanEdit(Pet pet);
         Task<bool> SetFound(int id);
         bool IsValidName(string name);
