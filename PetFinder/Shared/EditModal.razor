@@ -5,12 +5,10 @@
                 <div class="icon-box @iconBoxClass">
                     <i class="fas @fasClass"></i>
                 </div>
-                <h4 class="modal-title w-100">@Title </h4>
+                <h4 class="modal-title w-100">Editar</h4>
             </div>
             <div class="modal-body">
-                <p>
-                    @Body
-                </p>
+                <textarea class="w-100 p-2" type="text" maxlength="200" @bind="newText"></textarea>
             </div>
             <div class="modal-footer justify-content-center">
                 @Footer
@@ -25,18 +23,11 @@
 }
 
 @code {
-    [Parameter]
-    public RenderFragment Title { get; set; }
-
-    [Parameter]
-    public RenderFragment Body { get; set; }
 
     [Parameter]
     public RenderFragment Footer { get; set; }
 
-    public bool isSuccess { get; set; }
-    public bool isWarning { get; set; }
-    public bool isError { get; set; }
+    public string newText { get; set; }
 
     private string modalDisplay = "none;";
     private string modalClass = "";
@@ -47,21 +38,8 @@
 
     public void Open()
     {
-        if (isError)
-        {
-            iconBoxClass = "icon-box-error";
-            fasClass = "fa-times";
-        }
-        else if (isWarning)
-        {
-            iconBoxClass = "icon-box-warning";
-            fasClass = "fa-exclamation";
-        }
-        else
-        {
-            iconBoxClass = "icon-box-success";
-            fasClass = "fa-check";
-        }
+        iconBoxClass = "icon-box-edit";
+        fasClass = "fa-pencil-alt";
         modalDisplay = "block;";
         modalClass = "show";
         showBackdrop = true;

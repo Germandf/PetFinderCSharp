@@ -116,6 +116,10 @@ body .bg-red {
     height: 215px;
 }
 
+textarea {
+    resize: none;
+    height: 100px;
+}
 
 /* COMMENTS */
 @media (min-width: 0) {
@@ -229,6 +233,12 @@ body .bg-red {
 }
 .modal-confirm .icon-box-success i {
     color: #4BB543;
+}
+.modal-confirm .icon-box-edit {
+    border-color: #0275D8;
+}
+.modal-confirm .icon-box-edit i {
+    color: #0275D8;
 }
 
 .modal-confirm .icon-box i {
