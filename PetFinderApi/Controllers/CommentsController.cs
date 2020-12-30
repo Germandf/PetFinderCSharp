@@ -70,11 +70,6 @@ namespace PetFinderApi.Controllers
             return await _commentService.GetAllFromPet(id);
         }
 
-        // Logea al usuario
-        [HttpPost("auth")]
-        public string SignIn()
-        {
-            return "SignIn";
-        }
+        
     }
 }
