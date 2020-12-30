@@ -35,7 +35,7 @@
         </div>
     </div>
 
-    <Modal @ref="confirmationModal">
+    <NotificationModal @ref="confirmationModal">
         <Title>
             Eliminar
         </Title>
@@ -48,9 +48,9 @@
             <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cancelar</button>
             <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => confirmationModal.Confirm()">Confirmar</button>
         </Footer>
-    </Modal>
+    </NotificationModal>
 
-    <Modal @ref="errorModal">
+    <NotificationModal @ref="errorModal">
         <Title>
             Error
         </Title>
@@ -62,7 +62,7 @@
         <Footer>
             <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cerrar</button>
         </Footer>
-    </Modal>
+    </NotificationModal>
 }
 
 @code {
@@ -71,8 +71,8 @@
     [Parameter]
     public ApplicationUser user { get; set; } = null!;
 
-    private Modal confirmationModal = new Modal();
-    private Modal errorModal = new Modal();
+    private NotificationModal confirmationModal { get; set; }
+    private NotificationModal errorModal { get; set; }
 
     private async Task setFound()
     {
@@ -83,12 +83,15 @@
         }
         else
         {
+            errorModal.isError = true;
             errorModal.Open();
         }
     }
 
     private void Delete()
     {
+        confirmationModal.isWarning = true;
+        confirmationModal.Open();
         confirmationModal.OnConfirm(async () =>
         {
             bool result = await petService.Delete(pet.Id);
@@ -99,9 +102,9 @@
             }
             else
             {
+                errorModal.isError = true;
                 errorModal.Open();
             }
         });
-        confirmationModal.Open();
     }
 }

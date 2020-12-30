@@ -1,0 +1,67 @@
+﻿<div class="modal fade @modalClass" aria-hidden="true" tabindex="-1" role="dialog" style="display:@modalDisplay; overflow-y: auto;">
+    <div class="modal-dialog-centered mx-auto modal-confirm">
+        <div class="modal-content">
+            <div class="modal-header flex-column">
+                <div class="icon-box @iconBoxClass">
+                    <i class="fas @fasClass"></i>
+                </div>
+                <h4 class="modal-title w-100">Editar</h4>
+            </div>
+            <div class="modal-body">
+                <textarea class="w-100 p-2" type="text" maxlength="200" @bind="newText"></textarea>
+            </div>
+            <div class="modal-footer justify-content-center">
+                @Footer
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (showBackdrop)
+{
+    <div class="modal-backdrop fade show"></div>
+}
+
+@code {
+
+    [Parameter]
+    public RenderFragment Footer { get; set; }
+
+    public string newText { get; set; }
+
+    private string modalDisplay = "none;";
+    private string modalClass = "";
+    private bool showBackdrop = false;
+    private string iconBoxClass { get; set; }
+    private string fasClass { get; set; }
+    private Func<Task> functionConfirm { get; set; }
+
+    public void Open()
+    {
+        iconBoxClass = "icon-box-edit";
+        fasClass = "fa-pencil-alt";
+        modalDisplay = "block;";
+        modalClass = "show";
+        showBackdrop = true;
+        StateHasChanged();
+    }
+
+    public void Close()
+    {
+        modalDisplay = "none";
+        modalClass = "";
+        showBackdrop = false;
+        functionConfirm = null;
+    }
+
+    public void Confirm()
+    {
+        functionConfirm();
+        this.Close();
+    }
+
+    public void OnConfirm(Func<Task> functionAsParameter)
+    {
+        functionConfirm = functionAsParameter;
+    }
+}

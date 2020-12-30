@@ -114,7 +114,7 @@
             }
         </section>
 
-        <Modal @ref="confirmationModal">
+        <NotificationModal @ref="confirmationModal">
             <Title>
                 Advertencia
             </Title>
@@ -126,7 +126,7 @@
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cancelar</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => confirmationModal.Confirm()">Confirmar</button>
             </Footer>
-        </Modal>
+        </NotificationModal>
     </Authorized>
 
     <NotAuthorized>
@@ -146,7 +146,7 @@
     private IEnumerable<Pet> pets { get; set; }
 
     private string Message { get; set; }
-    private Modal confirmationModal { get; set; }
+    private NotificationModal confirmationModal { get; set; }
 
     private ApplicationUser user { get; set; }
 
