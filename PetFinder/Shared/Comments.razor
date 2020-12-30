@@ -18,7 +18,13 @@
                     </button>
                 </form>
 
-                <Modal @ref="confirmationModal">
+                <EditModal @ref="editModal">
+                    <Footer>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => editModal.Close()">Cancelar</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" @onclick="() => editModal.Confirm()">Confirmar</button>
+                    </Footer>
+                </EditModal>
+                <NotificationModal @ref="confirmationModal">
                     <Title>
                         Eliminar
                     </Title>
@@ -31,8 +37,8 @@
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cancelar</button>
                         <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => confirmationModal.Confirm()">Confirmar</button>
                     </Footer>
-                </Modal>
-                <Modal @ref="errorModal">
+                </NotificationModal>
+                <NotificationModal @ref="errorModal">
                     <Title>
                         Error
                     </Title>
@@ -44,7 +50,7 @@
                     <Footer>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => errorModal.Close()">Entendido</button>
                     </Footer>
-                </Modal>
+                </NotificationModal>
             </Authorized>
         </AuthorizeView>
     </section>
@@ -61,6 +67,9 @@
                     <AuthorizeView>
                         <Authorized>
                             <!-- Si es el dueño del comentario o es admin -->
+                            <button class="btn" @onclick="() => UpdateComment(comment)">
+                                <i class="text-primary fa fa-pencil-alt"></i>
+                            </button>
                             <button class="btn" @onclick="() => DeleteComment(comment)">
                                 <i class="text-danger fa fa-trash"></i>
                             </button>
@@ -86,8 +95,9 @@
 
     private Comment newComment = new Comment();
     private List<Comment> comments = new List<Comment>();
-    private Modal confirmationModal { get; set; }
-    private Modal errorModal { get; set; }
+    private EditModal editModal { get; set; }
+    private NotificationModal confirmationModal { get; set; }
+    private NotificationModal errorModal { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -117,6 +127,24 @@
         comments.Clear();
         comments.AddRange(commentsFromApi);
         StateHasChanged();
+    }
+
+    private void UpdateComment(Comment comment)
+    {
+        editModal.newText = comment.Message;
+        editModal.Open();
+        editModal.OnConfirm(async () =>
+        {
+            comment.Message = editModal.newText;
+            // Preparo content del put
+            var json = JsonConvert.SerializeObject(comment);
+            var buffer = System.Text.Encoding.UTF8.GetBytes(json);
+            var byteContent = new ByteArrayContent(buffer);
+            byteContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+            // PUT api/comentarios/id
+            HttpResponseMessage response = await httpClient.PutAsync(url + "/" + comment.Id.ToString(), byteContent);
+            await CheckResponse(response);
+        });
     }
 
     private void DeleteComment(Comment comment)
