@@ -54,7 +54,7 @@
             </div>
         </section>
 
-        <NotificationModal @ref="confirmationModal">
+        <Modal @ref="confirmationModal">
             <Title>
                 Eliminar
             </Title>
@@ -67,7 +67,7 @@
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cancelar</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => confirmationModal.Confirm()">Confirmar</button>
             </Footer>
-        </NotificationModal>
+        </Modal>
     </Authorized>
 
     <NotAuthorized>
@@ -80,7 +80,7 @@
 @code {
     private IEnumerable<ApplicationUser> users { get; set; }
     private string Message { get; set; }
-    private NotificationModal confirmationModal { get; set; }
+    private Modal confirmationModal { get; set; }
 
     protected override async Task OnInitializedAsync()
     {

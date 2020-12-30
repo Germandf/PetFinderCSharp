@@ -17,14 +17,21 @@
                         Comentar
                     </button>
                 </form>
-
-                <EditModal @ref="editModal">
+                <ModalWithValue TypeValue="string" @ref="editModal">
+                    <Title>
+                        Editar
+                    </Title>
+                    <Body>
+                        <p>
+                            <textarea class="w-100 p-2" type="text" maxlength="200" @bind="editModal.value"></textarea>
+                        </p>
+                    </Body>
                     <Footer>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => editModal.Close()">Cancelar</button>
                         <button type="button" class="btn btn-primary" data-dismiss="modal" @onclick="() => editModal.Confirm()">Confirmar</button>
                     </Footer>
-                </EditModal>
-                <NotificationModal @ref="confirmationModal">
+                </ModalWithValue>
+                <Modal @ref="confirmationModal">
                     <Title>
                         Eliminar
                     </Title>
@@ -37,8 +44,8 @@
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cancelar</button>
                         <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => confirmationModal.Confirm()">Confirmar</button>
                     </Footer>
-                </NotificationModal>
-                <NotificationModal @ref="errorModal">
+                </Modal>
+                <Modal @ref="errorModal">
                     <Title>
                         Error
                     </Title>
@@ -50,7 +57,7 @@
                     <Footer>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => errorModal.Close()">Entendido</button>
                     </Footer>
-                </NotificationModal>
+                </Modal>
             </Authorized>
         </AuthorizeView>
     </section>
@@ -95,9 +102,10 @@
 
     private Comment newComment = new Comment();
     private List<Comment> comments = new List<Comment>();
-    private EditModal editModal { get; set; }
-    private NotificationModal confirmationModal { get; set; }
-    private NotificationModal errorModal { get; set; }
+    private ModalWithValue<string> editModal { get; set; }
+    private Modal confirmationModal { get; set; }
+    private Modal errorModal { get; set; }
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -131,11 +139,12 @@
 
     private void UpdateComment(Comment comment)
     {
-        editModal.newText = comment.Message;
+        editModal.value = comment.Message;
+        editModal.isEditing = true;
         editModal.Open();
         editModal.OnConfirm(async () =>
         {
-            comment.Message = editModal.newText;
+            comment.Message = editModal.value;
             // Preparo content del put
             var json = JsonConvert.SerializeObject(comment);
             var buffer = System.Text.Encoding.UTF8.GetBytes(json);

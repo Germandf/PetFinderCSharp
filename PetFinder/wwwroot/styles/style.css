@@ -251,7 +251,6 @@ textarea {
 .modal-confirm .btn, .modal-confirm .btn:active {
     color: #fff;
     border-radius: 4px;
-    background: #60c7c1;
     text-decoration: none;
     transition: all 0.4s;
     line-height: normal;

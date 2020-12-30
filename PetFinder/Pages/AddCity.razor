@@ -40,7 +40,7 @@
             </div>
         </div>
 
-        <NotificationModal @ref="modal">
+        <Modal @ref="modal">
             <Title>
                 ¡Se guardó con éxito!
             </Title>
@@ -52,7 +52,7 @@
             <Footer>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick='() => NavigationManager.NavigateTo("/admin")'>Cerrar</button>
             </Footer>
-        </NotificationModal>
+        </Modal>
     </Authorized>
 
     <NotAuthorized>
@@ -68,7 +68,7 @@
 
     private City city = new City();
     public bool isError { get; set; }
-    private NotificationModal modal { get; set; }
+    private Modal modal { get; set; }
     private List<string> errorsOnSaving = new List<string>();
 
     protected override async Task OnInitializedAsync()

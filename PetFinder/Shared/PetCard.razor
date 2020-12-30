@@ -35,7 +35,7 @@
         </div>
     </div>
 
-    <NotificationModal @ref="confirmationModal">
+    <Modal @ref="confirmationModal">
         <Title>
             Eliminar
         </Title>
@@ -48,9 +48,9 @@
             <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cancelar</button>
             <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => confirmationModal.Confirm()">Confirmar</button>
         </Footer>
-    </NotificationModal>
+    </Modal>
 
-    <NotificationModal @ref="errorModal">
+    <Modal @ref="errorModal">
         <Title>
             Error
         </Title>
@@ -62,7 +62,7 @@
         <Footer>
             <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cerrar</button>
         </Footer>
-    </NotificationModal>
+    </Modal>
 }
 
 @code {
@@ -71,8 +71,8 @@
     [Parameter]
     public ApplicationUser user { get; set; } = null!;
 
-    private NotificationModal confirmationModal { get; set; }
-    private NotificationModal errorModal { get; set; }
+    private Modal confirmationModal { get; set; }
+    private Modal errorModal { get; set; }
 
     private async Task setFound()
     {

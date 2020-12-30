@@ -124,7 +124,7 @@
             </div>
         </div>
 
-        <NotificationModal @ref="modal">
+        <Modal @ref="modal">
             <Title>
                 ¡Se guardó con éxito!
             </Title>
@@ -136,7 +136,7 @@
             <Footer>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick='() => NavigationManager.NavigateTo("/mis-mascotas")'>Cerrar</button>
             </Footer>
-        </NotificationModal>
+        </Modal>
     </Authorized>
 
 </AuthorizeView>
@@ -149,7 +149,7 @@
     private List<string> errorsSaving = new List<string>();
     public string error { get; set; }
     public bool isError { get; set; }
-    private NotificationModal modal { get; set; }
+    private Modal modal { get; set; }
 
     private string userId;
 

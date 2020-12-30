@@ -1,4 +1,5 @@
-﻿<div class="modal fade @modalClass" aria-hidden="true" tabindex="-1" role="dialog" style="display:@modalDisplay; overflow-y: auto;">
+﻿
+<div class="modal fade @modalClass" aria-hidden="true" tabindex="-1" role="dialog" style="display:@modalDisplay; overflow-y: auto;">
     <div class="modal-dialog-centered mx-auto modal-confirm">
         <div class="modal-content">
             <div class="modal-header flex-column">
@@ -25,6 +26,7 @@
 }
 
 @code {
+
     [Parameter]
     public RenderFragment Title { get; set; }
 
@@ -37,6 +39,7 @@
     public bool isSuccess { get; set; }
     public bool isWarning { get; set; }
     public bool isError { get; set; }
+    public bool isEditing { get; set; }
 
     private string modalDisplay = "none;";
     private string modalClass = "";
@@ -44,6 +47,11 @@
     private string iconBoxClass { get; set; }
     private string fasClass { get; set; }
     private Func<Task> functionConfirm { get; set; }
+
+    public Modal()
+    {
+
+    }
 
     public void Open()
     {
@@ -56,6 +64,11 @@
         {
             iconBoxClass = "icon-box-warning";
             fasClass = "fa-exclamation";
+        }
+        else if (isEditing)
+        {
+            iconBoxClass = "icon-box-edit";
+            fasClass = "fa-pencil-alt";
         }
         else
         {

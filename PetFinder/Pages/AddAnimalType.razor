@@ -43,7 +43,7 @@
             </div>
         </div>
 
-        <NotificationModal @ref="modal">
+        <Modal @ref="modal">
             <Title>
                 ¡ Se guardo con exito !
             </Title>
@@ -55,7 +55,7 @@
             <Footer>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick='() => Navigator.NavigateTo("/admin")'>Cerrar</button>
             </Footer>
-        </NotificationModal>
+        </Modal>
     </Authorized>
     <NotAuthorized>
         <Error>
@@ -67,7 +67,7 @@
 @code {
     [Parameter]
     public int id { get; set; }
-    private NotificationModal modal { get; set; }
+    private Modal modal { get; set; }
     private bool isError { get; set; }
     private bool isEditing { get; set; }
     private List<string> errorsOnSaving = new List<string>();
