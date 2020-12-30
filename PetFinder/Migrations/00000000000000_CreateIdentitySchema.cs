@@ -8,6 +8,7 @@ namespace BlazorApp4.Data.Migrations
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+
             migrationBuilder.CreateTable(
                 name: "AspNetRoles",
                 columns: table => new
@@ -27,7 +28,7 @@ namespace BlazorApp4.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(nullable: false),
-                    Name= table.Column<string>(maxLength: 256, nullable: true),
+                    Name = table.Column<string>(maxLength: 256, nullable: true),
                     Surname = table.Column<string>(maxLength: 256, nullable: true),
                     UserName = table.Column<string>(maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(maxLength: 256, nullable: true),
@@ -323,6 +324,18 @@ namespace BlazorApp4.Data.Migrations
                 name: "IX_Pets_GenderId",
                 table: "Pets",
                 column: "GenderId");
+
+            migrationBuilder.Sql(
+                sql: "CREATE FULLTEXT CATALOG PetFinder_Catalog AS DEFAULT;",
+            suppressTransaction: true);
+
+            migrationBuilder.Sql(
+                sql: "CREATE FULLTEXT INDEX ON [dbo].[Pets]("+
+                "[Description] LANGUAGE 'Spanish', " +
+                "[Name] LANGUAGE 'Spanish')" +
+                "KEY INDEX[PK_Pets]ON([PetFinder_Catalog], FILEGROUP[PRIMARY])" +
+                "WITH(CHANGE_TRACKING = AUTO, STOPLIST = SYSTEM)",
+                suppressTransaction: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

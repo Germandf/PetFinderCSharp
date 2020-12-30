@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace PetFinder.Data
 {
@@ -186,38 +187,48 @@ namespace PetFinder.Data
 
         public async Task<IEnumerable<Pet>> GetAllByFilter(params string[] filters)
         {
-            string city = null, animalType = null, gender = null;
-            foreach (string arg in filters)
+            string city = null, animalType = null, gender = null, search = null;
+            foreach (string filter in filters)
             {
-                if(arg == null)
+                if(filter == null)
                 {
                     // Do nothing
                 }
-                else if (arg.Contains("ciudad-"))
+                else if (filter.Contains("ciudad-"))
                 {
-                    city = arg.Replace("ciudad-", "").ToUpper();
+                    city = filter.Replace("ciudad-", "").ToUpper();
                     if (city.Length == 0) city = null;
                 }
-                else if (arg.Contains("tipo-"))
+                else if (filter.Contains("tipo-"))
                 {
-                    animalType = arg.Replace("tipo-", "").ToUpper();
+                    animalType = filter.Replace("tipo-", "").ToUpper();
                     if (animalType.Length == 0) animalType = null;
                 }
-                else if (arg.Contains("genero-"))
+                else if (filter.Contains("genero-"))
                 {
-                    gender = arg.Replace("genero-", "").ToUpper();
+                    gender = filter.Replace("genero-", "").ToUpper();
                     if (gender.Length == 0) gender = null;
                 }
+                else if (filter.Contains("contiene-"))
+                {
+                    search = filter.Replace("contiene-", "");
+                    search = HttpUtility.UrlDecode(search);
+                    if (search.Length == 0) search = null;
+                }
             }
-            return await SearchByFilter(city, animalType, gender);
+            return await SearchByFilter(city, animalType, gender, search);
         }
 
-        private async Task<IEnumerable<Pet>> SearchByFilter(string city, string animalType, string gender)
+        private async Task<IEnumerable<Pet>> SearchByFilter(string city, string animalType, string gender, string search)
         {
             return await _context.Pets.
                 Where(p => p.City.SerializedName == city || city == null).
                 Where(p => p.AnimalType.SerializedName == animalType || animalType == null).
                 Where(p => p.Gender.SerializedName == gender || gender == null).
+                Where(p => 
+                    ( EF.Functions.FreeText(p.Name, search)  || EF.Functions.FreeText(p.Description, search) )
+                    || search == null
+                    ).
                 Include(p => p.AnimalType).
                 Include(p => p.City).
                 Include(p => p.Gender).

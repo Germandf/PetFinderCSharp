@@ -61,7 +61,7 @@
         </div>
         <!-- Name or Description -->
         <div class="col-12 col-md-auto">
-            <input id="search" class="d-inline form-control mt-3" type="text" placeholder="Nombre o descripción" name="search">
+            <input id="search" class="d-inline form-control mt-3" type="text" placeholder="Nombre o descripción" name="search" @bind="searchText">
         </div>
         <!-- Filter -->
         <div class="col-12 col-md-auto d-flex justify-content-center mt-3 mt-md-0">
@@ -80,9 +80,11 @@
     [Parameter]
     public IEnumerable<Gender> genders { get; set; }
 
+
     private City selectedCity = new City();
     private AnimalType selectedAnimalType = new AnimalType();
     private Gender selectedGender = new Gender();
+    private string searchText = null;
 
     private void filtrar()
     {
@@ -99,6 +101,10 @@
         if (selectedGender.SerializedName != null)
         {
             urlFilter += $"/genero-{selectedGender.SerializedName.ToLower()}";
+        }
+        if (searchText != null)
+        {
+            urlFilter += $"/contiene-{searchText}";
         }
         if (urlFilter.Length > 0)
         {
