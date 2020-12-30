@@ -4,7 +4,7 @@
 @inject NavigationManager navigationManager;
 
 <section class="container-fluid bg-orange-dark ">
-    <form id="petFilterForm" class="row">
+    <form @onsubmit="filtrar" class="row">
         <!-- City -->
         <div class="col-12 col-md-auto">
             <select id="inputCity" class="d-inline form-control mt-3" name="city" @bind="selectedCity.SerializedName">
