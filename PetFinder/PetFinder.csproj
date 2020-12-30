@@ -36,6 +36,7 @@
     <PackageReference Include="BlazorInputFile" Version="0.2.0" />
     <PackageReference Include="bunit.web" Version="1.0.0-beta-11" />
     <PackageReference Include="bunit.xunit" Version="1.0.0-beta-11" />
+    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="5.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="5.0.1" />
