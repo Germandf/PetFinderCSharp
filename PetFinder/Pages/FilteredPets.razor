@@ -5,6 +5,8 @@
 @page "/filtrar/{filter1}/{filter2}/{record:int}"
 @page "/filtrar/{filter1}/{filter2}/{filter3}"
 @page "/filtrar/{filter1}/{filter2}/{filter3}/{record:int}"
+@page "/filtrar/{filter1}/{filter2}/{filter3}/{filter4}"
+@page "/filtrar/{filter1}/{filter2}/{filter3}/{filter4}/{record:int}"
 @inject ICityService CityService
 @inject IAnimalTypeService AnimalTypeService
 @inject IGenderService GenderService
@@ -44,6 +46,8 @@
     public string filter2 { get; set; }
     [Parameter]
     public string filter3 { get; set; }
+    [Parameter]
+    public string filter4 { get; set; }
 
     private ApplicationUser user { get; set; }
     private IEnumerable<City> cities;
@@ -66,7 +70,7 @@
     {
         try
         {
-            pets = await PetService.GetAllByFilter(filter1, filter2, filter3);
+            pets = await PetService.GetAllByFilter(filter1, filter2, filter3, filter4);
             pets = pets.Skip(record).Take(pageSize).ToList();
         }
         catch (Exception e)

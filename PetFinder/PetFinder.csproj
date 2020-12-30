@@ -5,12 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Pages\Shared\**" />
     <Compile Remove="wwwroot\css\open-iconic\**" />
     <Compile Remove="wwwroot\styles\bootstrap\**" />
+    <Content Remove="Pages\Shared\**" />
     <Content Remove="wwwroot\css\open-iconic\**" />
     <Content Remove="wwwroot\styles\bootstrap\**" />
+    <EmbeddedResource Remove="Pages\Shared\**" />
     <EmbeddedResource Remove="wwwroot\css\open-iconic\**" />
     <EmbeddedResource Remove="wwwroot\styles\bootstrap\**" />
+    <None Remove="Pages\Shared\**" />
     <None Remove="wwwroot\css\open-iconic\**" />
     <None Remove="wwwroot\styles\bootstrap\**" />
   </ItemGroup>
@@ -58,7 +62,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Pages\Shared\" />
     <Folder Include="wwwroot\images\" />
   </ItemGroup>
 
