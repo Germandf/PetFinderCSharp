@@ -181,7 +181,7 @@ namespace PetFinderApi.Controllers
             }
             else
             {
-                return NotFound();
+                return NotFound(comments);
             }
         }
     }
