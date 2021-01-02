@@ -11,6 +11,7 @@ using PetFinder.Areas.Identity;
 using Microsoft.AspNetCore.Identity;
 using PetFinder.Data;
 using PetFinderApi.Data.Interfaces;
+using Microsoft.AspNetCore.Http;
 
 namespace PetFinderApi.Controllers
 {
@@ -41,11 +42,20 @@ namespace PetFinderApi.Controllers
         /// <param name="id">Comment's id</param>
         /// <response code="200">Returns the comment</response>
         /// <response code="404">If the comment wasn't found</response>
-        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("comentarios/{id}")]
         public async Task<ActionResult<Comment>> Get(int id)
         {
-            return await _commentService.Get(id);
+            Comment comment = await _commentService.Get(id);
+            if (comment != null)
+            {
+                return Ok(comment);
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         // Crea un comentario
@@ -58,11 +68,21 @@ namespace PetFinderApi.Controllers
         /// <param name="comment">Comment's content</param>
         /// <response code="201">The comment was created</response>
         /// <response code="409">If the comment couldn't be created</response>
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPost("comentarios")]
-        public async Task<IActionResult> Insert([FromBody] Comment comment)
+        public async Task<ActionResult<Comment>> Insert([FromBody] Comment comment)
         {
-            await _commentService.Insert(comment);
-            return Accepted();
+            bool wasCreated = await _commentService.Insert(comment);
+            if (wasCreated)
+            {
+                return Created(new Uri($"{Request.Path}/{comment.Id}", UriKind.Relative), comment);
+                //return StatusCode(201, comment);
+            }
+            else
+            {
+                return Conflict();
+            }
         }
 
         // Modifica un comentario segun su ID
@@ -77,12 +97,30 @@ namespace PetFinderApi.Controllers
         /// <response code="200">The comment was modified</response>
         /// <response code="404">If the comment wasn't found</response>
         /// <response code="409">If the comment couldn't be modified</response>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPut("comentarios/{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] Comment comment)
         {
-            comment.Id = id;
-            await _commentService.Update(comment);
-            return Accepted();
+            bool commentExists = await _commentService.Exists(id);
+            if (commentExists)
+            {
+                comment.Id = id;
+                bool wasUpdated = await _commentService.Update(comment);
+                if (wasUpdated)
+                {
+                    return Ok(comment);
+                }
+                else
+                {
+                    return Conflict();
+                }
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         // Elimina un comentario segun su ID
@@ -96,11 +134,29 @@ namespace PetFinderApi.Controllers
         /// <response code="200">The comment was deleted</response>
         /// <response code="404">If the comment wasn't found</response>
         /// <response code="409">If the comment couldn't be deleted</response>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpDelete("comentarios/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            await _commentService.Delete(id);
-            return Accepted();
+            bool commentExists = await _commentService.Exists(id);
+            if (commentExists)
+            {
+                bool wasDeleted = await _commentService.Delete(id);
+                if (wasDeleted)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return Conflict();
+                }
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         // Obtiene todos los comentarios de una mascota segun su ID
@@ -112,13 +168,21 @@ namespace PetFinderApi.Controllers
         /// </remarks>
         /// <param name="id">Pet's id</param>
         /// <response code="200">Returns the comments</response>
-        /// <response code="404">If the pet wasn't found</response>
-        /// <response code="409">If the comment couldn't be gotten</response>
-        [Produces("application/json")]
+        /// <response code="404">If comments weren't found</response>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("comentarios/mascota/{id}")]
-        public async Task<IEnumerable<Comment>> GetAllFromPet(int id)
+        public async Task<ActionResult<IEnumerable<Comment>>> GetAllFromPet(int id)
         {
-            return await _commentService.GetAllFromPet(id);
+            IEnumerable<Comment> comments = await _commentService.GetAllFromPet(id);
+            if (comments.Any())
+            {
+                return Ok(comments);
+            }
+            else
+            {
+                return NotFound();
+            }
         }
     }
 }

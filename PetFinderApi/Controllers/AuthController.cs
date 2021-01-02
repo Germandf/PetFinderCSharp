@@ -44,23 +44,22 @@ namespace PetFinderApi.Controllers
 
         // Logea al usuario
         /// <summary>
-        /// Logs in a user
+        /// Logs In a user
         /// </summary>
         /// <remarks>
         /// Logs in a user by sending his email and password, it returns a Token required to authenticate with JWT
         /// </remarks>
         /// <param name="model">User's email and password</param>
         /// <response code="200">Returns the Token</response>
-        /// <response code="404">If the user wasn't found</response>
-        /// <response code="409">If the user couldn't be logged in</response>
+        /// <response code="401">If the user couldn't be logged in</response>
         [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost("auth")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             IActionResult response = Unauthorized();
-
             var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
-            
             if (result.Succeeded)
             {
                 var appUser = _userManager.Users.SingleOrDefault(r => r.Email == model.Email);
