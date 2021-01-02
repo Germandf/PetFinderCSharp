@@ -58,6 +58,19 @@
                         <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => errorModal.Close()">Entendido</button>
                     </Footer>
                 </Modal>
+                <Modal @ref="successModal">
+                    <Title>
+                        ¡Éxito!
+                    </Title>
+                    <Body>
+                        <p>
+                            La tarea solicitada se realizó correctamente
+                        </p>
+                    </Body>
+                    <Footer>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => successModal.Close()">Cerrar</button>
+                    </Footer>
+                </Modal>
             </Authorized>
         </AuthorizeView>
     </section>
@@ -105,12 +118,12 @@
     private ModalWithValue<string> editModal { get; set; }
     private Modal confirmationModal { get; set; }
     private Modal errorModal { get; set; }
-
+    private Modal successModal { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         user = await ApplicationUserService.GetCurrent();
-        await ReadComments();
+        await GetComments();
     }
 
     private async void CreateComment(Comment comment)
@@ -125,15 +138,17 @@
         // POST api/comentarios
         HttpResponseMessage response = await httpClient.PostAsync(url, byteContent);
         await CheckResponse(response);
+        newComment.Message = "";
     }
 
-    private async Task ReadComments()
+    private async Task GetComments()
     {
         // GET api/comentarios/id
         HttpResponseMessage response = await httpClient.GetAsync(url + "/mascota/" + PetId.ToString());
         Comment[] commentsFromApi = await response.Content.ReadAsAsync<Comment[]>();
         comments.Clear();
         comments.AddRange(commentsFromApi);
+        comments.Reverse();
         StateHasChanged();
     }
 
@@ -172,7 +187,9 @@
     {
         if (response.IsSuccessStatusCode)
         {
-            await ReadComments();
+            await GetComments();
+            successModal.isSuccess = true;
+            successModal.Open();
         }
         else
         {
