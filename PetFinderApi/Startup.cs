@@ -18,7 +18,9 @@ using PetFinderApi.Data.Services;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -37,10 +39,34 @@ namespace PetFinderApi
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "PetFinderApi", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { 
+                    Title = "PetFinderApi",
+                    Version = "v1",
+                    Description = "PetFinderApi's official documentation. " +
+                    "Created with educational purposes for Eternet SRL by Huertas José and Germán De Francesco.",
+                    TermsOfService = new Uri("https://petfinder.com/api/terms"),
+                    Contact = new OpenApiContact
+                    {
+                        Name = "Eternet SRL",
+                        Email = "develop@eternet.cc",
+                        Url = new Uri("https://www.eternet.cc"),
+                    },
+                    License = new OpenApiLicense
+                    {
+                        Name = "Use under LICX",
+                        Url = new Uri("https://petfinder.com/api/license"),
+                    }
+                });
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
+
             services.AddDbContext<PetFinderContext>(options =>
                     options.UseSqlServer(Environment.GetEnvironmentVariable("SQLServerPetfinder")),
                     ServiceLifetime.Transient
@@ -51,7 +77,6 @@ namespace PetFinderApi
                 .AddEntityFrameworkStores<PetFinderContext>()
                 .AddDefaultTokenProviders();
 
-
             // ===== Add Jwt Authentication ========
             Configuration["JwtKey"] = Environment.GetEnvironmentVariable("PetFinderJWTSecret"); // Random password secret
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
@@ -61,9 +86,7 @@ namespace PetFinderApi
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
                 })
-
                 .AddJwtBearer(cfg =>
                 {
                     cfg.RequireHttpsMetadata = false;
