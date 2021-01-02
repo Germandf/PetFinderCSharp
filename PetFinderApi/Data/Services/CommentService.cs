@@ -24,6 +24,11 @@ namespace PetFinderApi.Data.Services
             return await _context.SaveChangesAsync() > 0;
         }
 
+        public async Task<bool> Exists(int id)
+        {
+            return await _context.Comments.AnyAsync(c => c.Id == id);
+        }
+
         public async Task<Comment> Get(int id)
         {
             return await _context.Comments.FindAsync(id);
