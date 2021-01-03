@@ -24,7 +24,7 @@ namespace PetFinderApi.Data.Services
             _context = context;
             _userManager = userManager;
         }
-        public async Task<bool> userCanEdit(string userEmail, int commentId)
+        public async Task<bool> UserCanEdit(string userEmail, int commentId)
         {
             ApplicationUser user = await _userManager.FindByEmailAsync(userEmail);
             if(user == null)

@@ -15,6 +15,6 @@ namespace PetFinderApi.Data.Interfaces
         Task<bool> Delete(int id);
         Task<IEnumerable<Comment>> GetAllFromPet(int id);
         Task<bool> Exists(int id);
-        Task<bool> userCanEdit(string userEmail, int commentId);
+        Task<bool> UserCanEdit(string userEmail, int commentId);
     }
 }

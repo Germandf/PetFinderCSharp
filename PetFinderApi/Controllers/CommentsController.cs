@@ -110,7 +110,7 @@ namespace PetFinderApi.Controllers
         public async Task<IActionResult> Update(int id, [FromBody] Comment comment)
         {
             string userEmail = _JWTService.GetUserEmail(HttpContext);
-            if (!await _commentService.userCanEdit(userEmail, id))
+            if (!await _commentService.UserCanEdit(userEmail, id))
             {
                 return Unauthorized();
             }
@@ -157,7 +157,7 @@ namespace PetFinderApi.Controllers
             if (commentExists)
             {
                 string userEmail = _JWTService.GetUserEmail(HttpContext);
-                if (!await _commentService.userCanEdit(userEmail, id))
+                if (!await _commentService.UserCanEdit(userEmail, id))
                 {
                     return Unauthorized();
                 }
