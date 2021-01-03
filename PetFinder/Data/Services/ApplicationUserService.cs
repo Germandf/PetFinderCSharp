@@ -70,6 +70,10 @@ namespace PetFinder.Data
             return currUser;
 
         }
+        public async Task<IdentityResult> DeleteAsync(ApplicationUser user)
+        {
+            return await _userManager.DeleteAsync(await _userManager.FindByIdAsync(user.Id));
+        }
         public async Task<IEnumerable<ApplicationUser>> GetAll()
         {
 

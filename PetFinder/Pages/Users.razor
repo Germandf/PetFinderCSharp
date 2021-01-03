@@ -3,7 +3,6 @@
 @using Microsoft.AspNetCore.Identity
 @inject IApplicationUserService aplicationUserService;
 @inject SignInManager<ApplicationUser> sigInManager
-@inject UserManager<ApplicationUser> userManager
 @inject RoleManager<IdentityRole> roleManager
 
 <AuthorizeView Roles="@ApplicationUserService.ROLE_ADMIN">
@@ -115,11 +114,13 @@
         confirmationModal.Open();
         confirmationModal.OnConfirm(async () =>
         {
-            var result = await userManager.DeleteAsync(currUser);
+            IdentityResult result = await aplicationUserService.DeleteAsync(currUser);
+
 
             if (result.Succeeded)
             {
                 //Actualizo la lista con la db
+                users = null;
                 users = await aplicationUserService.GetAll();
                 StateHasChanged();
             }

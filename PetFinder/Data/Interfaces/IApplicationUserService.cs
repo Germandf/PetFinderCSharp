@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using PetFinder.Areas.Identity;
 using PetFinder.Models;
 using System;
@@ -17,5 +18,6 @@ namespace PetFinder.Data
         Task<bool> Upgrade(string userId);
         Task<ApplicationUser> GetCurrent();
         Task<ApplicationUser> getById(string Id);
+        Task<IdentityResult> DeleteAsync(ApplicationUser user);
     }
 }
