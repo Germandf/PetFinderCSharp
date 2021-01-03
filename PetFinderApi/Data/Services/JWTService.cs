@@ -25,11 +25,11 @@ namespace PetFinderApi.Data.Services
             _configuration = configuration;
             _userManager = userManager;
         }
-        public string GetUserId(HttpContext httpContext)
+        public string GetUserEmail(HttpContext httpContext)
         {
             ClaimsPrincipal principal = httpContext.User;
-            string userId = principal.Claims.Where(x => x.Type == JwtRegisteredClaimNames.Jti).FirstOrDefault()?.Value;
-            return userId;
+            string userEmail = principal.Claims.Where(x => x.Type == JwtRegisteredClaimNames.Sub).FirstOrDefault()?.Value;
+            return userEmail;
         }
         public async Task<object> GenerateJwtToken(string email, ApplicationUser user)
         {

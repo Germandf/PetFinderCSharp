@@ -42,7 +42,6 @@ namespace PetFinderApi.Controllers
             _jwtService = jwtService;
         }
 
-        // Logea al usuario
         /// <summary>
         /// Logs In a user
         /// </summary>

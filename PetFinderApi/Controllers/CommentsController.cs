@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Identity;
 using PetFinder.Data;
 using PetFinderApi.Data.Interfaces;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace PetFinderApi.Controllers
 {
@@ -22,14 +23,17 @@ namespace PetFinderApi.Controllers
         private readonly ILogger<CommentsController> _logger;
         private readonly PetFinderContext _context;
         private readonly ICommentService _commentService;
+        private readonly IJWTService _JWTService;
 
-        public CommentsController(  ILogger<CommentsController> logger, 
+        public CommentsController(ILogger<CommentsController> logger,
                                     PetFinderContext context,
-                                    ICommentService commentService)
+                                    ICommentService commentService,
+                                    IJWTService jwtService)
         {
             _logger = logger;
             _context = context;
             _commentService = commentService;
+            _JWTService = jwtService;
         }
 
         // Obtiene un comentario segun su ID
@@ -42,6 +46,8 @@ namespace PetFinderApi.Controllers
         /// <param name="id">Comment's id</param>
         /// <response code="200">Returns the comment</response>
         /// <response code="404">If the comment wasn't found</response>
+        /// <response code="401">If the user isn't loged or can't delete</response>
+
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("comentarios/{id}")]
@@ -71,6 +77,7 @@ namespace PetFinderApi.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPost("comentarios")]
+        [Authorize]
         public async Task<ActionResult<Comment>> Insert([FromBody] Comment comment)
         {
             bool wasCreated = await _commentService.Insert(comment);
@@ -101,8 +108,14 @@ namespace PetFinderApi.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPut("comentarios/{id}")]
+        [Authorize]
         public async Task<IActionResult> Update(int id, [FromBody] Comment comment)
         {
+            string userEmail = _JWTService.GetUserEmail(HttpContext);
+            if (!await _commentService.userCanEdit(userEmail, id))
+            {
+                return Unauthorized();
+            }
             bool commentExists = await _commentService.Exists(id);
             if (commentExists)
             {
@@ -136,13 +149,20 @@ namespace PetFinderApi.Controllers
         /// <response code="409">If the comment couldn't be deleted</response>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)] 
         [HttpDelete("comentarios/{id}")]
+        [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
             bool commentExists = await _commentService.Exists(id);
             if (commentExists)
             {
+                string userEmail = _JWTService.GetUserEmail(HttpContext);
+                if (!await _commentService.userCanEdit(userEmail, id))
+                {
+                    return Unauthorized();
+                }
+
                 bool wasDeleted = await _commentService.Delete(id);
                 if (wasDeleted)
                 {

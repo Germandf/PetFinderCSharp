@@ -1,4 +1,5 @@
-﻿using PetFinder.Models;
+﻿using PetFinder.Areas.Identity;
+using PetFinder.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,5 +15,6 @@ namespace PetFinderApi.Data.Interfaces
         Task<bool> Delete(int id);
         Task<IEnumerable<Comment>> GetAllFromPet(int id);
         Task<bool> Exists(int id);
+        Task<bool> userCanEdit(string userEmail, int commentId);
     }
 }

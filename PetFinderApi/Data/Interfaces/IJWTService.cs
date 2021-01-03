@@ -10,6 +10,6 @@ namespace PetFinderApi.Data.Interfaces
     public interface IJWTService
     {
         Task<object> GenerateJwtToken(string email, ApplicationUser user);
-        string GetUserId(HttpContext httpContext);
+        string GetUserEmail(HttpContext httpContext);
     }
 }
