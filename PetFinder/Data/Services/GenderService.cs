@@ -38,17 +38,17 @@ namespace PetFinder.Data
             return await _context.SaveChangesAsync() > 0;
         }
 
-        public async Task<bool> IsNotRepeated(string name)
+        public async Task<bool> IsRepeated(string name)
         {
             var existingGenderCount = Task.Run(() => _context.Genders.Count(a => a.Name == name));
             int results = await existingGenderCount;
             if (results == 0)
             {
-                return true;
+                return false;
             }
             else
             {
-                return false;
+                return true;
             }
         }
 
@@ -69,15 +69,15 @@ namespace PetFinder.Data
         {
             if (IsValidName(gender.Name))
             {
-                if (await IsNotRepeated(gender.Name))
+                if (await IsRepeated(gender.Name))
                 {
-                    if (gender.Id > 0)
-                    {
-                        return await Update(gender);
-                    }
-                    return await Insert(gender);
+                    throw new GenderAlreadyExistsException("Ya existe un genero con ese nombre");
                 }
-                throw new GenderAlreadyExistsException("Ya existe un genero con ese nombre");
+                if (gender.Id > 0)
+                {
+                    return await Update(gender);
+                }
+                return await Insert(gender);
             }
             throw new DbUpdateException("Asegúrese de insertar un nombre y que sea menor a 20 caracteres");
         }

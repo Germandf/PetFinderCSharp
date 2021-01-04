@@ -86,10 +86,10 @@ namespace PetFinderTests
             GenderService genderService = new GenderService(context);
 
             string notRepeatedName = "Masculino";
-            bool isValid = await genderService.IsNotRepeated(notRepeatedName);
+            bool isValid = await genderService.IsRepeated(notRepeatedName);
 
             // Deberia ser falso ya que la cadena tiene 21 caracteres, siendo el maximo 20
-            Assert.True(isValid);
+            Assert.False(isValid);
         }
 
         [Fact]
