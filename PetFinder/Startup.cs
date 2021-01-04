@@ -16,6 +16,7 @@ using PetFinder.Areas.Identity;
 using PetFinder.Areas.Identity.Helper;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
+using PetFinder.Data.Interfaces;
 
 namespace PetFinder
 {
@@ -32,6 +33,7 @@ namespace PetFinder
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            Configuration["UrlApiController"] = Configuration.GetValue<string>("apiCommentsURL");
             services.AddDbContext<PetFinderContext>(options =>
                     options.UseSqlServer(Environment.GetEnvironmentVariable("SQLServerPetfinder")),
                     ServiceLifetime.Transient
@@ -65,10 +67,13 @@ namespace PetFinder
             services.AddScoped<IApplicationUserService, ApplicationUserService>();
 
             services.AddScoped<IFileService, FileService>();
+            services.AddScoped<IAuthJwtService, AuthJwtService>();
+
             services.AddHttpContextAccessor();
 
             services.AddControllers();
-   
+
+           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

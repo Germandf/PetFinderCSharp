@@ -13,5 +13,6 @@ namespace PetFinder.Models
         public string UserId { get; set; }
         public int PetId { get; set; }
         public int Rate { get; set; }
+        public virtual ApplicationUser User {get; set;}
     }
 }

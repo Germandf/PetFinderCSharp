@@ -11,6 +11,12 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using System.Security.Claims;
+using PetFinder.Helpers;
+using PetFinder.Data.Interfaces;
+using Microsoft.AspNetCore.Http;
+using PetFinder.Areas.Identity.Extensions;
+using PetFinder.Models;
 
 namespace PetFinder.Areas.Identity.Pages.Account
 {
@@ -20,14 +26,20 @@ namespace PetFinder.Areas.Identity.Pages.Account
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly IAuthJwtService _jwtService;
+        private readonly PetFinderContext _context;
 
         public LoginModel(SignInManager<ApplicationUser> signInManager, 
             ILogger<LoginModel> logger,
-            UserManager<ApplicationUser> userManager)
+            UserManager<ApplicationUser> userManager,
+            IAuthJwtService jwtService,
+            PetFinderContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _jwtService = jwtService;
+            _context = context;
         }
 
         [BindProperty]
@@ -73,6 +85,7 @@ namespace PetFinder.Areas.Identity.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = null)
         {
+            
             returnUrl ??= Url.Content("~/");
 
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
@@ -81,6 +94,29 @@ namespace PetFinder.Areas.Identity.Pages.Account
             {
                 // This doesn't count login failures towards account lockout
                 // To enable password failures to trigger account lockout, set lockoutOnFailure: true
+
+                var user = await _userManager.FindByNameAsync(Input.Email);
+
+                if(user != null && await _userManager.CheckPasswordAsync(user, Input.Password))
+                {
+                    GenericResult<string> resultJwt = await _jwtService.GetJwt(Input.Email, Input.Password);
+                    if (resultJwt.Success)
+                    {
+
+                        // Si el usuario tiene el claim de JWT lo elimino y agrego uno nuevo
+                        var claimJwt = _context.UserClaims.
+                            Where(x => x.ClaimType == "JWT" && x.UserId == user.Id).FirstOrDefault();
+
+                        if (claimJwt != null)
+                        {
+                            _context.UserClaims.Remove(claimJwt);
+                            await _context.SaveChangesAsync();
+                        }                       
+                        await _userManager.AddClaimAsync(user, new Claim("JWT", resultJwt.value));
+                    }
+                }
+                
+
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
