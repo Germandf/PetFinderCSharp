@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
@@ -15,6 +16,8 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using PetFinder.Data;
+using PetFinder.Data.Interfaces;
+using PetFinder.Helpers;
 
 namespace PetFinder.Areas.Identity.Pages.Account
 {
@@ -26,19 +29,22 @@ namespace PetFinder.Areas.Identity.Pages.Account
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly IAuthJwtService _jwtService;
 
         public RegisterModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             ILogger<RegisterModel> logger,
             IEmailSender emailSender,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            IAuthJwtService jwtService)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
             _roleManager = roleManager;
+            _jwtService = jwtService;
         }
 
         [BindProperty]
@@ -139,8 +145,12 @@ namespace PetFinder.Areas.Identity.Pages.Account
                         }
 
 
-
-                        await _signInManager.SignInAsync(user, isPersistent: true);
+                        GenericResult<string> resultJwt = await _jwtService.GetJwt(Input.Email, Input.Password);
+                        if (resultJwt.Success)
+                        {
+                            await _userManager.AddClaimAsync(user, new Claim("JWT", resultJwt.value));
+                        }
+                        await _signInManager.SignInAsync(user, isPersistent: false);
                         return LocalRedirect(returnUrl);
                     }
                 }

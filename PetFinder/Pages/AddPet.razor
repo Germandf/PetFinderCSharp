@@ -166,6 +166,7 @@
         base.OnInitialized();
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var userClaims = authState.User;
+        
         userId = userManager.GetUserId(userClaims);
 
         if (!userClaims.Identity.IsAuthenticated) //Si no está autenticado redirigimos

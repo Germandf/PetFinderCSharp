@@ -23,20 +23,17 @@ namespace PetFinderApi.Controllers
     public class AuthController : Controller
     {
         private readonly ILogger<CommentsController> _logger;
-        private readonly PetFinderContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly IJWTService _jwtService;
 
         public AuthController(
             ILogger<CommentsController> logger,
-            PetFinderContext context,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IJWTService jwtService)
         {
             _logger = logger;
-            _context = context;
             _userManager = userManager;
             _signInManager = signInManager;
             _jwtService = jwtService;

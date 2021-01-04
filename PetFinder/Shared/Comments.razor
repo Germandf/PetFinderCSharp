@@ -1,7 +1,12 @@
 ﻿@using PetFinder.Areas.Identity;
 @using Newtonsoft.Json;
-@inject IApplicationUserService ApplicationUserService
+@using PetFinder.Areas.Identity.Extensions;
+@using Microsoft.Extensions.Configuration;
+@using System.Net.Http.Headers;
 
+@inject IApplicationUserService ApplicationUserService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IConfiguration Configuration
 <div class="row">
     <h3 class="petSubTitle mt-3 mx-4">Comentarios</h3>
     <section class="mb-2 col-12">
@@ -110,8 +115,8 @@
     public int PetId { get; set; }
 
     private readonly HttpClient httpClient = new HttpClient();
-    private string url = "https://localhost:44306/api/comentarios";
     private ApplicationUser user = null;
+    private string JWT { get; set; }
 
     private Comment newComment = new Comment();
     private List<Comment> comments = new List<Comment>();
@@ -119,15 +124,24 @@
     private Modal confirmationModal { get; set; }
     private Modal errorModal { get; set; }
     private Modal successModal { get; set; }
+    private string URLApiComments { get; set; }
+
 
     protected override async Task OnInitializedAsync()
     {
+
         user = await ApplicationUserService.GetCurrent();
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var userClaims = authState.User;
+        URLApiComments = Configuration["UrlApiController"]+"comentarios";
         await GetComments();
+        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userClaims.Identity.GetJwt());
+
     }
 
     private async void CreateComment(Comment comment)
     {
+
         comment.PetId = PetId;
         comment.UserId = user.Id;
         // Preparo content del post
@@ -136,15 +150,17 @@
         var byteContent = new ByteArrayContent(buffer);
         byteContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
         // POST api/comentarios
-        HttpResponseMessage response = await httpClient.PostAsync(url, byteContent);
+        HttpResponseMessage response = await httpClient.PostAsync(URLApiComments, byteContent);
         await CheckResponse(response);
         newComment.Message = "";
     }
 
     private async Task GetComments()
     {
+
+
         // GET api/comentarios/id
-        HttpResponseMessage response = await httpClient.GetAsync(url + "/mascota/" + PetId.ToString());
+        HttpResponseMessage response = await httpClient.GetAsync(URLApiComments + "/mascota/" + PetId.ToString());
         Comment[] commentsFromApi = await response.Content.ReadAsAsync<Comment[]>();
         comments.Clear();
         comments.AddRange(commentsFromApi);
@@ -166,7 +182,7 @@
             var byteContent = new ByteArrayContent(buffer);
             byteContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
             // PUT api/comentarios/id
-            HttpResponseMessage response = await httpClient.PutAsync(url + "/" + comment.Id.ToString(), byteContent);
+            HttpResponseMessage response = await httpClient.PutAsync(URLApiComments + "/" + comment.Id.ToString(), byteContent);
             await CheckResponse(response);
         });
     }
@@ -178,7 +194,7 @@
         confirmationModal.OnConfirm(async () =>
         {
             // DELETE api/comentarios/id
-            HttpResponseMessage response = await httpClient.DeleteAsync(url + "/" + comment.Id.ToString());
+            HttpResponseMessage response = await httpClient.DeleteAsync(URLApiComments + "/" + comment.Id.ToString());
             await CheckResponse(response);
         });
     }
