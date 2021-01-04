@@ -10,9 +10,7 @@
 - Agregar variable de entorno PetFinderJWTSecret con un código secreto generado al azar
 
 ## Cuenta de administrador
-**Mail**: admin@petfinder.com.ar
-
-**Password**: sysadmin
+- La primer cuenta en registrarse una vez creada la base de datos, se proclamará automáticamente como administrador. Luego podrá ascender a otros usuarios a administrador si así lo desea.
 
 ## Integrantes
 Los integrantes del equipo son:
