@@ -16,17 +16,17 @@
                     <li class="list-group-item pl-0">Animal: @pet.AnimalType.Name</li>
                 </ul>
                 <div class="text-right">
-                    <a href="ver/#" class="btn bg-orange text-white">Ver más</a>
+                    <a href="ver/#" class="btn bg-orange text-white mt-2">Ver más</a>
                     <AuthorizeView>
                         <Authorized>
                             @if (user.isAdmin() || pet.UserId == user.Id)
                             {
-                                <a href="editar-mascota/@pet.Id" class="btn bg-orange-dark text-white ml-1">Editar</a>
-                                <button @onclick="() => setFound()" class=" btn bg-orange-dark text-white mt-1">Lo encontre</button>
+                                <a href="editar-mascota/@pet.Id" class="btn bg-orange-dark text-white mt-2 ml-1">Editar</a>
+                                <button @onclick="() => setFound()" class=" btn bg-orange-dark text-white mt-2 ml-1">Lo encontre</button>
                             }
                             @if (user.isAdmin())
                             {
-                                <button @onclick="() => Delete()" class="btn bg-red text-white mt-1">Eliminar</button>
+                                <button @onclick="() => Delete()" class="btn bg-red text-white mt-2 ml-2">Eliminar</button>
                             }
                         </Authorized>
                     </AuthorizeView>
