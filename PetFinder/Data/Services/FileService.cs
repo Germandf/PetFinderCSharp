@@ -31,7 +31,7 @@ namespace PetFinder.Data
                 Directory.CreateDirectory(absolutePath);
         }
 
-        public async Task<GenericResult<string>> UploadAsync(IFileListEntry fileEntry)
+        public async Task<GenericResult<string>> UploadPetPhotoAsync(IFileListEntry fileEntry)
         {
             GenericResult<string> result = new GenericResult<string>();
             CreateImagesFolder(); // Creo el directorio donde voy a guardar las imagenes

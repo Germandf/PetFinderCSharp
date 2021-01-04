@@ -154,7 +154,7 @@ namespace PetFinder.Data
 
             if (photo != null) // Puede ser que la imagen sea nula porque estemos editando y no cambiamos la foto
             {
-                GenericResult<string> resultImage  = (await _fileService.UploadAsync(photo));
+                GenericResult<string> resultImage  = (await _fileService.UploadPetPhotoAsync(photo));
                 if (resultImage.Success) pet.Photo = resultImage.value; // Si la imagen se subio bien le asignamos la url a la mascota
                 else result.AddRange(resultImage.Errors);
             }
