@@ -52,7 +52,6 @@ namespace PetFinder.Data
             return await _context.SaveChangesAsync() > 0;
         }
 
-
         public async Task<GenericResult> Save(AnimalType animalType)
         {
             GenericResult result = new GenericResult();
@@ -82,10 +81,11 @@ namespace PetFinder.Data
             }
             return result;
         }
+
         public bool IsValidName(string name) { 
             if (name == null) return false;
             if(name.Length <= 0 || name.Length > 35) return false;
-            // Checkeo que sean caracteres de a - Z con espacios
+            // Chequeo que sean caracteres de a - Z con espacios
             var match = Regex.Match(name, "^[a-zA-Z ]+$");
             if (!match.Success) return false;
             return true;
@@ -101,7 +101,7 @@ namespace PetFinder.Data
             return false;
         }
 
-        public async Task<bool> HasNoPetsAssociated(AnimalType animalType)
+        public async Task<bool> HasPetsAssociated(AnimalType animalType)
         {
             var petsFromThisAnimalType = await _context.Pets.
                 Include(p => p.AnimalType).
@@ -109,9 +109,9 @@ namespace PetFinder.Data
                 ToListAsync();
             if (petsFromThisAnimalType.Count() == 0)
             {
-                return true;
+                return false;
             }
-            return false;
+            return true;
         }
     }
 

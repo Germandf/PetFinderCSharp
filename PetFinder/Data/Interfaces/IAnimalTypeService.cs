@@ -71,6 +71,6 @@ namespace PetFinder.Data
         /// <returns>
         /// A bool that indicates if there is at least one
         /// </returns>
-        Task<bool> HasNoPetsAssociated(AnimalType animalType);
+        Task<bool> HasPetsAssociated(AnimalType animalType);
     }
 }
