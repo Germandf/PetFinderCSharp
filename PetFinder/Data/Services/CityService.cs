@@ -102,7 +102,7 @@ namespace PetFinder.Data
             return false;
         }
 
-        public async Task<bool> HasNoPetsAssociated(City city)
+        public async Task<bool> HasPetsAssociated(City city)
         {
             var petsFromThisCity = await _context.Pets.
                 Include(p => p.City).
@@ -110,9 +110,9 @@ namespace PetFinder.Data
                 ToListAsync();
             if(petsFromThisCity.Count() == 0)
             {
-                return true;
+                return false;
             }
-            return false;
+            return true;
         }
     }
 

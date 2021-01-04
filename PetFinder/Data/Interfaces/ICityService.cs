@@ -17,6 +17,6 @@ namespace PetFinder.Data
         Task<GenericResult> Save(City city);
         bool IsValidName(string name);
         Task<bool> IsRepeated(string name);
-        Task<bool> HasNoPetsAssociated(City city);
+        Task<bool> HasPetsAssociated(City city);
     }
 }

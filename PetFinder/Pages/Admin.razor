@@ -203,11 +203,7 @@
     private async Task DeleteCity(City city)
     {
         bool result = false;
-        if (await CityService.HasNoPetsAssociated(city))
-        {
-            result = await CityService.Delete(city.Id);
-        }
-        else
+        if (await CityService.HasPetsAssociated(city))
         {
             confirmationModal.isWarning = true;
             confirmationModal.Open();
@@ -215,6 +211,10 @@
             {
                 result = await CityService.Delete(city.Id);
             });
+        }
+        else
+        {
+            result = await CityService.Delete(city.Id);
         }
         if (result)
         {
