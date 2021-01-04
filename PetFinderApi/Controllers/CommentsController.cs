@@ -25,7 +25,7 @@ namespace PetFinderApi.Controllers
         private readonly ICommentService _commentService;
         private readonly IJWTService _JWTService;
 
-        public CommentsController(ILogger<CommentsController> logger,
+        public CommentsController(  ILogger<CommentsController> logger,
                                     PetFinderContext context,
                                     ICommentService commentService,
                                     IJWTService jwtService)
@@ -36,7 +36,6 @@ namespace PetFinderApi.Controllers
             _JWTService = jwtService;
         }
 
-        // Obtiene un comentario segun su ID
         /// <summary>
         /// Gets a comment
         /// </summary>
@@ -46,8 +45,6 @@ namespace PetFinderApi.Controllers
         /// <param name="id">Comment's id</param>
         /// <response code="200">Returns the comment</response>
         /// <response code="404">If the comment wasn't found</response>
-        /// <response code="401">If the user isn't loged or can't delete</response>
-
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("comentarios/{id}")]
@@ -64,7 +61,6 @@ namespace PetFinderApi.Controllers
             }
         }
 
-        // Crea un comentario
         /// <summary>
         /// Creates a comment
         /// </summary>
@@ -73,8 +69,10 @@ namespace PetFinderApi.Controllers
         /// </remarks>
         /// <param name="comment">Comment's content</param>
         /// <response code="201">The comment was created</response>
+        /// <response code="401">If the user isn't logged in</response>
         /// <response code="409">If the comment couldn't be created</response>
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPost("comentarios")]
         [Authorize]
@@ -84,7 +82,6 @@ namespace PetFinderApi.Controllers
             if (wasCreated)
             {
                 return Created(new Uri($"{Request.Path}/{comment.Id}", UriKind.Relative), comment);
-                //return StatusCode(201, comment);
             }
             else
             {
@@ -92,7 +89,6 @@ namespace PetFinderApi.Controllers
             }
         }
 
-        // Modifica un comentario segun su ID
         /// <summary>
         /// Modifies a comment
         /// </summary>
@@ -102,9 +98,11 @@ namespace PetFinderApi.Controllers
         /// <param name="id">Comment's id</param>
         /// <param name="comment">Comment's content</param>
         /// <response code="200">The comment was modified</response>
+        /// <response code="401">If the user isn't logged in</response>
         /// <response code="404">If the comment wasn't found</response>
         /// <response code="409">If the comment couldn't be modified</response>
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPut("comentarios/{id}")]
@@ -136,7 +134,6 @@ namespace PetFinderApi.Controllers
             }
         }
 
-        // Elimina un comentario segun su ID
         /// <summary>
         /// Deletes a comment
         /// </summary>
@@ -145,9 +142,11 @@ namespace PetFinderApi.Controllers
         /// </remarks>
         /// <param name="id">Comment's id</param>
         /// <response code="200">The comment was deleted</response>
+        /// <response code="401">If the user isn't logged in</response>
         /// <response code="404">If the comment wasn't found</response>
         /// <response code="409">If the comment couldn't be deleted</response>
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)] 
         [HttpDelete("comentarios/{id}")]
@@ -162,7 +161,6 @@ namespace PetFinderApi.Controllers
                 {
                     return Unauthorized();
                 }
-
                 bool wasDeleted = await _commentService.Delete(id);
                 if (wasDeleted)
                 {
@@ -179,7 +177,6 @@ namespace PetFinderApi.Controllers
             }
         }
 
-        // Obtiene todos los comentarios de una mascota segun su ID
         /// <summary>
         /// Gets all comments from a pet
         /// </summary>
