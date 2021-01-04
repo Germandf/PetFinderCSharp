@@ -50,7 +50,7 @@ namespace PetFinder.Data
         Task<bool> Delete(int id);
 
         /// <summary>
-        /// Insert or Update an AnimalType depending on the case.
+        /// Inserts or Updates an AnimalType depending on the case.
         /// </summary>
         /// <returns>
         /// A GenericResult that indicates if it was successfull or not
@@ -58,7 +58,7 @@ namespace PetFinder.Data
         Task<GenericResult> Save(AnimalType animalType);
 
         /// <summary>
-        /// Check if a name is used by an already created AnimalType
+        /// Checks if the name is used by an already created AnimalType
         /// </summary>
         /// <returns>
         /// A bool that indicates if it's being used or not
@@ -66,7 +66,7 @@ namespace PetFinder.Data
         Task<bool> IsRepeated(string name);
 
         /// <summary>
-        /// Check if exists a Pet that depends on a specific AnimalType
+        /// Checks if exists a Pet that depends on a specific AnimalType
         /// </summary>
         /// <returns>
         /// A bool that indicates if there is at least one
