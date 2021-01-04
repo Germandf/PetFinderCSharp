@@ -49,15 +49,40 @@ namespace PetFinderApi.Data.Services
 
         public async Task<Comment> Get(int id)
         {
-            return await _context.Comments.FindAsync(id);
+            return await _context.Comments.
+                 Select(x =>
+                    new Comment
+                    {
+                        PetId = x.PetId,
+                        Id = x.Id,
+                        Rate = x.Rate,
+                        Message = x.Message,
+                        UserId = x.UserId,
+                        User = new ApplicationUser { Name = x.User.Name, Surname = x.User.Surname }
+                    }
+                ).
+                Where(x => x.Id == id).
+                FirstOrDefaultAsync();
         }
 
         public async Task<IEnumerable<Comment>> GetAllFromPet(int id)
         {
+
             return await _context.Comments.
                 Where(c => c.PetId == id).
+                Select(x => 
+                    new Comment
+                    {
+                        PetId = x.PetId,
+                        Id = x.Id,
+                        Rate = x.Rate,
+                        Message = x.Message,
+                        UserId = x.UserId,
+                        User = new ApplicationUser { Name = x.User.Name, Surname = x.User.Surname }
+                    }
+                ).
                 ToListAsync();
-        }
+    }
 
         public async Task<bool> Insert(Comment comment)
         {
