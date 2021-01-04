@@ -12,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PetFinder.Areas.Identity;
+using PetFinder.Data;
 using PetFinder.Models;
 using PetFinderApi.Data.Interfaces;
 using PetFinderApi.Data.Services;
@@ -104,6 +105,7 @@ namespace PetFinderApi
 
             services.AddScoped<ICommentService, CommentService>();
             services.AddScoped<IJWTService, JWTService>();
+            services.AddScoped<PetService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

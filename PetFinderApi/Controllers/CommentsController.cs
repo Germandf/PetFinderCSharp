@@ -13,6 +13,8 @@ using PetFinder.Data;
 using PetFinderApi.Data.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
+using PetFinder.Helpers;
+using PetFinderApi.Data.Services;
 
 namespace PetFinderApi.Controllers
 {
@@ -69,24 +71,27 @@ namespace PetFinderApi.Controllers
         /// </remarks>
         /// <param name="comment">Comment's content</param>
         /// <response code="201">The comment was created</response>
+        /// <response code="400">If the comment has incorrect data like a wrong petId or userId</response>
         /// <response code="401">If the user isn't logged in</response>
         /// <response code="409">If the comment couldn't be created</response>
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpPost("comentarios")]
         [Authorize]
         public async Task<ActionResult<Comment>> Insert([FromBody] Comment comment)
         {
-            bool wasCreated = await _commentService.Insert(comment);
-            if (wasCreated)
+            GenericResult wasCreated = await _commentService.Insert(comment);
+            if (wasCreated.Success)
             {
                 return Created(new Uri($"{Request.Path}/{comment.Id}", UriKind.Relative), comment);
             }
-            else
+            else if(wasCreated.Errors.Contains(CommentService.ERROR_SAVING_COMMENT))
             {
                 return Conflict();
             }
+            return BadRequest();
         }
 
         /// <summary>
@@ -98,10 +103,12 @@ namespace PetFinderApi.Controllers
         /// <param name="id">Comment's id</param>
         /// <param name="comment">Comment's content</param>
         /// <response code="200">The comment was modified</response>
+        /// <response code="400">If the comment has incorrect data like a wrong petId or userId</response>
         /// <response code="401">If the user isn't logged in</response>
         /// <response code="404">If the comment wasn't found</response>
         /// <response code="409">If the comment couldn't be modified</response>
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
@@ -114,24 +121,21 @@ namespace PetFinderApi.Controllers
             {
                 return Unauthorized();
             }
-            bool commentExists = await _commentService.Exists(id);
-            if (commentExists)
+            comment.Id = id;
+            GenericResult wasUpdated = await _commentService.Update(comment);
+            if (wasUpdated.Success)
             {
-                comment.Id = id;
-                bool wasUpdated = await _commentService.Update(comment);
-                if (wasUpdated)
-                {
-                    return Ok(comment);
-                }
-                else
-                {
-                    return Conflict();
-                }
+                return Ok(comment);
             }
-            else
+            else if (wasUpdated.Errors.Contains(CommentService.ERROR_COMMENT_NOT_FOUND))
             {
                 return NotFound();
             }
+            else if (wasUpdated.Errors.Contains(CommentService.ERROR_SAVING_COMMENT))
+            {
+                return Conflict();
+            }
+            return BadRequest();
         }
 
         /// <summary>
