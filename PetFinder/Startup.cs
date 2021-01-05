@@ -38,9 +38,12 @@ namespace PetFinder
         public void ConfigureServices(IServiceCollection services)
         {
             var mvcBuilder = services.AddControllersWithViews();
-            services.AddSerilogUi(mvcBuilder, options => options.UseSqlServer(
-                Environment.GetEnvironmentVariable("SQLServerPetfinder"),
-                "Logs")
+            services.AddSerilogUi(mvcBuilder, options => options
+                .EnableAuthorization(authOptions =>
+                {
+                    authOptions.Roles = new[] { ApplicationUserService.ROLE_ADMIN };
+                })
+                .UseSqlServer(Environment.GetEnvironmentVariable("SQLServerPetfinder"), "Logs")
             );
 
             Configuration["UrlApiController"] = Configuration.GetValue<string>("apiCommentsURL");
