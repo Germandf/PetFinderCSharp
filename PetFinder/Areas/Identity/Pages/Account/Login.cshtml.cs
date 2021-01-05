@@ -10,13 +10,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.Extensions.Logging;
 using System.Security.Claims;
 using PetFinder.Helpers;
 using PetFinder.Data.Interfaces;
 using Microsoft.AspNetCore.Http;
 using PetFinder.Areas.Identity.Extensions;
 using PetFinder.Models;
+using Serilog;
 
 namespace PetFinder.Areas.Identity.Pages.Account
 {
@@ -25,12 +25,12 @@ namespace PetFinder.Areas.Identity.Pages.Account
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly ILogger<LoginModel> _logger;
+        private readonly ILogger _logger;
         private readonly IAuthJwtService _jwtService;
         private readonly PetFinderContext _context;
 
         public LoginModel(SignInManager<ApplicationUser> signInManager, 
-            ILogger<LoginModel> logger,
+            ILogger logger,
             UserManager<ApplicationUser> userManager,
             IAuthJwtService jwtService,
             PetFinderContext context)
@@ -102,7 +102,6 @@ namespace PetFinder.Areas.Identity.Pages.Account
                     GenericResult<string> resultJwt = await _jwtService.GetJwt(Input.Email, Input.Password);
                     if (resultJwt.Success)
                     {
-
                         // Si el usuario tiene el claim de JWT lo elimino y agrego uno nuevo
                         var claimJwt = _context.UserClaims.
                             Where(x => x.ClaimType == "JWT" && x.UserId == user.Id).FirstOrDefault();
@@ -120,7 +119,7 @@ namespace PetFinder.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    _logger.LogInformation("User logged in.");
+                    _logger.Information("User logged in.");
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
@@ -129,7 +128,7 @@ namespace PetFinder.Areas.Identity.Pages.Account
                 }
                 if (result.IsLockedOut)
                 {
-                    _logger.LogWarning("User account locked out.");
+                    _logger.Warning("User account locked out.");
                     return RedirectToPage("./Lockout");
                 }
                 else

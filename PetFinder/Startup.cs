@@ -17,6 +17,8 @@ using PetFinder.Areas.Identity.Helper;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
 using PetFinder.Data.Interfaces;
+using Serilog;
+using Serilog.Sinks.MSSqlServer;
 
 namespace PetFinder
 {
@@ -38,6 +40,15 @@ namespace PetFinder
                     options.UseSqlServer(Environment.GetEnvironmentVariable("SQLServerPetfinder")),
                     ServiceLifetime.Transient
                   );
+
+            services.AddSingleton(
+                (ILogger)new LoggerConfiguration()
+                    .WriteTo
+                    .MSSqlServer(
+                        connectionString: Environment.GetEnvironmentVariable("SQLServerPetfinder"),
+                        sinkOptions: new MSSqlServerSinkOptions { TableName = "LogEvents" })
+                    .CreateLogger()
+            );
             services.AddDefaultIdentity<ApplicationUser>(options => 
             {
                 options.SignIn.RequireConfirmedAccount = false;
