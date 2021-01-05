@@ -51,18 +51,14 @@ namespace PetFinder
                     options.UseSqlServer(Environment.GetEnvironmentVariable("SQLServerPetfinder")),
                     ServiceLifetime.Transient
                   );
-
             services.AddSingleton(
                 (ILogger)new LoggerConfiguration()
-                    .WriteTo
-                    .MSSqlServer(
+                    .MinimumLevel.Information()
+                    .WriteTo.MSSqlServer(
                         connectionString: Environment.GetEnvironmentVariable("SQLServerPetfinder"),
                         sinkOptions: new MSSqlServerSinkOptions { TableName = "Logs" })
                     .CreateLogger()
-            );
-
-            
-
+            ); 
             services.AddDefaultIdentity<ApplicationUser>(options => 
             {
                 options.SignIn.RequireConfirmedAccount = false;
@@ -96,9 +92,7 @@ namespace PetFinder
 
             services.AddHttpContextAccessor();
 
-            services.AddControllers();
-
-           
+            services.AddControllers();  
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
