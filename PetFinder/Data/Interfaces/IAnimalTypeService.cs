@@ -53,7 +53,7 @@ namespace PetFinder.Data
         /// Inserts or Updates an AnimalType depending on the case.
         /// </summary>
         /// <returns>
-        /// A GenericResult that indicates if it was successfull or not
+        /// A GenericResult that indicates if it was successfull or not, if not, it will contain the error/s
         /// </returns>
         Task<GenericResult> Save(AnimalType animalType);
 
