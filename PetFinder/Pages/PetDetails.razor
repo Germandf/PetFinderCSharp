@@ -73,6 +73,6 @@
     protected override async Task OnInitializedAsync()
     {
         pet = await PetService.Get(id);
-        user = await userService.getById(pet.UserId);
+        user = await userService.GetById(pet.UserId);
     }
 }
