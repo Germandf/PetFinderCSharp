@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using PetFinder.Areas.Identity;
 using PetFinder.Models;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,14 +20,17 @@ namespace PetFinder.Data
         private readonly PetFinderContext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly ILogger _loger;
 
         public ApplicationUserService(PetFinderContext context, 
             UserManager<ApplicationUser> userManager,
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            ILogger loger)
         {
             _context = context;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
+            _loger = loger;
         }
 
         public async Task<bool> Downgrade(String userId)
@@ -34,11 +38,19 @@ namespace PetFinder.Data
             ApplicationUser user = await _userManager.FindByIdAsync(userId);
 
             IdentityResult resultRemoveRole = await _userManager.AddToRoleAsync(user, "Normal");
+            var currUser = await GetCurrent();
+
             if (resultRemoveRole.Succeeded)
             {
                 IdentityResult resultAdd = await _userManager.RemoveFromRoleAsync(user, "Administrator");
-                return resultAdd.Succeeded;
+
+                if (resultAdd.Succeeded)
+                {
+                    _loger.Information("{user} role changed to NORMAL USER by {currUser}", user.Email, currUser.Email);
+                    return true;
+                }
             }
+            _loger.Warning("{currUser} try to change role to NORMAL USER of {user} without success", currUser.Email, user.Email);
             return false;
         }
         public async Task<bool> Upgrade(String userId)
@@ -46,11 +58,20 @@ namespace PetFinder.Data
             ApplicationUser user = await _userManager.FindByIdAsync(userId);
 
             IdentityResult resultAdd = await _userManager.RemoveFromRoleAsync(user, "Normal");
+            var currUser = await GetCurrent();
+
             if (resultAdd.Succeeded)
             {
                 IdentityResult resultRemoveRole = await _userManager.AddToRoleAsync(user, "Administrator");
-                return resultRemoveRole.Succeeded;
+                if (resultRemoveRole.Succeeded)
+                {
+                    _loger.Information("{user} role changed to ADMIN by {currUser}", user.Email, currUser.Email);
+
+                    return true;
+                }
             }
+            _loger.Warning("{currUser} try to change role to ADMIN of {user} without success", currUser.Email, user.Email);
+
             return false;
         }
         public async Task<ApplicationUser> GetCurrent()
@@ -72,7 +93,14 @@ namespace PetFinder.Data
         }
         public async Task<IdentityResult> DeleteAsync(ApplicationUser user)
         {
-            return await _userManager.DeleteAsync(await _userManager.FindByIdAsync(user.Id));
+            IdentityResult result = await _userManager.DeleteAsync(await _userManager.FindByIdAsync(user.Id));
+
+            var currUser = await GetCurrent();
+            if (result.Succeeded)
+                _loger.Information("{currUser} deleted by {user} successfully", user.Email, currUser.Email );
+            else
+                _loger.Warning("{currUser} try delete  {user} without success", currUser.Email, user.Email);
+            return result;
         }
         public async Task<IEnumerable<ApplicationUser>> GetAll()
         {
