@@ -35,14 +35,12 @@ namespace PetFinder.Data
             byteContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
             // POST api/auth
             HttpResponseMessage response = await httpClient.PostAsync(URLApiAuth, byteContent);
-
             GenericResult<string> result = new GenericResult<string>();
             if (response.IsSuccessStatusCode)// Deberia devolver algo así {token: [jwt]}
             {
                 string source = await response.Content.ReadAsStringAsync();
                 var tokenObj = JObject.Parse(source);
                 result.value = Convert.ToString(tokenObj["token"]);
-
             }
             else
             {
@@ -51,6 +49,7 @@ namespace PetFinder.Data
             return result;
         }
     }
+
     public class LoginModel
     {
         public string Email { get; set; }
