@@ -8,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PetFinder.Areas.Identity;
@@ -16,6 +15,8 @@ using PetFinder.Data;
 using PetFinder.Models;
 using PetFinderApi.Data.Interfaces;
 using PetFinderApi.Data.Services;
+using Serilog;
+using Serilog.Sinks.MSSqlServer;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -72,6 +73,15 @@ namespace PetFinderApi
                     options.UseSqlServer(Environment.GetEnvironmentVariable("SQLServerPetfinder")),
                     ServiceLifetime.Transient
                   );
+
+            services.AddSingleton(
+                (ILogger)new LoggerConfiguration()
+                    .MinimumLevel.Information()
+                    .WriteTo.MSSqlServer(
+                        connectionString: Environment.GetEnvironmentVariable("SQLServerPetfinder"),
+                        sinkOptions: new MSSqlServerSinkOptions { TableName = "Logs" })
+                    .CreateLogger()
+            );
 
             // ===== Add Identity ========
             services.AddIdentity<ApplicationUser, IdentityRole>()

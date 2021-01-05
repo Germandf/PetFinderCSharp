@@ -47,10 +47,12 @@ namespace PetFinder
             );
 
             Configuration["UrlApiController"] = Configuration.GetValue<string>("apiCommentsURL");
+
             services.AddDbContext<PetFinderContext>(options =>
                     options.UseSqlServer(Environment.GetEnvironmentVariable("SQLServerPetfinder")),
                     ServiceLifetime.Transient
                   );
+
             services.AddSingleton(
                 (ILogger)new LoggerConfiguration()
                     .MinimumLevel.Information()
@@ -58,7 +60,7 @@ namespace PetFinder
                         connectionString: Environment.GetEnvironmentVariable("SQLServerPetfinder"),
                         sinkOptions: new MSSqlServerSinkOptions { TableName = "Logs" })
                     .CreateLogger()
-            ); 
+            );
             services.AddDefaultIdentity<ApplicationUser>(options => 
             {
                 options.SignIn.RequireConfirmedAccount = false;
