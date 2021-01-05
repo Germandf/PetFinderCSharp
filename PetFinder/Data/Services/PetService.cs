@@ -112,7 +112,6 @@ namespace PetFinder.Data
         public async Task<bool> Insert(Pet pet)
         {
             _context.Pets.Add(pet);
-            _logger.Information("Pet {name} created", pet.Name);
             return await _context.SaveChangesAsync() > 0;
         }
 
@@ -182,7 +181,6 @@ namespace PetFinder.Data
                 _context.Entry(pet).State = EntityState.Modified;
                 if (await _context.SaveChangesAsync() > 0) 
                 {
-                    _logger.Information("Pet {name} updated, Id: {id}", pet.Name, pet.Id);
                     return result;
                 } 
                 else result.AddError(ERROR_SAVING);

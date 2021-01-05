@@ -5,6 +5,7 @@ using PetFinder.Data;
 using PetFinder.Helpers;
 using PetFinder.Models;
 using PetFinderApi.Data.Interfaces;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,15 +22,18 @@ namespace PetFinderApi.Data.Services
         public static string ERROR_COMMENT_NOT_FOUND = "El comentario no existe";
 
         private readonly PetFinderContext _context;
+        private readonly ILogger _logger;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly PetService _petService;
         #endregion
 
-        public CommentService(  PetFinderContext context, 
+        public CommentService(  PetFinderContext context,
+                                ILogger logger,
                                 UserManager<ApplicationUser> userManager,
                                 PetService petService)
         {
             _context = context;
+            _logger = logger;
             _userManager = userManager;
             _petService = petService;
         }
@@ -56,6 +60,7 @@ namespace PetFinderApi.Data.Services
         {
             var comment = await _context.Comments.FindAsync(id);
             _context.Comments.Remove(comment);
+            _logger.Warning("Comment {message} deleted, Id: {id}", comment.Message, comment.Id);
             return await _context.SaveChangesAsync() > 0;
         }
 
