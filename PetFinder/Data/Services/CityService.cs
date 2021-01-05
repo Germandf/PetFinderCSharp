@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PetFinder.Helpers;
 using PetFinder.Models;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,19 +12,23 @@ namespace PetFinder.Data
     public class CityService : ICityService
     {
         private readonly PetFinderContext _context;
+        private readonly ILogger _logger;
         public const string INVALID_NAME_ERROR = "El nombre ingresado no corresponde a un nombre valido";
         public const string REPEATED_CITY_ERROR = "Ya existe la ciudad";
         public const string SAVING_ERROR = "Ocurrio un error al guardar";
 
-        public CityService(PetFinderContext context)
+        public CityService( PetFinderContext context,
+                            ILogger logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<bool> Delete(int id)
         {
             var city = await _context.Cities.FindAsync(id);
             _context.Cities.Remove(city);
+            _logger.Information("City {name} deleted, Id: {id}", city.Name, city.Id);
             return await _context.SaveChangesAsync() > 0;
         }
 
@@ -40,6 +45,7 @@ namespace PetFinder.Data
         public async Task<bool> Insert(City city)
         {
             _context.Cities.Add(city);
+            _logger.Information("City {name} created", city.Name);
             return await _context.SaveChangesAsync() > 0;
         }
 
@@ -76,6 +82,7 @@ namespace PetFinder.Data
         public async Task<bool> Update(City city)
         {
             _context.Entry(city).State = EntityState.Modified;
+            _logger.Warning("City {name} updated, Id: {id}", city.Name, city.Id);
             return await _context.SaveChangesAsync() > 0;
         }
 
