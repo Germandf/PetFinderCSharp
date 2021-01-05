@@ -119,7 +119,7 @@ namespace PetFinder.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
-                    _logger.Information("User logged in.");
+                    _logger.Information("{User} logged in.", user.Email);
                     return LocalRedirect(returnUrl);
                 }
                 if (result.RequiresTwoFactor)
@@ -128,7 +128,7 @@ namespace PetFinder.Areas.Identity.Pages.Account
                 }
                 if (result.IsLockedOut)
                 {
-                    _logger.Warning("User account locked out.");
+                    _logger.Warning("{User} account locked out.", user.Email);
                     return RedirectToPage("./Lockout");
                 }
                 else
