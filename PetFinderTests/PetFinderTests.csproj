@@ -17,6 +17,8 @@
     <PackageReference Include="Serilog" Version="2.10.0" />
     <PackageReference Include="Serilog.Extensions.Logging" Version="3.0.1" />
     <PackageReference Include="Serilog.Sinks.MSSqlServer" Version="5.6.0" />
+    <PackageReference Include="Serilog.UI" Version="1.0.5" />
+    <PackageReference Include="Serilog.UI.MsSqlServerProvider" Version="1.0.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
     <PackageReference Include="Verify.Bunit" Version="6.4.0" />
     <PackageReference Include="xunit" Version="2.4.1" />

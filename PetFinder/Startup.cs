@@ -19,6 +19,8 @@ using System.IO;
 using PetFinder.Data.Interfaces;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
+using Serilog.Ui.Web;
+using Serilog.Ui.MsSqlServerProvider;
 
 namespace PetFinder
 {
@@ -35,6 +37,12 @@ namespace PetFinder
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            var mvcBuilder = services.AddControllersWithViews();
+            services.AddSerilogUi(mvcBuilder, options => options.UseSqlServer(
+                Environment.GetEnvironmentVariable("SQLServerPetfinder"),
+                "Logs")
+            );
+
             Configuration["UrlApiController"] = Configuration.GetValue<string>("apiCommentsURL");
             services.AddDbContext<PetFinderContext>(options =>
                     options.UseSqlServer(Environment.GetEnvironmentVariable("SQLServerPetfinder")),
@@ -46,9 +54,12 @@ namespace PetFinder
                     .WriteTo
                     .MSSqlServer(
                         connectionString: Environment.GetEnvironmentVariable("SQLServerPetfinder"),
-                        sinkOptions: new MSSqlServerSinkOptions { TableName = "LogEvents" })
+                        sinkOptions: new MSSqlServerSinkOptions { TableName = "Logs" })
                     .CreateLogger()
             );
+
+            
+
             services.AddDefaultIdentity<ApplicationUser>(options => 
             {
                 options.SignIn.RequireConfirmedAccount = false;
@@ -112,6 +123,7 @@ namespace PetFinder
                 endpoints.MapControllers();
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
+                endpoints.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }
