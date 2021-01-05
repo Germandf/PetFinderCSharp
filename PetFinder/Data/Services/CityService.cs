@@ -28,7 +28,7 @@ namespace PetFinder.Data
         {
             var city = await _context.Cities.FindAsync(id);
             _context.Cities.Remove(city);
-            _logger.Information("City {name} deleted, Id: {id}", city.Name, city.Id);
+            _logger.Warning("City {name} deleted, Id: {id}", city.Name, city.Id);
             return await _context.SaveChangesAsync() > 0;
         }
 
@@ -82,7 +82,7 @@ namespace PetFinder.Data
         public async Task<bool> Update(City city)
         {
             _context.Entry(city).State = EntityState.Modified;
-            _logger.Warning("City {name} updated, Id: {id}", city.Name, city.Id);
+            _logger.Information("City {name} updated, Id: {id}", city.Name, city.Id);
             return await _context.SaveChangesAsync() > 0;
         }
 

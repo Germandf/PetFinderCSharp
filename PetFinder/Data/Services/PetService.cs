@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PetFinder.Areas.Identity;
 using PetFinder.Helpers;
 using PetFinder.Models;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,19 +25,24 @@ namespace PetFinder.Data
         const string ERROR_SAVING           = "Ocurrió un error al guardar el usuario";
 
         private readonly PetFinderContext _context;
+        private readonly ILogger _logger;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IApplicationUserService _applicationUserService;
         private readonly IFileService _fileService;
+
         public PetService(PetFinderContext context)
         {
             _context = context;
         }
 
-        public PetService(PetFinderContext context,
-                          IApplicationUserService applicationUserService,
-                          UserManager<ApplicationUser> userManager, IFileService fileService)
+        public PetService(  PetFinderContext context,
+                            ILogger logger,
+                            IApplicationUserService applicationUserService,
+                            UserManager<ApplicationUser> userManager, 
+                            IFileService fileService)
         {
             _context = context;
+            _logger = logger;
             _userManager = userManager;
             _applicationUserService = applicationUserService;
             _fileService = fileService;
@@ -58,6 +64,7 @@ namespace PetFinder.Data
             if (await CurrUserCanEdit(pet))
             {
                 _context.Pets.Remove(pet);
+                _logger.Warning("Pet {name} deleted, Id: {id}", pet.Name, pet.Id);
             }
             return await _context.SaveChangesAsync() > 0;
         }
@@ -105,15 +112,14 @@ namespace PetFinder.Data
         public async Task<bool> Insert(Pet pet)
         {
             _context.Pets.Add(pet);
+            _logger.Information("Pet {name} created", pet.Name);
             return await _context.SaveChangesAsync() > 0;
         }
 
         public bool IsValidName(string name)
         {
             if (name == null)
-            {
                 return false;
-            }
             else
             {
                 bool isValid = name.Length > 0 && name.Length <= 20;
@@ -142,16 +148,13 @@ namespace PetFinder.Data
         public async Task<GenericResult> Save(Pet pet, IFileListEntry photo)
         {
             GenericResult result = new GenericResult();
-
             ApplicationUser appUser = await _applicationUserService.GetCurrent();
             if (appUser == null)
             {
                 result.AddError(ERROR_INVALID_USER);
                 return result;
             }
-
             pet.UserId = appUser.Id;
-
             if (photo != null) // Puede ser que la imagen sea nula porque estemos editando y no cambiamos la foto
             {
                 GenericResult<string> resultImage  = (await _fileService.UploadPetPhotoAsync(photo));
@@ -159,7 +162,6 @@ namespace PetFinder.Data
                 else result.AddRange(resultImage.Errors);
             }
             result.Errors.AddRange(CheckPet(pet)); // Si devuelve errores los agrego para mostrarlos
-
             if (result.Success) // Si no hay errores guardo o actualizo
             {
                 // Si estamos editando
@@ -178,7 +180,11 @@ namespace PetFinder.Data
             if (await CurrUserCanEdit(pet))
             {
                 _context.Entry(pet).State = EntityState.Modified;
-                if (await _context.SaveChangesAsync() > 0) return result;
+                if (await _context.SaveChangesAsync() > 0) 
+                {
+                    _logger.Information("Pet {name} updated, Id: {id}", pet.Name, pet.Id);
+                    return result;
+                } 
                 else result.AddError(ERROR_SAVING);
             }
             else result.AddError(ERROR_INVALID_USER);
