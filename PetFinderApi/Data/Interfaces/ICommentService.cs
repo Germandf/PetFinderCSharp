@@ -59,7 +59,7 @@ namespace PetFinderApi.Data.Interfaces
         Task<bool> Exists(int id);
 
         /// <summary>
-        /// Checks if the current User in session has permissions on this Comment
+        /// Checks if a User has permissions on a Comment
         /// </summary>
         /// <returns>
         /// A bool that indicates if he has permissions or not

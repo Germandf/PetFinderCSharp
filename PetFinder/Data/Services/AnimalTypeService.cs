@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PetFinder.Helpers;
 using PetFinder.Models;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,20 +13,23 @@ namespace PetFinder.Data
     public class AnimalTypeService : IAnimalTypeService
     {
         private readonly PetFinderContext _context;
+        private readonly ILogger _logger;
         public const string INVALID_NAME_ERROR = "El nombre ingresado no corresponde a un nombre valido";
         public const string REPEATED_ANIMAL_TYPE_ERROR = "Ya existe el tipo de animal";
         public const string SAVING_ERROR = "Ocurrio un error al guardar";
 
-        public AnimalTypeService(PetFinderContext context)
+        public AnimalTypeService(   PetFinderContext context, 
+                                    ILogger logger)
         {
             _context = context;
+            _logger = logger;
         }
 
         public async Task<bool> Delete(int id)
         {
-            var animalTypeToDelte = await Get(id);
-            _context.Remove(animalTypeToDelte);
-            //Nos devuelve cuantas lineas elimino si elimino más que 0 quiere decir que elimino ok
+            var animalType = await Get(id);
+            _context.Remove(animalType);
+            _logger.Warning("AnimalType {name} deleted, Id: {id}", animalType.Name, animalType.Id);
             return await _context.SaveChangesAsync() > 0; 
         }
 
@@ -42,6 +46,7 @@ namespace PetFinder.Data
         public async Task<bool> Insert(AnimalType animalType)
         {
             _context.AnimalTypes.Add(animalType);
+            _logger.Information("AnimalType {name} created", animalType.Name);
             return await _context.SaveChangesAsync() > 0;
         }
 
@@ -49,6 +54,7 @@ namespace PetFinder.Data
         {
             //Le decimos a la DB que el animalType fue modificado
             _context.Entry(animalType).State = EntityState.Modified;
+            _logger.Information("AnimalType {name} updated, Id: {id}", animalType.Name, animalType.Id);
             return await _context.SaveChangesAsync() > 0;
         }
 
