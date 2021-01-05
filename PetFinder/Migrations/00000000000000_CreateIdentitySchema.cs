@@ -310,6 +310,27 @@ namespace BlazorApp4.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
 
                 });
+
+                migrationBuilder.CreateTable(
+                name: "Logs",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Message  = table.Column<string>(type: "nvarchar(MAX)", nullable: true),
+                    MessageTemplate = table.Column<string>(type: "nvarchar(MAX)", nullable: true),
+                    Level = table.Column<string>(type: "nvarchar(MAX)", nullable: false),
+                    TimeStamp = table.Column<DateTime>(type: "datetime", nullable: false),
+                    Exception = table.Column<string>(type: "nvarchar(MAX)", nullable: true),
+                    Properties = table.Column<string>(type: "nvarchar(MAX)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Logs", x => x.Id);
+
+                });
+
+
             migrationBuilder.CreateIndex(
                 name: "IX_Pets_AnimalTypeId",
                 table: "Pets",
