@@ -2,6 +2,7 @@
 using PetFinder.Data;
 using PetFinder.Helpers;
 using PetFinder.Models;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +15,12 @@ namespace PetFinderTests
     public class AnimalTypeTests
     {
         private PetFinderDbContextFactory dbContextFactory { get; set; }
+        private ILogger logger { get; set; }
 
         public AnimalTypeTests()
         {
             dbContextFactory = new PetFinderDbContextFactory();
+            logger = new LoggerConfiguration().CreateLogger();
         }
 
         public AnimalType CreateAnimalType(string name)
@@ -34,7 +37,7 @@ namespace PetFinderTests
             PetFinderContext context = dbContextFactory.CreateContext();
             AnimalType animalType = CreateAnimalType("Perro");
             AnimalType animalTypeRepeated = CreateAnimalType("Perro");
-            AnimalTypeService animalTypeService = new AnimalTypeService(context);
+            AnimalTypeService animalTypeService = new AnimalTypeService(context, logger);
 
             await animalTypeService.Save(animalType);
             GenericResult result = await animalTypeService.Save(animalTypeRepeated);
@@ -47,7 +50,7 @@ namespace PetFinderTests
         {
             PetFinderContext context = dbContextFactory.CreateContext();
             AnimalType animalType= CreateAnimalType("Perro Lobo");
-            AnimalTypeService animalTypeService = new AnimalTypeService(context);
+            AnimalTypeService animalTypeService = new AnimalTypeService(context, logger);
 
             await animalTypeService.Save(animalType);
             animalType.Name = "Edited mock";
@@ -63,7 +66,7 @@ namespace PetFinderTests
         {
             PetFinderContext context = dbContextFactory.CreateContext();
             AnimalType animalType = CreateAnimalType("Perro Lobo");
-            AnimalTypeService animalTypeService = new AnimalTypeService(context);
+            AnimalTypeService animalTypeService = new AnimalTypeService(context, logger);
 
             await animalTypeService.Save(animalType);
             AnimalType animalTypeGato = CreateAnimalType("Gato");
@@ -79,7 +82,7 @@ namespace PetFinderTests
         public void ShouldBeInvalidName()
         {
             PetFinderContext context = dbContextFactory.CreateContext();
-            AnimalTypeService cityService = new AnimalTypeService(context);
+            AnimalTypeService cityService = new AnimalTypeService(context, logger);
 
             string invalidName = "algo muy largo con muchos caracteres";
             bool isValid = cityService.IsValidName(invalidName);
@@ -92,7 +95,7 @@ namespace PetFinderTests
         public void ShouldBeInvalidNameIlegalCharacters()
         {
             PetFinderContext context = dbContextFactory.CreateContext();
-            AnimalTypeService cityService = new AnimalTypeService(context);
+            AnimalTypeService cityService = new AnimalTypeService(context, logger);
 
             string invalidName = "@asdasd 213"; // Solo deberia aceptar letras de la A a la Z
             bool isValid = cityService.IsValidName(invalidName);
@@ -104,7 +107,7 @@ namespace PetFinderTests
         public void ShouldBeValidName()
         {
             PetFinderContext context = dbContextFactory.CreateContext();
-            AnimalTypeService cityService = new AnimalTypeService(context);
+            AnimalTypeService cityService = new AnimalTypeService(context, logger);
 
             string invalidName = "Perro Lobo"; // Solo deberia aceptar numeros de la A a la Z
             bool isValid = cityService.IsValidName(invalidName);

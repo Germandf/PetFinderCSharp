@@ -2,6 +2,7 @@
 using PetFinder.Data;
 using PetFinder.Helpers;
 using PetFinder.Models;
+using Serilog;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +15,14 @@ namespace PetFinderTests
     public class CityTests
     {
         private PetFinderDbContextFactory dbContextFactory { get; set; }
+        private ILogger logger { get; set; }
+
         public CityTests()
         {
             dbContextFactory = new PetFinderDbContextFactory();
+            logger = new LoggerConfiguration().CreateLogger();
         }
+
         public City CreateCity(string name)
         {
             var auxCity = new City();
@@ -31,7 +36,7 @@ namespace PetFinderTests
         {
             PetFinderContext context = dbContextFactory.CreateContext();
             City city = CreateCity("Tres Arroyos");
-            CityService cityService = new CityService(context);
+            CityService cityService = new CityService(context, logger);
 
             await cityService.Save(city);
             // Deberia insertarse
@@ -43,7 +48,7 @@ namespace PetFinderTests
         {
             PetFinderContext context = dbContextFactory.CreateContext();
             City city = new City();
-            CityService cityService = new CityService(context);
+            CityService cityService = new CityService(context, logger);
 
             // No deberia insertarse ya que no tiene nombre
             GenericResult result = await cityService.Save(city);
@@ -57,7 +62,7 @@ namespace PetFinderTests
             PetFinderContext context = dbContextFactory.CreateContext();
             City city = CreateCity("Tres Arroyos");
             City cityRepeated = CreateCity("Tres Arroyos");
-            CityService cityService = new CityService(context);
+            CityService cityService = new CityService(context, logger);
 
             await cityService.Save(city);
             // No deberia insertarse ya que existe una ciudad con el mismo nombre
@@ -70,7 +75,7 @@ namespace PetFinderTests
         public void ShouldBeInvalidName()
         {
             PetFinderContext context = dbContextFactory.CreateContext();
-            CityService cityService = new CityService(context);
+            CityService cityService = new CityService(context, logger);
 
             string invalidName = "asdasdasdasdasdasdasdasdasdasdasdasd";
             bool isValid = cityService.IsValidName(invalidName);
@@ -84,7 +89,7 @@ namespace PetFinderTests
         {
             PetFinderContext context = dbContextFactory.CreateContext();
             City city = CreateCity("Tres Arroyos");
-            CityService cityService = new CityService(context);
+            CityService cityService = new CityService(context, logger);
 
             await cityService.Save(city);
             city.Name = "Edited mock";
@@ -101,7 +106,7 @@ namespace PetFinderTests
         {
             PetFinderContext context = dbContextFactory.CreateContext();
             City city = CreateCity("Tres Arroyos");
-            CityService cityService = new CityService(context);
+            CityService cityService = new CityService(context, logger);
 
             await cityService.Save(city);
             await cityService.Delete(city.Id);
