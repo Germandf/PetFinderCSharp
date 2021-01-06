@@ -52,7 +52,7 @@ namespace PetFinder.Data
             }
             catch (HttpRequestException exception)
             {
-                result.AddError("Error al establecer la conexión");
+                result.AddError("Error al establecer la conexión. Código de error: " + exception);
             }
             return result;
         }
