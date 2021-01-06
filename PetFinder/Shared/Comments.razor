@@ -56,7 +56,7 @@
                     </Title>
                     <Body>
                         <p>
-                            Ha ocurrido un error al realizar la tarea, intente más tarde
+                            @errorMessage
                         </p>
                     </Body>
                     <Footer>
@@ -126,6 +126,9 @@
     private Modal successModal { get; set; }
     private string URLApiComments { get; set; }
 
+    private string errorMessage { get; set; }
+
+    private static string ERROR_ESTABLHISHING_CONNECTION = "Ocurrió un error al establecer la conexión. Si esto persiste por favor comuniquese con un administrador";
 
     protected override async Task OnInitializedAsync()
     {
@@ -150,22 +153,34 @@
         var byteContent = new ByteArrayContent(buffer);
         byteContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
         // POST api/comentarios
-        HttpResponseMessage response = await httpClient.PostAsync(URLApiComments, byteContent);
-        await CheckResponse(response);
+        try
+        {
+            HttpResponseMessage response = await httpClient.PostAsync(URLApiComments, byteContent);
+            await CheckResponse(response);
+        }
+        catch (HttpRequestException exception)
+        {
+            ShowModalError(ERROR_ESTABLHISHING_CONNECTION);
+        }
         newComment.Message = "";
     }
 
     private async Task GetComments()
     {
-
-
         // GET api/comentarios/id
-        HttpResponseMessage response = await httpClient.GetAsync(URLApiComments + "/mascota/" + PetId.ToString());
-        Comment[] commentsFromApi = await response.Content.ReadAsAsync<Comment[]>();
-        comments.Clear();
-        comments.AddRange(commentsFromApi);
-        comments.Reverse();
-        StateHasChanged();
+        try
+        {
+            HttpResponseMessage response = await httpClient.GetAsync(URLApiComments + "/mascota/" + PetId.ToString());
+            Comment[] commentsFromApi = await response.Content.ReadAsAsync<Comment[]>();
+            comments.Clear();
+            comments.AddRange(commentsFromApi);
+            comments.Reverse();
+            StateHasChanged();
+        }
+        catch (HttpRequestException exception)
+        {
+            ShowModalError(ERROR_ESTABLHISHING_CONNECTION);
+        }
     }
 
     private void UpdateComment(Comment comment)
@@ -182,8 +197,15 @@
             var byteContent = new ByteArrayContent(buffer);
             byteContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
             // PUT api/comentarios/id
-            HttpResponseMessage response = await httpClient.PutAsync(URLApiComments + "/" + comment.Id.ToString(), byteContent);
-            await CheckResponse(response);
+            try
+            {
+                HttpResponseMessage response = await httpClient.PutAsync(URLApiComments + "/" + comment.Id.ToString(), byteContent);
+                await CheckResponse(response);
+            }
+            catch (HttpRequestException exception)
+            {
+                ShowModalError(ERROR_ESTABLHISHING_CONNECTION);
+            }
         });
     }
 
@@ -193,12 +215,25 @@
         confirmationModal.Open();
         confirmationModal.OnConfirm(async () =>
         {
-            // DELETE api/comentarios/id
-            HttpResponseMessage response = await httpClient.DeleteAsync(URLApiComments + "/" + comment.Id.ToString());
-            await CheckResponse(response);
+            try
+            {
+                // DELETE api/comentarios/id
+                HttpResponseMessage response = await httpClient.DeleteAsync(URLApiComments + "/" + comment.Id.ToString());
+                await CheckResponse(response);
+            }
+            catch (HttpRequestException exception)
+            {
+                ShowModalError(ERROR_ESTABLHISHING_CONNECTION);
+            }
         });
     }
 
+    private void ShowModalError(string err)
+    {
+        errorMessage = err;
+        errorModal.isError = true;
+        errorModal.Open();
+    }
     private async Task CheckResponse(HttpResponseMessage response)
     {
         if (response.IsSuccessStatusCode)
