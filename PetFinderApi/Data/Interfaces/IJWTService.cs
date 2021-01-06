@@ -13,7 +13,7 @@ namespace PetFinderApi.Data.Interfaces
         /// Generates a JWT by a User's credentials
         /// </summary>
         /// <returns>
-        /// A JwtSecurityTokenHandler object with the User's Token
+        /// The JWT in string format
         /// </returns>
         string GenerateJwtToken(ApplicationUser user);
 
