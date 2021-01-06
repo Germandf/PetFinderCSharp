@@ -97,7 +97,7 @@ namespace PetFinder.Data
 
             var currUser = await GetCurrent();
             if (result.Succeeded)
-                _loger.Information("{user} deleted by {currUser} successfully", user.Email, currUser.Email );
+                _loger.Warning("{user} deleted by {currUser} successfully", user.Email, currUser.Email );
             else
                 _loger.Warning("{currUser} try delete  {user} without success", currUser.Email, user.Email);
             return result;
