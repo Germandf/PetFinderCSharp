@@ -170,7 +170,7 @@
 
     private void UpdateComment(Comment comment)
     {
-        editModal.value = comment.Message;
+        editModal.valueChange(comment.Message);
         editModal.isEditing = true;
         editModal.Open();
         editModal.OnConfirm(async () =>

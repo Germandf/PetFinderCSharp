@@ -10,5 +10,6 @@ namespace PetFinder.Shared
     {
         [Parameter]
         public TypeValue value { get; set; }
+        public void valueChange(TypeValue args) => value = args;
     }
 }
