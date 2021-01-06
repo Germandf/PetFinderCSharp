@@ -3,10 +3,10 @@
 @using PetFinder.Areas.Identity.Extensions;
 @using Microsoft.Extensions.Configuration;
 @using System.Net.Http.Headers;
-
 @inject IApplicationUserService ApplicationUserService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IConfiguration Configuration
+
 <div class="row">
     <h3 class="petSubTitle mt-3 mx-4">Comentarios</h3>
     <section class="mb-2 col-12">
@@ -115,36 +115,36 @@
     public int PetId { get; set; }
 
     private readonly HttpClient httpClient = new HttpClient();
-    private ApplicationUser user = null;
-    private string JWT { get; set; }
+    private static string ERROR_BAD_REQUEST = "El comentario tenía datos incorrectos, intente nuevamente";
+    private static string ERROR_UNAUTHORIZED = "No tienes permiso para realizar esta acción";
+    private static string ERROR_NOT_FOUND = "No se encontró el objeto solicitado";
+    private static string ERROR_CONFLICT = "No se ha podido completar la acción, intenta más tarde";
+    private static string ERROR_UNKNOWN = "Ha ocurrido un error inesperado, ponte en contacto con uno de los administradores";
 
+    private ApplicationUser user = null;
     private Comment newComment = new Comment();
     private List<Comment> comments = new List<Comment>();
     private ModalWithValue<string> editModal { get; set; }
     private Modal confirmationModal { get; set; }
     private Modal errorModal { get; set; }
     private Modal successModal { get; set; }
+
+    private string JWT { get; set; }
     private string URLApiComments { get; set; }
-
     private string errorMessage { get; set; }
-
-    private static string ERROR_ESTABLHISHING_CONNECTION = "Ocurrió un error al establecer la conexión. Si esto persiste por favor comuniquese con un administrador";
 
     protected override async Task OnInitializedAsync()
     {
-
         user = await ApplicationUserService.GetCurrent();
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var userClaims = authState.User;
         URLApiComments = Configuration["UrlApiController"]+"comentarios";
         await GetComments();
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userClaims.Identity.GetJwt());
-
     }
 
     private async void CreateComment(Comment comment)
     {
-
         comment.PetId = PetId;
         comment.UserId = user.Id;
         // Preparo content del post
@@ -160,7 +160,7 @@
         }
         catch (HttpRequestException exception)
         {
-            ShowModalError(ERROR_ESTABLHISHING_CONNECTION);
+            ShowModalError(ERROR_UNKNOWN + "Código de error: " + exception);
         }
         newComment.Message = "";
     }
@@ -172,6 +172,8 @@
         {
             HttpResponseMessage response = await httpClient.GetAsync(URLApiComments + "/mascota/" + PetId.ToString());
             Comment[] commentsFromApi = await response.Content.ReadAsAsync<Comment[]>();
+            if (commentsFromApi == null)
+                commentsFromApi = new Comment[0];
             comments.Clear();
             comments.AddRange(commentsFromApi);
             comments.Reverse();
@@ -179,7 +181,7 @@
         }
         catch (HttpRequestException exception)
         {
-            ShowModalError(ERROR_ESTABLHISHING_CONNECTION);
+            ShowModalError(ERROR_UNKNOWN + "Código de error: " + exception);
         }
     }
 
@@ -204,7 +206,7 @@
             }
             catch (HttpRequestException exception)
             {
-                ShowModalError(ERROR_ESTABLHISHING_CONNECTION);
+                ShowModalError(ERROR_UNKNOWN + "Código de error: " + exception);
             }
         });
     }
@@ -223,7 +225,7 @@
             }
             catch (HttpRequestException exception)
             {
-                ShowModalError(ERROR_ESTABLHISHING_CONNECTION);
+                ShowModalError(ERROR_UNKNOWN + "Código de error: " + exception);
             }
         });
     }
@@ -234,6 +236,7 @@
         errorModal.isError = true;
         errorModal.Open();
     }
+
     private async Task CheckResponse(HttpResponseMessage response)
     {
         if (response.IsSuccessStatusCode)
@@ -242,10 +245,15 @@
             successModal.isSuccess = true;
             successModal.Open();
         }
+        else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            ShowModalError(ERROR_BAD_REQUEST);
+        else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            ShowModalError(ERROR_UNAUTHORIZED);
+        else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            ShowModalError(ERROR_NOT_FOUND);
+        else if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+            ShowModalError(ERROR_CONFLICT);
         else
-        {
-            errorModal.isError = true;
-            errorModal.Open();
-        }
+            ShowModalError(ERROR_UNKNOWN);
     }
 }

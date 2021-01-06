@@ -89,7 +89,6 @@ namespace PetFinderApi.Data.Services
 
         public async Task<IEnumerable<Comment>> GetAllFromPet(int id)
         {
-
             return await _context.Comments.
                 Where(c => c.PetId == id).
                 Select(x => 
@@ -104,7 +103,7 @@ namespace PetFinderApi.Data.Services
                     }
                 ).
                 ToListAsync();
-    }
+        }
 
         public async Task<GenericResult> Insert(Comment comment)
         {
