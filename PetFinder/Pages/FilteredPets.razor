@@ -23,6 +23,10 @@
     {
         <h2>Loading...</h2>
     }
+    else if (!pets.Any())
+    {
+        <p class="lastPetsTitle">No se encontraron mascotas con estos filtros, ¡Prueba otros!</p>
+    }
     else
     {
         <div class="row">
