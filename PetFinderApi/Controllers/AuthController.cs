@@ -60,7 +60,7 @@ namespace PetFinderApi.Controllers
             {
                 var appUser = _userManager.Users.SingleOrDefault(r => r.Email == model.Email);
                 //string Token = await GenerateJwtToken(model.Email, appUser);
-                var jwt = await _jwtService.GenerateJwtToken(appUser.Email, appUser);
+                var jwt = _jwtService.GenerateJwtToken(appUser);
                 response = Ok(new { token = jwt});
             }
             return response;

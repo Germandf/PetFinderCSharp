@@ -15,7 +15,7 @@ namespace PetFinderApi.Data.Interfaces
         /// <returns>
         /// A JwtSecurityTokenHandler object with the User's Token
         /// </returns>
-        Task<object> GenerateJwtToken(string email, ApplicationUser user);
+        string GenerateJwtToken(ApplicationUser user);
 
         /// <summary>
         /// Gets a User's email through the HttpContext
