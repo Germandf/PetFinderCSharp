@@ -24,18 +24,15 @@
     </div>
     @if (pets == null || isLoading)
     {
-        @if (isLoading)
-        {
-            <div class="w-100 text-center">
-                <div class="spinner-border large-spinner" role="status">
-                    <span class="sr-only">Loading...</span>
-                </div>
+        <div class="w-100 text-center">
+            <div class="spinner-border large-spinner" role="status">
+                <span class="sr-only">Loading...</span>
             </div>
-        }
-        else
-        {
-            <p class="lastPetsTitle">Aún no tienes mascotas perdidas, ¿acabás de perder una? Lo sentimos, ¡agrégala a PetFinder para advertir al resto!</p>
-        }
+        </div>
+    }
+    else if (!pets.Any())
+    {
+        <p class="lastPetsTitle">Aún no tienes mascotas perdidas, ¿acabás de perder una? Lo sentimos, ¡agrégala a PetFinder para advertir al resto!</p>
     }
     else
     {
