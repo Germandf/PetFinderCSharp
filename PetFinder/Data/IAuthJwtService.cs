@@ -1,16 +1,24 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using PetFinder.Data.Interfaces;
 using PetFinder.Helpers;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace PetFinder.Data
 {
+    public interface IAuthJwtService
+    {
+        /// <summary>
+        /// Does a POST method to /api/auth with the User's email and password to obtain its JWT
+        /// </summary>
+        /// <returns>
+        /// The User's temporary Token if the data was correct or a list of errors in case it was not
+        /// </returns>
+        Task<GenericResult<string>> GetJwt(string email, string password);
+    }
+
     public class AuthJwtService : IAuthJwtService
     {
         #region 
@@ -22,9 +30,10 @@ namespace PetFinder.Data
         public AuthJwtService(IConfiguration Configuration)
         {
             _configuration = Configuration;
-            httpClient  = new HttpClient();
+            httpClient = new HttpClient();
             URLApiAuth = _configuration["UrlApiController"] + "auth";
         }
+
         public async Task<GenericResult<string>> GetJwt(string email, string password)
         {
             LoginModel user = new LoginModel { Email = email, Password = password };
@@ -34,7 +43,6 @@ namespace PetFinder.Data
             var byteContent = new ByteArrayContent(bufferUser);
             byteContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
             GenericResult<string> result = new GenericResult<string>();
-
             try
             {
                 // POST api/auth

@@ -4,11 +4,21 @@ using PetFinder.Helpers;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace PetFinder.Data
 {
+    public interface IFileService
+    {
+        /// <summary>
+        /// Uploads the pet's photo to the server's folder
+        /// </summary>
+        /// <returns>
+        /// The photo's unique name if it was uploaded successfully or a list of errors in case it was not
+        /// </returns>
+        Task<GenericResult<string>> UploadPetPhotoAsync(IFileListEntry file);
+    }
+
     public class FileService : IFileService
     {
         private static readonly List<string> ImageTypes = new List<string> { "image/jpg", "image/jpeg", "image/png" };
@@ -18,6 +28,7 @@ namespace PetFinder.Data
         const string INVALID_FILE_TYPE = "El tipo de archivo que intenta subir es invalido. Debe ser JPG, JPEG o PNG";
 
         private readonly IWebHostEnvironment _environment;
+
         public FileService(IWebHostEnvironment environment)
         {
             _environment = environment;

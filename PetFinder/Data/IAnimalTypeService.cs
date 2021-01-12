@@ -10,6 +10,73 @@ using System.Threading.Tasks;
 
 namespace PetFinder.Data
 {
+    interface IAnimalTypeService
+    {
+        /// <summary>
+        /// Gets all AnimalTypes
+        /// </summary>
+        /// <returns>
+        /// An IEnumerable of type AnimalType
+        /// </returns>
+        Task<IEnumerable<AnimalType>> GetAll();
+
+        /// <summary>
+        /// Gets a specific AnimalType by its Id
+        /// </summary>
+        /// <returns>
+        /// An AnimalType object
+        /// </returns>
+        Task<AnimalType> Get(int Id);
+
+        /// <summary>
+        /// Inserts an AnimalType
+        /// </summary>
+        /// <returns>
+        /// A bool that indicates if it was successfull or not
+        /// </returns>
+        Task<bool> Insert(AnimalType animalType);
+
+        /// <summary>
+        /// Updates an AnimalType
+        /// </summary>
+        /// <returns>
+        /// A bool that indicates if it was successfull or not
+        /// </returns>
+        Task<bool> Update(AnimalType animalType);
+
+        /// <summary>
+        /// Deletes an AnimalType
+        /// </summary>
+        /// <returns>
+        /// A bool that indicates if it was successfull or not
+        /// </returns>
+        Task<bool> Delete(int id);
+
+        /// <summary>
+        /// Inserts or Updates an AnimalType depending on the case.
+        /// </summary>
+        /// <returns>
+        /// A GenericResult that indicates if it was successfull or not, if not, it will contain the error/s
+        /// </returns>
+        Task<GenericResult> Save(AnimalType animalType);
+
+        /// <summary>
+        /// Checks if the name is used by an already created AnimalType
+        /// </summary>
+        /// <returns>
+        /// A bool that indicates if it's being used or not
+        /// </returns>
+        Task<bool> IsRepeated(string name);
+
+        /// <summary>
+        /// Checks if exists a Pet that depends on a specific AnimalType
+        /// </summary>
+        /// <returns>
+        /// A bool that indicates if there is at least one
+        /// </returns>
+        Task<bool> HasPetsAssociated(AnimalType animalType);
+    }
+
     public class AnimalTypeService : IAnimalTypeService
     {
         private readonly PetFinderContext _context;
@@ -18,7 +85,7 @@ namespace PetFinder.Data
         public const string REPEATED_ANIMAL_TYPE_ERROR = "Ya existe el tipo de animal";
         public const string SAVING_ERROR = "Ocurrio un error al guardar";
 
-        public AnimalTypeService(   PetFinderContext context, 
+        public AnimalTypeService(PetFinderContext context,
                                     ILogger logger)
         {
             _context = context;
@@ -30,7 +97,7 @@ namespace PetFinder.Data
             var animalType = await Get(id);
             _context.Remove(animalType);
             _logger.Warning("AnimalType {name} deleted, Id: {id}", animalType.Name, animalType.Id);
-            return await _context.SaveChangesAsync() > 0; 
+            return await _context.SaveChangesAsync() > 0;
         }
 
         public async Task<IEnumerable<AnimalType>> GetAll()
@@ -88,9 +155,10 @@ namespace PetFinder.Data
             return result;
         }
 
-        public bool IsValidName(string name) { 
+        public bool IsValidName(string name)
+        {
             if (name == null) return false;
-            if(name.Length <= 0 || name.Length > 35) return false;
+            if (name.Length <= 0 || name.Length > 35) return false;
             // Chequeo que sean caracteres de a - Z con espacios
             var match = Regex.Match(name, "^[a-zA-Z ]+$");
             if (!match.Success) return false;

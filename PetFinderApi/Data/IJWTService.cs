@@ -1,29 +1,42 @@
 ﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using PetFinder.Areas.Identity;
-using PetFinderApi.Data.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
-namespace PetFinderApi.Data.Services
+namespace PetFinderApi.Data
 {
-    public class JWTService: IJWTService
+    public interface IJWTService
+    {
+        /// <summary>
+        /// Generates a JWT by a User's credentials
+        /// </summary>
+        /// <returns>
+        /// The JWT in string format
+        /// </returns>
+        string GenerateJwtToken(ApplicationUser user);
+
+        /// <summary>
+        /// Gets a User's email through the HttpContext
+        /// </summary>
+        /// <returns>
+        /// A string with the User's email
+        /// </returns>
+        string GetUserEmail(HttpContext httpContext);
+    }
+
+    public class JWTService : IJWTService
     {
         private readonly IConfiguration _configuration;
-        private readonly UserManager<ApplicationUser> _userManager;
 
-        public JWTService(IConfiguration configuration,
-            UserManager<ApplicationUser> userManager)
+        public JWTService(IConfiguration configuration)
         {
             _configuration = configuration;
-            _userManager = userManager;
         }
 
         public string GetUserEmail(HttpContext httpContext)

@@ -13,16 +13,99 @@ using System.Web;
 
 namespace PetFinder.Data
 {
+    interface IPetService
+    {
+        /// <summary>
+        /// Gets all Pets with their referenced City, AnimalType and Gender
+        /// </summary>
+        /// <returns>
+        /// An IEnumerable of type Pet that each one includes City, AnimalType and Gender
+        /// </returns>
+        Task<IEnumerable<Pet>> GetAll();
+
+        /// <summary>
+        /// Gets a specific Pet with its referenced City, AnimalType and Gender by its Id
+        /// </summary>
+        /// <returns>
+        /// A Pet object that includes City, AnimalType and Gender
+        /// </returns>
+        Task<Pet> Get(int id);
+
+        /// <summary>
+        /// Inserts a Pet
+        /// </summary>
+        /// <returns>
+        /// A bool that indicates if it was successfull or not
+        /// </returns>
+        Task<bool> Insert(Pet pet);
+
+        /// <summary>
+        /// Updates a Pet
+        /// </summary>
+        /// <returns>
+        /// A bool that indicates if it was successfull or not
+        /// </returns>
+        Task<GenericResult> Update(Pet pet);
+
+        /// <summary>
+        /// Deletes a Pet
+        /// </summary>
+        /// <returns>
+        /// A bool that indicates if it was successfull or not
+        /// </returns>
+        Task<bool> Delete(int id);
+
+        /// <summary>
+        /// Inserts or Updates a Pet depending on the case, it also takes care of uploading the photo if necessary
+        /// </summary>
+        /// <returns>
+        /// A GenericResult that indicates if it was successfull or not, if not, it will contain the error/s
+        /// </returns>
+        Task<GenericResult> Save(Pet pet, IFileListEntry photo);
+
+        /// <summary>
+        /// Looks for all Pets that contains the same UserId attribute as the one inserted
+        /// </summary>
+        /// <returns>
+        /// An IEnumerable of type Pet that each one includes City, AnimalType and Gender
+        /// </returns>
+        Task<IEnumerable<Pet>> GetAllByUser(string UserId);
+
+        /// <summary>
+        /// Looks for all Pets that matches with the filters inserted, these can be single or multiple
+        /// </summary>
+        /// <returns>
+        /// An IEnumerable of type Pet that each one includes City, AnimalType and Gender
+        /// </returns>
+        Task<IEnumerable<Pet>> GetAllByFilter(params string[] filters);
+
+        /// <summary>
+        /// Checks if the current user in session has permissions on this Pet
+        /// </summary>
+        /// <returns>
+        /// A bool that indicates if he has permissions or not
+        /// </returns>
+        Task<bool> CurrUserCanEdit(Pet pet);
+
+        /// <summary>
+        /// Sets the Found attribute of the Pet object as true
+        /// </summary>
+        /// <returns>
+        /// A bool that indicates if it was successfull or not
+        /// </returns>
+        Task<bool> SetFound(int id);
+    }
+
     public class PetService : IPetService
     {
-        const string ERROR_MISSING_GENDER   = "Debe especificar un género";
-        const string ERROR_MISSING_CITY     = "Debe especificar una ciudad";
-        const string ERROR_MISSING_TYPE     = "Debe especificar un tipo de animal";
-        const string ERROR_INVALID_NAME     = "Asegúrese de insertar un nombre y que sea menor a 20 caracteres";
-        const string ERROR_INVALID_PHOTO    = "Debe elegir un tipo de imagen valida";
-        const string ERROR_INVALID_USER     = "El usuario no puede editar esta mascota";
-        const string ERROR_MISSING_PHONE    = "Debe indicar un número de teléfono";
-        const string ERROR_SAVING           = "Ocurrió un error al guardar el usuario";
+        const string ERROR_MISSING_GENDER = "Debe especificar un género";
+        const string ERROR_MISSING_CITY = "Debe especificar una ciudad";
+        const string ERROR_MISSING_TYPE = "Debe especificar un tipo de animal";
+        const string ERROR_INVALID_NAME = "Asegúrese de insertar un nombre y que sea menor a 20 caracteres";
+        const string ERROR_INVALID_PHOTO = "Debe elegir un tipo de imagen valida";
+        const string ERROR_INVALID_USER = "El usuario no puede editar esta mascota";
+        const string ERROR_MISSING_PHONE = "Debe indicar un número de teléfono";
+        const string ERROR_SAVING = "Ocurrió un error al guardar el usuario";
 
         private readonly PetFinderContext _context;
         private readonly ILogger _logger;
@@ -35,10 +118,10 @@ namespace PetFinder.Data
             _context = context;
         }
 
-        public PetService(  PetFinderContext context,
+        public PetService(PetFinderContext context,
                             ILogger logger,
                             IApplicationUserService applicationUserService,
-                            UserManager<ApplicationUser> userManager, 
+                            UserManager<ApplicationUser> userManager,
                             IFileService fileService)
         {
             _context = context;
@@ -54,7 +137,7 @@ namespace PetFinder.Data
             if (currUser == null) return false; // No esta logeado
             bool isAdmin = await _userManager.IsInRoleAsync(currUser, ApplicationUserService.ROLE_ADMIN);
             if (isAdmin) return true; //Si es admin puede editar
-            if(pet.UserId == currUser.Id) return true; // Si es suya puede editar
+            if (pet.UserId == currUser.Id) return true; // Si es suya puede editar
             return false; // No puede editar
         }
 
@@ -95,7 +178,7 @@ namespace PetFinder.Data
                 Include(p => p.AnimalType).
                 Include(p => p.City).
                 Include(p => p.Gender).
-                Where(p=> p.Found == 0).
+                Where(p => p.Found == 0).
                 ToListAsync();
         }
 
@@ -105,7 +188,7 @@ namespace PetFinder.Data
                 Include(p => p.AnimalType).
                 Include(p => p.City).
                 Include(p => p.Gender).
-                Where(p=> p.Found == 0 && p.UserId == UserId).
+                Where(p => p.Found == 0 && p.UserId == UserId).
                 ToListAsync();
         }
 
@@ -139,7 +222,7 @@ namespace PetFinder.Data
                 errorMessages.Add(ERROR_MISSING_PHONE);
             if (!IsValidName(pet.Name))
                 errorMessages.Add(ERROR_INVALID_NAME);
-            if (pet.Photo == null )
+            if (pet.Photo == null)
                 errorMessages.Add(ERROR_INVALID_PHOTO);
             return errorMessages;
         }
@@ -156,7 +239,7 @@ namespace PetFinder.Data
             pet.UserId = appUser.Id;
             if (photo != null) // Puede ser que la imagen sea nula porque estemos editando y no cambiamos la foto
             {
-                GenericResult<string> resultImage  = (await _fileService.UploadPetPhotoAsync(photo));
+                GenericResult<string> resultImage = (await _fileService.UploadPetPhotoAsync(photo));
                 if (resultImage.Success) pet.Photo = resultImage.value; // Si la imagen se subio bien le asignamos la url a la mascota
                 else result.AddRange(resultImage.Errors);
             }
@@ -179,10 +262,10 @@ namespace PetFinder.Data
             if (await CurrUserCanEdit(pet))
             {
                 _context.Entry(pet).State = EntityState.Modified;
-                if (await _context.SaveChangesAsync() > 0) 
+                if (await _context.SaveChangesAsync() > 0)
                 {
                     return result;
-                } 
+                }
                 else result.AddError(ERROR_SAVING);
             }
             else result.AddError(ERROR_INVALID_USER);
@@ -194,7 +277,7 @@ namespace PetFinder.Data
             string city = null, animalType = null, gender = null, search = null;
             foreach (string filter in filters)
             {
-                if(filter == null)
+                if (filter == null)
                 {
                     // Do nothing
                 }
@@ -229,8 +312,8 @@ namespace PetFinder.Data
                 Where(p => p.City.SerializedName == city || city == null).
                 Where(p => p.AnimalType.SerializedName == animalType || animalType == null).
                 Where(p => p.Gender.SerializedName == gender || gender == null).
-                Where(p => 
-                    ( EF.Functions.FreeText(p.Name, search)  || EF.Functions.FreeText(p.Description, search) )
+                Where(p =>
+                    (EF.Functions.FreeText(p.Name, search) || EF.Functions.FreeText(p.Description, search))
                     || search == null
                     ).
                 Include(p => p.AnimalType).
