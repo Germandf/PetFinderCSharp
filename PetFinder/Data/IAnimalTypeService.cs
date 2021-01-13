@@ -85,7 +85,7 @@ namespace PetFinder.Data
         public const string REPEATED_ANIMAL_TYPE_ERROR = "Ya existe el tipo de animal";
         public const string SAVING_ERROR = "Ocurrio un error al guardar";
 
-        public AnimalTypeService(PetFinderContext context,
+        public AnimalTypeService(   PetFinderContext context,
                                     ILogger logger)
         {
             _context = context;
@@ -127,7 +127,7 @@ namespace PetFinder.Data
 
         public async Task<GenericResult> Save(AnimalType animalType)
         {
-            GenericResult result = new GenericResult();
+            var result = new GenericResult();
             if (IsValidName(animalType.Name))
             {
                 animalType.SerializedName = animalType.Name.ToUpper().Replace(" ", "");

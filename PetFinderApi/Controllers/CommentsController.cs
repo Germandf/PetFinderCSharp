@@ -10,11 +10,10 @@ using System.Net.Http;
 using PetFinder.Areas.Identity;
 using Microsoft.AspNetCore.Identity;
 using PetFinder.Data;
-using PetFinderApi.Data.Interfaces;
+using PetFinderApi.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
 using PetFinder.Helpers;
-using PetFinderApi.Data.Services;
 
 namespace PetFinderApi.Controllers
 {

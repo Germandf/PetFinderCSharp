@@ -1,9 +1,8 @@
 ﻿@page "/agregar-tipo-de-animal"
 @page "/editar-tipo-de-animal/{id:int}"
-@using PetFinder.Helpers;
-
 @inject NavigationManager Navigator
 @inject IAnimalTypeService animalTypeService
+@using PetFinder.Helpers;
 
 <AuthorizeView Roles="@ApplicationUserService.ROLE_ADMIN">
     <Authorized>
@@ -67,12 +66,12 @@
 @code {
     [Parameter]
     public int id { get; set; }
+
     private Modal modal { get; set; }
     private bool isError { get; set; }
     private bool isEditing { get; set; }
-    private List<string> errorsOnSaving = new List<string>();
-
-    private AnimalType currAnimalType = new AnimalType();
+    private List<string> errorsOnSaving = new();
+    private AnimalType currAnimalType = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -83,7 +82,6 @@
             {
                 isError = true;
                 errorsOnSaving.Add("No se encontro el tipo de animal");
-                //currAnimalType = new AnimalType();
                 Navigator.NavigateTo("/admin");
             }
             else
@@ -97,7 +95,6 @@
     {
         errorsOnSaving = new List<string>();
         GenericResult result = await animalTypeService.Save(currAnimalType);
-
         if (result.Success)
         {
             modal.Open();

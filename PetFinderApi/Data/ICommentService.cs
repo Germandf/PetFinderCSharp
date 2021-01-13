@@ -208,7 +208,7 @@ namespace PetFinderApi.Data
 
         public async Task<GenericResult> HasCorrectData(Comment comment)
         {
-            GenericResult result = new GenericResult();
+            var result = new GenericResult();
             if (await _petService.Get(comment.PetId) == null)
             {
                 result.AddError(ERROR_WRONG_PET);

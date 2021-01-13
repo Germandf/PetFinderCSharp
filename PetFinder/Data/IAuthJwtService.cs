@@ -23,30 +23,30 @@ namespace PetFinder.Data
     {
         #region 
         private IConfiguration _configuration;
-        private HttpClient httpClient { get; set; }
-        private string URLApiAuth { get; set; }
+        private HttpClient _httpClient { get; set; }
+        private string _urlApiAuth { get; set; }
         #endregion
 
         public AuthJwtService(IConfiguration Configuration)
         {
             _configuration = Configuration;
-            httpClient = new HttpClient();
-            URLApiAuth = _configuration["UrlApiController"] + "auth";
+            _httpClient = new HttpClient();
+            _urlApiAuth = _configuration["UrlApiController"] + "auth";
         }
 
         public async Task<GenericResult<string>> GetJwt(string email, string password)
         {
-            LoginModel user = new LoginModel { Email = email, Password = password };
+            var user = new LoginModel { Email = email, Password = password };
             var jsonUser = JsonConvert.SerializeObject(user);
             // Preparo content del post
             var bufferUser = System.Text.Encoding.UTF8.GetBytes(jsonUser);
             var byteContent = new ByteArrayContent(bufferUser);
             byteContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
-            GenericResult<string> result = new GenericResult<string>();
+            var result = new GenericResult<string>();
             try
             {
                 // POST api/auth
-                HttpResponseMessage response = await httpClient.PostAsync(URLApiAuth, byteContent);
+                HttpResponseMessage response = await _httpClient.PostAsync(_urlApiAuth, byteContent);
                 if (response.IsSuccessStatusCode)// Deberia devolver algo así {token: [jwt]}
                 {
                     string source = await response.Content.ReadAsStringAsync();

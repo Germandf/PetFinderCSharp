@@ -44,7 +44,7 @@ namespace PetFinder.Data
 
         public async Task<GenericResult<string>> UploadPetPhotoAsync(IFileListEntry fileEntry)
         {
-            GenericResult<string> result = new GenericResult<string>();
+            var result = new GenericResult<string>();
             CreateImagesFolder(); // Creo el directorio donde voy a guardar las imagenes
             if (fileEntry == null)
             {
@@ -56,7 +56,6 @@ namespace PetFinder.Data
             {
                 string fileExtension = fileType.Replace("image/", string.Empty);
                 var uniqueFileName = string.Format(@"{0}.{1}", Guid.NewGuid(), fileExtension);
-
                 var path = Path.Combine(_environment.ContentRootPath, "wwwroot/images", uniqueFileName);
                 var ms = new MemoryStream();
                 await fileEntry.Data.CopyToAsync(ms);

@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Security.Claims;
 using PetFinder.Helpers;
-using PetFinder.Data.Interfaces;
+using PetFinder.Data;
 using Microsoft.AspNetCore.Http;
 using PetFinder.Areas.Identity.Extensions;
 using PetFinder.Models;

@@ -10,9 +10,8 @@
 @inject IGenderService GenderService
 @inject IFileService FileService
 @inject NavigationManager NavigationManager
-@inject UserManager<ApplicationUser> userManager;
+@inject UserManager<ApplicationUser> userManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
-
 
 <AuthorizeView>
     <Authorized>
@@ -145,8 +144,8 @@
     [Parameter]
     public int id { get; set; }
 
-    private Pet pet = new Pet();
-    private List<string> errorsSaving = new List<string>();
+    private Pet pet = new();
+    private List<string> errorsSaving = new();
     public string error { get; set; }
     public bool isError { get; set; }
     private Modal modal { get; set; }

@@ -6,7 +6,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-
 using PetFinder.Data;
 using PetFinder.Models;
 using System;
@@ -16,7 +15,6 @@ using PetFinder.Areas.Identity;
 using PetFinder.Areas.Identity.Helper;
 using Microsoft.Extensions.FileProviders;
 using System.IO;
-using PetFinder.Data.Interfaces;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
 using Serilog.Ui.Web;

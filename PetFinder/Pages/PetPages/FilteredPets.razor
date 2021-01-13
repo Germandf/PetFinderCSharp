@@ -41,10 +41,6 @@
 
 @code {
     [Parameter]
-    public int record { get; set; }
-    private int pageSize = 12;
-
-    [Parameter]
     public string filter1 { get; set; }
     [Parameter]
     public string filter2 { get; set; }
@@ -52,7 +48,10 @@
     public string filter3 { get; set; }
     [Parameter]
     public string filter4 { get; set; }
+    [Parameter]
+    public int record { get; set; }
 
+    private int pageSize = 12;
     private ApplicationUser user { get; set; }
     private IEnumerable<City> cities;
     private IEnumerable<AnimalType> animalTypes;

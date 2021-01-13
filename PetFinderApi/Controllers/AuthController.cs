@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using PetFinder.Areas.Identity;
 using PetFinder.Models;
-using PetFinderApi.Data.Interfaces;
+using PetFinderApi.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;

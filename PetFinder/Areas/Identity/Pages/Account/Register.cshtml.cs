@@ -15,7 +15,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Options;
 using PetFinder.Data;
-using PetFinder.Data.Interfaces;
+using PetFinder.Data;
 using PetFinder.Helpers;
 using Serilog;
 

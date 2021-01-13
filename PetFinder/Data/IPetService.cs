@@ -118,7 +118,7 @@ namespace PetFinder.Data
             _context = context;
         }
 
-        public PetService(PetFinderContext context,
+        public PetService(  PetFinderContext context,
                             ILogger logger,
                             IApplicationUserService applicationUserService,
                             UserManager<ApplicationUser> userManager,
@@ -229,7 +229,7 @@ namespace PetFinder.Data
 
         public async Task<GenericResult> Save(Pet pet, IFileListEntry photo)
         {
-            GenericResult result = new GenericResult();
+            var result = new GenericResult();
             ApplicationUser appUser = await _applicationUserService.GetCurrent();
             if (appUser == null)
             {
@@ -258,7 +258,7 @@ namespace PetFinder.Data
 
         public async Task<GenericResult> Update(Pet pet)
         {
-            GenericResult result = new GenericResult();
+            var result = new GenericResult();
             if (await CurrUserCanEdit(pet))
             {
                 _context.Entry(pet).State = EntityState.Modified;

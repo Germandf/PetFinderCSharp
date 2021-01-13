@@ -102,7 +102,6 @@
 
     private async Task Upgrade(ApplicationUser user)
     {
-
         await aplicationUserService.Upgrade(user.Id);
         users = await aplicationUserService.GetAll();
         StateHasChanged();
@@ -115,8 +114,6 @@
         confirmationModal.OnConfirm(async () =>
         {
             IdentityResult result = await aplicationUserService.DeleteAsync(currUser);
-
-
             if (result.Succeeded)
             {
                 //Actualizo la lista con la db

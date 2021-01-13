@@ -122,8 +122,8 @@
     private static string ERROR_UNKNOWN = "Ha ocurrido un error inesperado, ponte en contacto con uno de los administradores";
 
     private ApplicationUser user = null;
-    private Comment newComment = new Comment();
-    private List<Comment> comments = new List<Comment>();
+    private Comment newComment = new();
+    private List<Comment> comments = new();
     private ModalWithValue<string> editModal { get; set; }
     private Modal confirmationModal { get; set; }
     private Modal errorModal { get; set; }

@@ -84,7 +84,7 @@ namespace PetFinder.Data
         public const string REPEATED_CITY_ERROR = "Ya existe la ciudad";
         public const string SAVING_ERROR = "Ocurrio un error al guardar";
 
-        public CityService(PetFinderContext context,
+        public CityService( PetFinderContext context,
                             ILogger logger)
         {
             _context = context;
@@ -118,13 +118,12 @@ namespace PetFinder.Data
 
         public async Task<GenericResult> Save(City city)
         {
-            GenericResult result = new GenericResult();
+            var result = new GenericResult();
             if (IsValidName(city.Name))
             {
                 city.SerializedName = city.Name.ToUpper().Replace(" ", "");
                 if (await IsRepeated(city.SerializedName) && city.Id == 0)
                 {
-                    //Devolver result con mensaje de error
                     result.AddError(REPEATED_CITY_ERROR);
                 }
                 if (result.Success)

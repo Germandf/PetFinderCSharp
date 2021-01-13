@@ -85,10 +85,8 @@ namespace PetFinder.Data
         public async Task<bool> Downgrade(String userId)
         {
             ApplicationUser user = await _userManager.FindByIdAsync(userId);
-
             IdentityResult resultRemoveRole = await _userManager.AddToRoleAsync(user, "Normal");
             var currUser = await GetCurrent();
-
             if (resultRemoveRole.Succeeded)
             {
                 IdentityResult resultAdd = await _userManager.RemoveFromRoleAsync(user, "Administrator");
@@ -106,10 +104,8 @@ namespace PetFinder.Data
         public async Task<bool> Upgrade(String userId)
         {
             ApplicationUser user = await _userManager.FindByIdAsync(userId);
-
             IdentityResult resultAdd = await _userManager.RemoveFromRoleAsync(user, "Normal");
             var currUser = await GetCurrent();
-
             if (resultAdd.Succeeded)
             {
                 IdentityResult resultRemoveRole = await _userManager.AddToRoleAsync(user, "Administrator");
@@ -121,32 +117,26 @@ namespace PetFinder.Data
                 }
             }
             _loger.Warning("{currUser} try to change role to ADMIN of {user} without success", currUser.Email, user.Email);
-
             return false;
         }
 
         public async Task<ApplicationUser> GetCurrent()
         {
             ApplicationUser currUser = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-
             if (currUser == null)
             {
                 return null;
             }
-
             if (await _userManager.IsInRoleAsync(currUser, ApplicationUserService.ROLE_ADMIN))
             {
                 currUser.setAdmin(true);
             }
-
             return currUser;
-
         }
 
         public async Task<IdentityResult> DeleteAsync(ApplicationUser user)
         {
             IdentityResult result = await _userManager.DeleteAsync(await _userManager.FindByIdAsync(user.Id));
-
             var currUser = await GetCurrent();
             if (result.Succeeded)
                 _loger.Warning("{user} deleted by {currUser} successfully", user.Email, currUser.Email);
@@ -157,9 +147,7 @@ namespace PetFinder.Data
 
         public async Task<IEnumerable<ApplicationUser>> GetAll()
         {
-
             IEnumerable<ApplicationUser> users = await _context.AspNetUsers.ToListAsync();
-
             foreach (ApplicationUser user in users)
             {
                 if (await _userManager.IsInRoleAsync(user, ROLE_ADMIN))

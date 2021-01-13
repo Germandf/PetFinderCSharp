@@ -80,10 +80,9 @@
     [Parameter]
     public IEnumerable<Gender> genders { get; set; }
 
-
-    private City selectedCity = new City();
-    private AnimalType selectedAnimalType = new AnimalType();
-    private Gender selectedGender = new Gender();
+    private City selectedCity = new();
+    private AnimalType selectedAnimalType = new();
+    private Gender selectedGender = new();
     private string searchText = null;
 
     private void filtrar()

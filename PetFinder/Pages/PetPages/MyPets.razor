@@ -50,6 +50,7 @@
 @code {
     [Parameter]
     public int record { get; set; }
+
     private int pageSize = 12;
 
     [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }

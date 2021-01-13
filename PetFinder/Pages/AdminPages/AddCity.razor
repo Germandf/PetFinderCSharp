@@ -1,9 +1,8 @@
 ﻿@page "/agregar-ciudad"
 @page "/editar-ciudad/{id:int}"
-@using PetFinder.Helpers;
-
 @inject ICityService CityService
 @inject NavigationManager NavigationManager
+@using PetFinder.Helpers;
 
 <AuthorizeView Roles="@ApplicationUserService.ROLE_ADMIN">
     <Authorized>
@@ -29,7 +28,7 @@
                     {
                         <div class="alert alert-danger mt-2">
                             <ul>
-                                @foreach(string error in errorsOnSaving)
+                                @foreach (string error in errorsOnSaving)
                                 {
                                     <li> @error </li>
                                 }
@@ -89,7 +88,6 @@
     {
         errorsOnSaving = new List<string>();
         GenericResult result = await CityService.Save(city);
-
         if (result.Success)
         {
             modal.Open();
