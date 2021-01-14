@@ -3,12 +3,13 @@
 @inject ICityService CityService
 @inject NavigationManager NavigationManager
 @using PetFinder.Helpers;
+@using PetFinder.ViewModels;
 
 <AuthorizeView Roles="@ApplicationUserService.ROLE_ADMIN">
     <Authorized>
         <div class="row">
             <div class="col-12 mt-5 text-center">
-                <EditForm Context="editFormContext" Model="@city" id="addcityForm" class="form-signin text-left shadow rounded">
+                <EditForm Context="editFormContext" Model="@cityViewModel" id="addcityForm" class="form-signin text-left shadow rounded">
                     <!-- Muestra el titulo correspondiente -->
                     @if (id != 0 && isError == false)
                     {
@@ -19,7 +20,7 @@
                         <h1 class="h3 mb-3 font-weight-normal">Agregar ciudad</h1>
                     }
                     <label for="inputName" class="sr-only mt-3 ">Nombre</label>
-                    <input id="inputName" type="text" class="mt-3 form-control" placeholder="Nombre" required autofocus="" @bind="city.Name">
+                    <input id="inputName" type="text" class="mt-3 form-control" placeholder="Nombre" required autofocus="" @bind="cityViewModel.Name">
                     <div class="d-block text-right">
                         <button class="mt-2 text-white btn-lg bg-orange-dark" type="button" value="Cancel" @onclick="Cancel">Cancelar</button>
                         <button class="mt-2 text-white btn-lg bg-orange" type="submit" value="Save" @onclick="SaveCity">Confirmar</button>
@@ -45,7 +46,7 @@
             </Title>
             <Body>
                 <p>
-                    La ciudad @city.Name se guardó con éxito.
+                    La ciudad @cityViewModel.Name se guardó con éxito.
                 </p>
             </Body>
             <Footer>
@@ -65,7 +66,7 @@
     [Parameter]
     public int id { get; set; }
 
-    private City city = new City();
+    private CityViewModel cityViewModel = new();
     public bool isError { get; set; }
     private Modal modal { get; set; }
     private List<string> errorsOnSaving = new List<string>();
@@ -74,12 +75,15 @@
     {
         if (id != 0)
         {
-            city = await CityService.Get(id);
+            City city = await CityService.Get(id);
             if (city == null)
             {
                 errorsOnSaving.Add("No se encontro la ciudad");
                 isError = true;
-                city = new City();
+            }
+            else
+            {
+                cityViewModel.ConvertFromCity(city);
             }
         }
     }
@@ -87,7 +91,7 @@
     protected async Task SaveCity()
     {
         errorsOnSaving = new List<string>();
-        GenericResult result = await CityService.Save(city);
+        GenericResult result = await CityService.Save(cityViewModel);
         if (result.Success)
         {
             modal.Open();

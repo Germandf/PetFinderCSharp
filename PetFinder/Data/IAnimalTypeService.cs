@@ -27,7 +27,7 @@ namespace PetFinder.Data
         /// <returns>
         /// An AnimalType object
         /// </returns>
-        Task<AnimalType> Get(int Id);
+        Task<AnimalType> Get(int id);
 
         /// <summary>
         /// Inserts an AnimalType
@@ -114,9 +114,9 @@ namespace PetFinder.Data
             return await _context.AnimalTypes.ToListAsync();
         }
 
-        public async Task<AnimalType> Get(int Id)
+        public async Task<AnimalType> Get(int id)
         {
-            AnimalType animalType = await _context.AnimalTypes.FindAsync(Id);
+            AnimalType animalType = await _context.AnimalTypes.FindAsync(id);
             _context.Entry(animalType).State = EntityState.Detached;
             return animalType;
         }
