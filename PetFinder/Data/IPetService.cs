@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PetFinder.Areas.Identity;
 using PetFinder.Helpers;
 using PetFinder.Models;
+using PetFinder.ViewModels;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -62,6 +63,11 @@ namespace PetFinder.Data
         /// A GenericResult that indicates if it was successfull or not, if not, it will contain the error/s
         /// </returns>
         Task<GenericResult> Save(Pet pet, IFileListEntry photo);
+
+        /// <summary>
+        /// Transforms the PetViewModel into a Pet and calls Save with the Pet parameter
+        /// </summary>
+        Task<GenericResult> Save(PetViewModel pet, IFileListEntry photo);
 
         /// <summary>
         /// Looks for all Pets that contains the same UserId attribute as the one inserted
@@ -225,6 +231,12 @@ namespace PetFinder.Data
             if (pet.Photo == null)
                 errorMessages.Add(ERROR_INVALID_PHOTO);
             return errorMessages;
+        }
+
+        public async Task<GenericResult> Save(PetViewModel petVM, IFileListEntry photo)
+        {
+            Pet pet = petVM.ConvertToPet();
+            return await Save(pet, photo);
         }
 
         public async Task<GenericResult> Save(Pet pet, IFileListEntry photo)

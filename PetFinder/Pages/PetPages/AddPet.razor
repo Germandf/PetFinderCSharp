@@ -1,9 +1,5 @@
 ﻿@page "/agregar-mascota"
 @page "/editar-mascota/{id:int}"
-@using Microsoft.AspNetCore.Identity
-@using PetFinder.Areas.Identity;
-@using PetFinder.Helpers;
-
 @inject IPetService PetService
 @inject ICityService CityService
 @inject IAnimalTypeService AnimalTypeService
@@ -12,12 +8,16 @@
 @inject NavigationManager NavigationManager
 @inject UserManager<ApplicationUser> userManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
+@using Microsoft.AspNetCore.Identity
+@using PetFinder.Areas.Identity;
+@using PetFinder.Helpers;
+@using PetFinder.ViewModels;
 
 <AuthorizeView>
     <Authorized>
         <div class="row">
             <div class="col-12 mt-5 text-center">
-                <EditForm Context="contextForm" Model="@pet" id="addPetForm" class="form-signin text-left shadow rounded">
+                <EditForm Context="contextForm" Model="@petViewModel" id="addPetForm" class="form-signin text-left shadow rounded">
                     <!-- Muestra el titulo correspondiente -->
                     @if (id != 0 && isError == false)
                     {
@@ -29,10 +29,10 @@
                     }
                     <!-- Pet -->
                     <label for="inputName" class="sr-only mt-3 ">Nombre</label>
-                    <input id="inputName" type="text" class="mt-3 form-control" placeholder="Nombre" required autofocus="" name="name" @bind="pet.Name">
+                    <input id="inputName" type="text" class="mt-3 form-control" placeholder="Nombre" required autofocus="" name="name" @bind="petViewModel.Name">
                     <!-- City -->
                     <label for="inputCity" class="sr-only mt-3 ">Ciudad</label>
-                    <select id="inputCity" class="d-inline form-control mt-3" name="city" @bind="pet.CityId">
+                    <select id="inputCity" class="d-inline form-control mt-3" name="city" @bind="petViewModel.CityId">
                         @if (cities == null)
                         {
                             <option value="">Loading...</option>
@@ -49,7 +49,7 @@
                     </select>
                     <!-- Pet Type -->
                     <label for="inputAnimalType" class="sr-only mt-3">Tipo de animal</label>
-                    <select id="inputAnimalType" class="d-inline form-control mt-3" required name="animalType" @bind="pet.AnimalTypeId">
+                    <select id="inputAnimalType" class="d-inline form-control mt-3" required name="animalType" @bind="petViewModel.AnimalTypeId">
                         @if (animalTypes == null)
                         {
                             <option value="">Loading...</option>
@@ -65,7 +65,7 @@
                     </select>
                     <!-- Gender -->
                     <label for="inputGenderType" class="sr-only mt-3">Genero</label>
-                    <select id="inputGenderType" class="d-inline form-control mt-3" required name="gender" @bind="pet.GenderId">
+                    <select id="inputGenderType" class="d-inline form-control mt-3" required name="gender" @bind="petViewModel.GenderId">
                         @if (genders == null)
                         {
                             <option value="">Loading...</option>
@@ -81,10 +81,10 @@
                     </select>
                     <!-- Lost Date -->
                     <label for="inputDateTime" class="sr-only mt-3">Fecha de extravio</label>
-                    <input id="inputDateTime" required type="date" class="mt-3 form-control" placeholder="Fecha de extravio" autofocus="" name="date" @bind="pet.Date">
+                    <input id="inputDateTime" required type="date" class="mt-3 form-control" placeholder="Fecha de extravio" autofocus="" name="date" @bind="petViewModel.Date">
                     <!-- Phone Number -->
                     <label for="inputPhone" class="sr-only mt-3">Teléfono</label>
-                    <input id="inputPhone" type="number" class="mt-3 form-control" placeholder="Teléfono" required autofocus="" name="phone" @bind="pet.PhoneNumber">
+                    <input id="inputPhone" type="number" class="mt-3 form-control" placeholder="Teléfono" required autofocus="" name="phone" @bind="petViewModel.PhoneNumber">
                     <!-- Photo -->
                     <div class="input-group mt-3">
                         <div class="custom-file">
@@ -103,7 +103,10 @@
                     </div>
                     <!-- Description -->
                     <label for="inputDescription" class="sr-only mt-3 ">Descripción</label>
-                    <textarea id="inputDescription" required type="text" class="mt-3 form-control" placeholder="Descripción" autofocus="" name="description" maxlength="200" @bind="pet.Description"></textarea>
+                    <textarea 
+                              id="inputDescription" required type="text" class="mt-3 form-control" placeholder="Descripción" 
+                              autofocus="" name="description" maxlength="200" @bind="petViewModel.Description">
+                    </textarea>
                     <div class="d-block text-right">
                         <button class="mt-2 text-white btn-lg bg-orange-dark" type="button" value="Cancel" @onclick="Cancel">Cancelar</button>
                         <button class="mt-2 text-white btn-lg bg-orange" type="submit" value="Save" @onclick="SavePet">Confirmar</button>
@@ -129,7 +132,7 @@
             </Title>
             <Body>
                 <p>
-                    @pet.Name fué agregado a nuestra base de datos. ¡Mucha suerte!
+                    @petViewModel.Name fué agregado a nuestra base de datos. ¡Mucha suerte!
                 </p>
             </Body>
             <Footer>
@@ -144,7 +147,7 @@
     [Parameter]
     public int id { get; set; }
 
-    private Pet pet = new();
+    private PetViewModel petViewModel = new();
     private List<string> errorsSaving = new();
     public string error { get; set; }
     public bool isError { get; set; }
@@ -165,9 +168,7 @@
         base.OnInitialized();
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var userClaims = authState.User;
-        
         userId = userManager.GetUserId(userClaims);
-
         if (!userClaims.Identity.IsAuthenticated) //Si no está autenticado redirigimos
         {
             string currUri = NavigationManager.Uri;
@@ -176,15 +177,13 @@
 
             NavigationManager.NavigateTo($"Identity/Account/Login?returnUrl={currUri}", forceLoad: true);
         }
-
         if (id != 0)
         {
-            pet = await PetService.Get(id);
+            Pet pet = await PetService.Get(id);
             if (pet == null)
             {
                 error = "No se encontró la mascota";
                 isError = true;
-                pet = new Pet();
             }
             else
             {
@@ -192,7 +191,6 @@
                 {
                     error = "No podes editar está mascota";
                     isError = true;
-                    pet = new Pet();
                 }
             }
         }
@@ -205,8 +203,7 @@
     {
         isError = false;
         errorsSaving = new List<string>();
-
-        GenericResult result = await PetService.Save(pet, file);
+        GenericResult result = await PetService.Save(petViewModel, file);
         if (result.Success)
         {
             modal.Open();
