@@ -185,13 +185,15 @@
                 error = "No se encontró la mascota";
                 isError = true;
             }
+            else if (!await PetService.CurrUserCanEdit(pet))
+            {
+                error = "No podes editar está mascota";
+                isError = true;
+            }
             else
             {
-                if (!await PetService.CurrUserCanEdit(pet))
-                {
-                    error = "No podes editar está mascota";
-                    isError = true;
-                }
+                petViewModel.ConvertFromPet(pet);
+                file = null;
             }
         }
         cities = await CityService.GetAll();
