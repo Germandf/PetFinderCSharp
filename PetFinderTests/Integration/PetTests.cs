@@ -8,32 +8,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using AutoFixture;
+using AutoFixture.AutoNSubstitute;
 using Xunit;
 
 namespace PetFinderTests
 {
     public class PetTests
     {
-        private PetFinderDbContextFactory dbContextFactory { get; set; }
+        private IFixture fixture;
         public PetTests()
         {
-            dbContextFactory = new PetFinderDbContextFactory();
+            var dbContextFactory = new PetFinderDbContextFactory();
+            fixture = new Fixture().Customize(new AutoNSubstituteCustomization());
+            fixture.Register(dbContextFactory.CreateContext);
         }
-        public Pet CreatePet(string name, int animalTypeId, int cityId, int genderId, DateTime date, string phoneNumber, string photo, string description, string userId, byte found)
-        {
-            var auxPet = new Pet();
-            auxPet.Name = name;
-            auxPet.AnimalTypeId = animalTypeId;
-            auxPet.CityId = cityId;
-            auxPet.GenderId = genderId;
-            auxPet.Date = date;
-            auxPet.PhoneNumber = phoneNumber;
-            auxPet.Photo = photo;
-            auxPet.Description = description;
-            auxPet.UserId = userId;
-            auxPet.Found = found;
-            return auxPet;
-        }
+
         public City CreateCity(string name)
         {
             var auxCity = new City();
@@ -56,10 +46,10 @@ namespace PetFinderTests
         [Fact]
         public void ShouldBeMissingDataAsync()
         {
-            PetFinderContext context = dbContextFactory.CreateContext();
-            Pet pet = new Pet();
-            PetService petService = new PetService(context);
-            List<string> errors = petService.CheckPet(pet);
+            var sut = fixture.Create<PetService>();
+            var pet = new Pet();
+
+            List<string> errors = sut.CheckPet(pet);
             //Deberia dar 6 errores
             Assert.Equal<int>(6, errors.Count);
         }
@@ -67,10 +57,9 @@ namespace PetFinderTests
         [Fact]
         public void ShouldBeInvalidName()
         {
-            PetFinderContext context = dbContextFactory.CreateContext();
-            PetService petService = new PetService(context);
+            var sut = fixture.Create<PetService>();
             string invalidName = "asdasdasdasdasdasdasd";
-            bool isValid = petService.IsValidName(invalidName);
+            bool isValid = sut.IsValidName(invalidName);
             // Deberia ser falso ya que la cadena tiene 21 caracteres, siendo el maximo 20
             Assert.False(isValid);
         }
