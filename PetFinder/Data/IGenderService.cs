@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using PetFinder.Helpers;
 using PetFinder.Models;
 using System;
 using System.Collections.Generic;
@@ -55,7 +56,7 @@ namespace PetFinder.Data
         /// <returns>
         /// A bool that indicates if it was successfull or not
         /// </returns>
-        Task<bool> Save(Gender gender);
+        Task<GenericResult> Save(Gender gender);
 
         /// <summary>
         /// Checks if the name is used by an already created Gender
@@ -125,21 +126,32 @@ namespace PetFinder.Data
             }
         }
 
-        public async Task<bool> Save(Gender gender)
+        public async Task<GenericResult> Save(Gender gender)
         {
-            if (IsValidName(gender.Name))
+            var genericResult = new GenericResult();
+            if (!IsValidName(gender.Name))
             {
-                if (await IsRepeated(gender.Name))
-                {
-                    throw new GenderAlreadyExistsException("Ya existe un genero con ese nombre");
-                }
-                if (gender.Id > 0)
-                {
-                    return await Update(gender);
-                }
-                return await Insert(gender);
+                genericResult.Errors.Add("Empty name");
+                return genericResult;
             }
-            throw new DbUpdateException("Asegúrese de insertar un nombre y que sea menor a 20 caracteres");
+            if (await IsRepeated(gender.Name))
+            {
+                genericResult.Errors.Add("Empty name");
+                return genericResult;
+            }
+            if (gender.Id > 0)
+            {
+                if( !await Update(gender))
+                {
+                    genericResult.Errors.Add("Error on update");
+                }
+                return genericResult;
+            }
+            if (!await Insert(gender))
+            {
+                genericResult.Errors.Add("Error on insert");
+            }
+            return genericResult;      
         }
 
         public async Task<bool> Update(Gender gender)

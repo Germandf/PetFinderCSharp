@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace PetFinder.Data
 {
-    interface IAnimalTypeService
+    public interface IAnimalTypeService
     {
         /// <summary>
         /// Gets all AnimalTypes
