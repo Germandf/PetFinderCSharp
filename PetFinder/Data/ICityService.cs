@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PetFinder.Helpers;
 using PetFinder.Models;
+using PetFinder.ViewModels;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -60,6 +61,14 @@ namespace PetFinder.Data
         Task<GenericResult> Save(City city);
 
         /// <summary>
+        /// Transforms the CityViewModel into a City and calls Save with the City parameter
+        /// </summary>
+        /// <returns>
+        /// A GenericResult that indicates if it was successfull or not, if not, it will contain the error/s
+        /// </returns>
+        Task<GenericResult> Save(CityViewModel cityViewModel);
+
+        /// <summary>
         /// Checks if the name is used by an already created City
         /// </summary>
         /// <returns>
@@ -106,7 +115,9 @@ namespace PetFinder.Data
 
         public async Task<City> Get(int id)
         {
-            return await _context.Cities.FindAsync(id);
+            City city = await _context.Cities.FindAsync(id);
+            _context.Entry(city).State = EntityState.Detached;
+            return city;
         }
 
         public async Task<bool> Insert(City city)
@@ -114,6 +125,12 @@ namespace PetFinder.Data
             _context.Cities.Add(city);
             _logger.Information("City {name} created", city.Name);
             return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<GenericResult> Save(CityViewModel cityViewModel)
+        {
+            City city = cityViewModel.ConvertToCity();
+            return await Save(city);
         }
 
         public async Task<GenericResult> Save(City city)

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PetFinder.Helpers;
 using PetFinder.Models;
+using PetFinder.ViewModels;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,7 @@ namespace PetFinder.Data
         /// <returns>
         /// An AnimalType object
         /// </returns>
-        Task<AnimalType> Get(int Id);
+        Task<AnimalType> Get(int id);
 
         /// <summary>
         /// Inserts an AnimalType
@@ -59,6 +60,14 @@ namespace PetFinder.Data
         /// A GenericResult that indicates if it was successfull or not, if not, it will contain the error/s
         /// </returns>
         Task<GenericResult> Save(AnimalType animalType);
+
+        /// <summary>
+        /// Transforms the AnimalTypeViewModel into an AnimalType and calls Save with the AnimalType parameter
+        /// </summary>
+        /// <returns>
+        /// A GenericResult that indicates if it was successfull or not, if not, it will contain the error/s
+        /// </returns>
+        Task<GenericResult> Save(AnimalTypeViewModel animalTypeViewModel);
 
         /// <summary>
         /// Checks if the name is used by an already created AnimalType
@@ -105,9 +114,11 @@ namespace PetFinder.Data
             return await _context.AnimalTypes.ToListAsync();
         }
 
-        public async Task<AnimalType> Get(int Id)
+        public async Task<AnimalType> Get(int id)
         {
-            return await _context.AnimalTypes.FindAsync(Id);
+            AnimalType animalType = await _context.AnimalTypes.FindAsync(id);
+            _context.Entry(animalType).State = EntityState.Detached;
+            return animalType;
         }
 
         public async Task<bool> Insert(AnimalType animalType)
@@ -123,6 +134,12 @@ namespace PetFinder.Data
             _context.Entry(animalType).State = EntityState.Modified;
             _logger.Information("AnimalType {name} updated, Id: {id}", animalType.Name, animalType.Id);
             return await _context.SaveChangesAsync() > 0;
+        }
+
+        public async Task<GenericResult> Save(AnimalTypeViewModel animalTypeViewModel)
+        {
+            AnimalType animalType = animalTypeViewModel.ConvertToAnimalType();
+            return await Save(animalType);
         }
 
         public async Task<GenericResult> Save(AnimalType animalType)

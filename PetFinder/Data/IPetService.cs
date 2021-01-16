@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PetFinder.Areas.Identity;
 using PetFinder.Helpers;
 using PetFinder.Models;
+using PetFinder.ViewModels;
 using Serilog;
 using System;
 using System.Collections.Generic;
@@ -62,6 +63,14 @@ namespace PetFinder.Data
         /// A GenericResult that indicates if it was successfull or not, if not, it will contain the error/s
         /// </returns>
         Task<GenericResult> Save(Pet pet, IFileListEntry photo);
+
+        /// <summary>
+        /// Transforms the PetViewModel into a Pet and calls Save with the Pet parameter
+        /// </summary>
+        /// <returns>
+        /// A GenericResult that indicates if it was successfull or not, if not, it will contain the error/s
+        /// </returns>
+        Task<GenericResult> Save(PetViewModel petViewModel, IFileListEntry photo);
 
         /// <summary>
         /// Looks for all Pets that contains the same UserId attribute as the one inserted
@@ -165,11 +174,13 @@ namespace PetFinder.Data
 
         public async Task<Pet> Get(int id)
         {
-            return await _context.Pets.
+            Pet pet = await _context.Pets.
                 Include(p => p.AnimalType).
                 Include(p => p.City).
                 Include(p => p.Gender).
                 FirstOrDefaultAsync(i => i.Id == id);
+            _context.Entry(pet).State = EntityState.Detached;
+            return pet;
         }
 
         public async Task<IEnumerable<Pet>> GetAll()
@@ -222,9 +233,15 @@ namespace PetFinder.Data
                 errorMessages.Add(ERROR_MISSING_PHONE);
             if (!IsValidName(pet.Name))
                 errorMessages.Add(ERROR_INVALID_NAME);
-            if (pet.Photo == null)
+            if (pet.Photo == null && pet.Id == 0)
                 errorMessages.Add(ERROR_INVALID_PHOTO);
             return errorMessages;
+        }
+
+        public async Task<GenericResult> Save(PetViewModel petViewModel, IFileListEntry photo)
+        {
+            Pet pet = petViewModel.ConvertToPet();
+            return await Save(pet, photo);
         }
 
         public async Task<GenericResult> Save(Pet pet, IFileListEntry photo)
@@ -246,12 +263,10 @@ namespace PetFinder.Data
             result.Errors.AddRange(CheckPet(pet)); // Si devuelve errores los agrego para mostrarlos
             if (result.Success) // Si no hay errores guardo o actualizo
             {
-                // Si estamos editando
-                if (pet.Id > 0) result.AddRange((await Update(pet)).Errors);
-                else
-                {
-                    if (!await Insert(pet)) result.AddError(ERROR_SAVING);
-                }
+                if (pet.Id > 0) // Si estamos editando
+                    result.AddRange((await Update(pet)).Errors);
+                else if (!await Insert(pet)) // Si estamos guardando
+                    result.AddError(ERROR_SAVING);
             }
             return result;
         }

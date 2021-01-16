@@ -112,7 +112,6 @@ namespace PetFinderApi.Data
             }
             bool isAdmin = await _userManager.IsInRoleAsync(user, ApplicationUserService.ROLE_ADMIN);
             Comment comment = await Get(commentId);
-            _context.Entry(comment).State = EntityState.Detached;
             if (comment == null)
             {
                 //Si no existe devuelvo true asi no da error de login, luego HasCorrectData detecta que no existe
@@ -136,7 +135,7 @@ namespace PetFinderApi.Data
 
         public async Task<Comment> Get(int id)
         {
-            return await _context.Comments.
+            Comment comment = await _context.Comments.
                  Select(x =>
                     new Comment
                     {
@@ -150,6 +149,8 @@ namespace PetFinderApi.Data
                 ).
                 Where(x => x.Id == id).
                 FirstOrDefaultAsync();
+            _context.Entry(comment).State = EntityState.Detached;
+            return comment;
         }
 
         public async Task<IEnumerable<Comment>> GetAllFromPet(int id)

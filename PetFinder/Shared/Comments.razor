@@ -1,18 +1,19 @@
-﻿@using PetFinder.Areas.Identity;
+﻿@inject IApplicationUserService ApplicationUserService
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject IConfiguration Configuration
+@using PetFinder.Areas.Identity;
 @using Newtonsoft.Json;
 @using PetFinder.Areas.Identity.Extensions;
 @using Microsoft.Extensions.Configuration;
 @using System.Net.Http.Headers;
-@inject IApplicationUserService ApplicationUserService
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject IConfiguration Configuration
+@using PetFinder.ViewModels;
 
 <div class="row">
     <h3 class="petSubTitle mt-3 mx-4">Comentarios</h3>
     <section class="mb-2 col-12">
         <AuthorizeView>
             <Authorized>
-                <form id="form-new-comment" class="g-bg-secondary rounded shadow mt-2 w-100 text-left p-2 u-shadow-v18 ">
+                <EditForm Context="editFormContext" Model="@newComment" id="form-new-comment" class="g-bg-secondary rounded shadow mt-2 w-100 text-left p-2 u-shadow-v18">
                     <p class="mt-2">Agregar nuevo comentario... </p>
                     <textarea class="w-100 p-2" type="text" id="message" name="message" maxlength="200" @bind="newComment.Message"></textarea>
                     <p class="mt-2 mb-2">
@@ -21,7 +22,7 @@
                     <button type="button" class="btn bg-orange text-white mr-2 mt-1" @onclick="() => CreateComment(newComment)">
                         Comentar
                     </button>
-                </form>
+                </EditForm>
                 <ModalWithValue TypeValue="string" @ref="editModal">
                     <Title>
                         Editar
@@ -80,7 +81,7 @@
         </AuthorizeView>
     </section>
     <section id="comments" class="col-12">
-        @foreach (Comment comment in comments)
+        @foreach (CommentViewModel comment in comments)
         {
             <div class="media g-mb-30 media-comment">
                 <div class="media-body shadow g-bg-secondary g-pa-30">
@@ -122,8 +123,8 @@
     private static string ERROR_UNKNOWN = "Ha ocurrido un error inesperado, ponte en contacto con uno de los administradores";
 
     private ApplicationUser user = null;
-    private Comment newComment = new();
-    private List<Comment> comments = new();
+    private CommentViewModel newComment = new();
+    private List<CommentViewModel> comments = new();
     private ModalWithValue<string> editModal { get; set; }
     private Modal confirmationModal { get; set; }
     private Modal errorModal { get; set; }
@@ -138,13 +139,14 @@
         user = await ApplicationUserService.GetCurrent();
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var userClaims = authState.User;
-        URLApiComments = Configuration["UrlApiController"]+"comentarios";
+        URLApiComments = Configuration["UrlApiController"] + "comentarios";
         await GetComments();
         httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userClaims.Identity.GetJwt());
     }
 
-    private async void CreateComment(Comment comment)
+    private async void CreateComment(CommentViewModel commentViewModel)
     {
+        Comment comment = commentViewModel.ConvertToComment();
         comment.PetId = PetId;
         comment.UserId = user.Id;
         // Preparo content del post
@@ -152,9 +154,9 @@
         var buffer = System.Text.Encoding.UTF8.GetBytes(json);
         var byteContent = new ByteArrayContent(buffer);
         byteContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
-        // POST api/comentarios
         try
         {
+            // POST api/comentarios
             HttpResponseMessage response = await httpClient.PostAsync(URLApiComments, byteContent);
             await CheckResponse(response);
         }
@@ -163,6 +165,7 @@
             ShowModalError(ERROR_UNKNOWN + "Código de error: " + exception);
         }
         newComment.Message = "";
+        newComment.Rate = 1;
     }
 
     private async Task GetComments()
@@ -171,9 +174,9 @@
         try
         {
             HttpResponseMessage response = await httpClient.GetAsync(URLApiComments + "/mascota/" + PetId.ToString());
-            Comment[] commentsFromApi = await response.Content.ReadAsAsync<Comment[]>();
+            CommentViewModel[] commentsFromApi = await response.Content.ReadAsAsync<CommentViewModel[]>();
             if (commentsFromApi == null)
-                commentsFromApi = new Comment[0];
+                commentsFromApi = new CommentViewModel[0];
             comments.Clear();
             comments.AddRange(commentsFromApi);
             comments.Reverse();
@@ -185,22 +188,23 @@
         }
     }
 
-    private void UpdateComment(Comment comment)
+    private void UpdateComment(CommentViewModel commentViewModel)
     {
-        editModal.valueChange(comment.Message);
+        editModal.valueChange(commentViewModel.Message);
         editModal.isEditing = true;
         editModal.Open();
         editModal.OnConfirm(async () =>
         {
-            comment.Message = editModal.value;
+            commentViewModel.Message = editModal.value;
+            Comment comment = commentViewModel.ConvertToComment();
             // Preparo content del put
             var json = JsonConvert.SerializeObject(comment);
             var buffer = System.Text.Encoding.UTF8.GetBytes(json);
             var byteContent = new ByteArrayContent(buffer);
             byteContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
-            // PUT api/comentarios/id
             try
             {
+                // PUT api/comentarios/id
                 HttpResponseMessage response = await httpClient.PutAsync(URLApiComments + "/" + comment.Id.ToString(), byteContent);
                 await CheckResponse(response);
             }
@@ -211,7 +215,7 @@
         });
     }
 
-    private void DeleteComment(Comment comment)
+    private void DeleteComment(CommentViewModel commentViewModel)
     {
         confirmationModal.isWarning = true;
         confirmationModal.Open();
@@ -220,7 +224,7 @@
             try
             {
                 // DELETE api/comentarios/id
-                HttpResponseMessage response = await httpClient.DeleteAsync(URLApiComments + "/" + comment.Id.ToString());
+                HttpResponseMessage response = await httpClient.DeleteAsync(URLApiComments + "/" + commentViewModel.Id.ToString());
                 await CheckResponse(response);
             }
             catch (HttpRequestException exception)
