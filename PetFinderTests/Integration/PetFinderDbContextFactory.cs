@@ -1,49 +1,36 @@
-﻿using Microsoft.Data.Sqlite;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using PetFinder.Models;
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace PetFinderTests
 {
-    class PetFinderDbContextFactory : IDisposable
+    class PetFinderDbContextFactory 
     {
-        private DbConnection _connection;
 
-        private DbContextOptions<PetFinderContext> CreateOptions()
+        private DbContextOptions<PetFinderContext> CreateOptions(string databaseName)
         {
-            return new DbContextOptionsBuilder<PetFinderContext>()
-                .UseSqlite(_connection).Options;
+            return new DbContextOptionsBuilder<PetFinderContext>().UseInMemoryDatabase(databaseName).Options;
         }
 
         public PetFinderContext CreateContext()
         {
-            if (_connection == null)
+            
+            var options = CreateOptions(Guid.NewGuid().ToString("N"));
+            var context = new PetFinderContext(options);
+
+            var initialGenders = new List<Gender>
             {
-                _connection = new SqliteConnection("DataSource=:memory:");
-                _connection.Open();
+                new Gender() {Name = "Macho", SerializedName = "MACHO"},
+                new Gender() { Name = "Hembra", SerializedName = "HEMBRA" }
+            };
 
-                var options = CreateOptions();
-                using (var context = new PetFinderContext(options))
-                {
-                    context.Database.EnsureCreated();
-                }
-            }
+            context.Genders.AddRange(initialGenders); 
+            context.SaveChanges();
 
-            return new PetFinderContext(CreateOptions());
+            return context;
         }
 
-        public void Dispose()
-        {
-            if (_connection != null)
-            {
-                _connection.Dispose();
-                _connection = null;
-            }
-        }
     }
 }
