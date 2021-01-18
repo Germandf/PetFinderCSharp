@@ -41,11 +41,8 @@ namespace PetFinderTests.Integration
         {
             var sut = _fixture.Create<GenderService>();
             var gender = new Gender();
-
-            // No deberia insertarse ya que no tiene nombre
             var result = await sut.Save(gender);
-
-            Assert.False(result.Success);
+            Assert.False(result.Success, "No deberia insertarse ya que no tiene nombre");
         }
 
         [Fact]
@@ -56,11 +53,10 @@ namespace PetFinderTests.Integration
             var gender2 = CreateGender("Masculino");
 
             await sut.Save(gender1);
-            // No deberia insertarse ya que existe un genero con el mismo nombre
 
             var result = await sut.Save(gender2);
 
-            Assert.False(result.Success);
+            Assert.False(result.Success, "No deberia insertarse ya que existe un genero con el mismo nombre");
         }
 
         [Fact]
@@ -70,9 +66,7 @@ namespace PetFinderTests.Integration
 
             var invalidName = "asdasdasdasdasdasdasd";
             var isValid = sut.IsValidName(invalidName);
-
-            // Deberia ser falso ya que la cadena tiene 21 caracteres, siendo el maximo 20
-            Assert.False(isValid);
+            Assert.False(isValid, "Deberia ser falso ya que la cadena tiene 21 caracteres, siendo el maximo 20");
         }
 
         [Fact]
@@ -83,8 +77,7 @@ namespace PetFinderTests.Integration
             var notRepeatedName = "Masculino";
             var isValid = await sut.IsRepeated(notRepeatedName);
 
-            // Deberia ser falso ya que no hay otro genero con ese nombre
-            Assert.False(isValid);
+            Assert.False(isValid, "Deberia ser falso ya que no hay otro genero con ese nombre");
         }
 
         [Fact]

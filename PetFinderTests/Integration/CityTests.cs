@@ -42,11 +42,8 @@ namespace PetFinderTests.Integration
         {
             var city = new City();
             var sut = _fixture.Create<CityService>();
-
-            // No deberia insertarse ya que no tiene nombre
             var result = await sut.Save(city);
-            // No deberia insertarse ya que existe una ciudad con el mismo nombre
-            Assert.False(result.Success);
+            Assert.False(result.Success, "No debería insertarse ya que no se especifico un nombre");
         }
 
         [Fact]
@@ -57,22 +54,21 @@ namespace PetFinderTests.Integration
             var cityRepeated = CreateCity("Tres Arroyos");
 
             await sut.Save(city);
-            // No deberia insertarse ya que existe una ciudad con el mismo nombre
             var result = await sut.Save(cityRepeated);
-            // No deberia insertarse ya que existe una ciudad con el mismo nombre
-            Assert.False(result.Success);
+            Assert.False(result.Success, "No deberia insertarse. Ya existe una ciudad con el mismo nombre.");
         }
 
-        [Fact]
-        private void ShouldBeInvalidName()
+
+        [Theory]
+        [InlineData("Nombre demasiado largo con muchisimos caracteres")]
+        private void ShouldBeInvalidName(string invalidName)
         {
             var sut = _fixture.Create<CityService>();
 
-            var invalidName = "asdasdasdasdasdasdasdasdasdasdasdasd";
             var isValid = sut.IsValidName(invalidName);
 
             // Deberia ser falso ya que la cadena tiene 36 caracteres, siendo el maximo 35
-            Assert.False(isValid);
+            Assert.False(isValid, "Debería aceptar letras de la A a la Z, como máximo 35 caracteres");
         }
 
         [Fact]

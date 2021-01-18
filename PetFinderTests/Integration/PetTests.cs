@@ -34,8 +34,7 @@ namespace PetFinderTests.Integration
             var sut = _fixture.Create<PetService>();
             var invalidName = "asdasdasdasdasdasdasd";
             var isValid = sut.IsValidName(invalidName);
-            // Deberia ser falso ya que la cadena tiene 21 caracteres, siendo el maximo 20
-            Assert.False(isValid);
+            Assert.False(isValid, "Solo se admiten nombres de 20 caracteres como máximo");
         }
     }
 }
