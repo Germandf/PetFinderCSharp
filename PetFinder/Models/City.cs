@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 #nullable disable
 
 namespace PetFinder.Models
 {
-    public partial class City
+    public class City
     {
         public City()
         {

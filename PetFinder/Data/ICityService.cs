@@ -1,100 +1,101 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Runtime.Serialization;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using PetFinder.Helpers;
 using PetFinder.Models;
 using PetFinder.ViewModels;
 using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PetFinder.Data
 {
-    interface ICityService
+    public interface ICityService
     {
         /// <summary>
-        /// Gets all Cities
+        ///     Gets all Cities
         /// </summary>
         /// <returns>
-        /// An IEnumerable of type City
+        ///     An IEnumerable of type City
         /// </returns>
         Task<IEnumerable<City>> GetAll();
 
         /// <summary>
-        /// Gets a specific City by its Id
+        ///     Gets a specific City by its Id
         /// </summary>
         /// <returns>
-        /// A City object
+        ///     A City object
         /// </returns>
         Task<City> Get(int id);
 
         /// <summary>
-        /// Inserts a City
+        ///     Inserts a City
         /// </summary>
         /// <returns>
-        /// A bool that indicates if it was successfull or not
+        ///     A bool that indicates if it was successfull or not
         /// </returns>
         Task<bool> Insert(City city);
 
         /// <summary>
-        /// Updates a City
+        ///     Updates a City
         /// </summary>
         /// <returns>
-        /// A bool that indicates if it was successfull or not
+        ///     A bool that indicates if it was successfull or not
         /// </returns>
         Task<bool> Update(City city);
 
         /// <summary>
-        /// Deletes a City
+        ///     Deletes a City
         /// </summary>
         /// <returns>
-        /// A bool that indicates if it was successfull or not
+        ///     A bool that indicates if it was successfull or not
         /// </returns>
         Task<bool> Delete(int id);
 
         /// <summary>
-        /// Inserts or Updates a City depending on the case.
+        ///     Inserts or Updates a City depending on the case.
         /// </summary>
         /// <returns>
-        /// A GenericResult that indicates if it was successfull or not, if not, it will contain the error/s
+        ///     A GenericResult that indicates if it was successfull or not, if not, it will contain the error/s
         /// </returns>
         Task<GenericResult> Save(City city);
 
         /// <summary>
-        /// Transforms the CityViewModel into a City and calls Save with the City parameter
+        ///     Transforms the CityViewModel into a City and calls Save with the City parameter
         /// </summary>
         /// <returns>
-        /// A GenericResult that indicates if it was successfull or not, if not, it will contain the error/s
+        ///     A GenericResult that indicates if it was successfull or not, if not, it will contain the error/s
         /// </returns>
         Task<GenericResult> Save(CityViewModel cityViewModel);
 
         /// <summary>
-        /// Checks if the name is used by an already created City
+        ///     Checks if the name is used by an already created City
         /// </summary>
         /// <returns>
-        /// A bool that indicates if it's being used or not
+        ///     A bool that indicates if it's being used or not
         /// </returns>
         Task<bool> IsRepeated(string name);
 
         /// <summary>
-        /// Checks if exists a Pet that depends on a specific City
+        ///     Checks if exists a Pet that depends on a specific City
         /// </summary>
         /// <returns>
-        /// A bool that indicates if there is at least one
+        ///     A bool that indicates if there is at least one
         /// </returns>
         Task<bool> HasPetsAssociated(City city);
     }
 
     public class CityService : ICityService
     {
-        private readonly PetFinderContext _context;
-        private readonly ILogger _logger;
         public const string INVALID_NAME_ERROR = "El nombre ingresado no corresponde a un nombre valido";
         public const string REPEATED_CITY_ERROR = "Ya existe la ciudad";
         public const string SAVING_ERROR = "Ocurrio un error al guardar";
+        private readonly PetFinderContext _context;
+        private readonly ILogger _logger;
 
-        public CityService( PetFinderContext context,
-                            ILogger logger)
+        public CityService(PetFinderContext context,
+            ILogger logger)
         {
             _context = context;
             _logger = logger;
@@ -115,7 +116,7 @@ namespace PetFinder.Data
 
         public async Task<City> Get(int id)
         {
-            City city = await _context.Cities.FindAsync(id);
+            var city = await _context.Cities.FindAsync(id);
             _context.Entry(city).State = EntityState.Detached;
             return city;
         }
@@ -129,7 +130,7 @@ namespace PetFinder.Data
 
         public async Task<GenericResult> Save(CityViewModel cityViewModel)
         {
-            City city = cityViewModel.ConvertToCity();
+            var city = cityViewModel.ConvertToCity();
             return await Save(city);
         }
 
@@ -139,26 +140,24 @@ namespace PetFinder.Data
             if (IsValidName(city.Name))
             {
                 city.SerializedName = city.Name.ToUpper().Replace(" ", "");
-                if (await IsRepeated(city.SerializedName) && city.Id == 0)
-                {
-                    result.AddError(REPEATED_CITY_ERROR);
-                }
+                if (await IsRepeated(city.SerializedName) && city.Id == 0) result.AddError(REPEATED_CITY_ERROR);
                 if (result.Success)
                 {
                     if (city.Id > 0)
                     {
-                        if (!await Update(city))
-                        {
-                            result.AddError(SAVING_ERROR);
-                        }
+                        if (!await Update(city)) result.AddError(SAVING_ERROR);
                     }
-                    else if (!await Insert(city)) result.AddError(SAVING_ERROR);
+                    else if (!await Insert(city))
+                    {
+                        result.AddError(SAVING_ERROR);
+                    }
                 }
             }
             else
             {
                 result.AddError(INVALID_NAME_ERROR);
             }
+
             return result;
         }
 
@@ -169,50 +168,52 @@ namespace PetFinder.Data
             return await _context.SaveChangesAsync() > 0;
         }
 
+        public async Task<bool> IsRepeated(string serializedName)
+        {
+            var existingCityCount =
+                await Task.Run(() => _context.Cities.Count(c => c.SerializedName == serializedName));
+            if (existingCityCount > 0) return true;
+            return false;
+        }
+
+        public async Task<bool> HasPetsAssociated(City city)
+        {
+            var petsFromThisCity = await _context.Pets.Include(p => p.City)
+                .Where(p => p.City.SerializedName == city.SerializedName).ToListAsync();
+            if (petsFromThisCity.Count() == 0) return false;
+            return true;
+        }
+
         public bool IsValidName(string name)
         {
             if (name == null)
             {
                 return false;
             }
-            else
-            {
-                bool isValid = name.Length > 0 && name.Length < 35;
-                return isValid;
-            }
-        }
 
-        public async Task<bool> IsRepeated(string serializedName)
-        {
-            var existingCityCount = await Task.Run(() => _context.Cities.Count(c => c.SerializedName == serializedName));
-            if (existingCityCount > 0)
-            {
-                return true;
-            }
-            return false;
-        }
-
-        public async Task<bool> HasPetsAssociated(City city)
-        {
-            var petsFromThisCity = await _context.Pets.
-                Include(p => p.City).
-                Where(p => p.City.SerializedName == city.SerializedName).
-                ToListAsync();
-            if (petsFromThisCity.Count() == 0)
-            {
-                return false;
-            }
-            return true;
+            var isValid = name.Length > 0 && name.Length < 35;
+            return isValid;
         }
     }
 
     [Serializable]
     public class CityAlreadyExistsException : Exception
     {
-        public CityAlreadyExistsException() : base() { }
-        public CityAlreadyExistsException(string message) : base(message) { }
-        public CityAlreadyExistsException(string message, Exception inner) : base(message, inner) { }
-        protected CityAlreadyExistsException(System.Runtime.Serialization.SerializationInfo info,
-            System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
+        public CityAlreadyExistsException()
+        {
+        }
+
+        public CityAlreadyExistsException(string message) : base(message)
+        {
+        }
+
+        public CityAlreadyExistsException(string message, Exception inner) : base(message, inner)
+        {
+        }
+
+        protected CityAlreadyExistsException(SerializationInfo info,
+            StreamingContext context) : base(info, context)
+        {
+        }
     }
 }

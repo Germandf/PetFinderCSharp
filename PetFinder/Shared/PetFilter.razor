@@ -1,14 +1,14 @@
 ﻿@inject ICityService CityService
 @inject IAnimalTypeService AnimalTypeService
 @inject IGenderService GenderService
-@inject NavigationManager navigationManager;
+@inject NavigationManager NavigationManager
 
 <section class="container-fluid bg-orange-dark ">
-    <form @onsubmit="filtrar" class="row">
+    <form @onsubmit="Filter" class="row">
         <!-- City -->
         <div class="col-12 col-md-auto">
-            <select id="inputCity" class="d-inline form-control mt-3" name="city" @bind="selectedCity.SerializedName">
-                @if (cities == null)
+            <select id="inputCity" class="d-inline form-control mt-3" name="city" @bind="_selectedCity.SerializedName">
+                @if (Cities == null)
                 {
                     <option selected disabled hidden>Loading...</option>
                 }
@@ -16,7 +16,7 @@
                 {
                     <option selected disabled hidden>Ciudad</option>
                     <option value="">Todas</option>
-                    foreach (City city in cities)
+                    foreach (var city in Cities)
                     {
                         <option value="@city.SerializedName">@city.Name</option>
                     }
@@ -25,8 +25,8 @@
         </div>
         <!-- Animal Type -->
         <div class="col-12 col-md-auto">
-            <select id="inputAnimalType" class="d-inline form-control mt-3" name="animalType" @bind="selectedAnimalType.SerializedName">
-                @if (animalTypes == null)
+            <select id="inputAnimalType" class="d-inline form-control mt-3" name="animalType" @bind="_selectedAnimalType.SerializedName">
+                @if (AnimalTypes == null)
                 {
                     <option selected disabled hidden>Loading...</option>
                 }
@@ -34,7 +34,7 @@
                 {
                     <option selected disabled hidden>Tipo de mascota</option>
                     <option value="">Todos</option>
-                    foreach (AnimalType animalType in animalTypes)
+                    foreach (var animalType in AnimalTypes)
                     {
                         <option value="@animalType.SerializedName">@animalType.Name</option>
                     }
@@ -43,8 +43,8 @@
         </div>
         <!-- Gender -->
         <div class="col-12 col-md-auto">
-            <select id="inputGender" class="d-inline form-control mt-3" name="gender" @bind="selectedGender.SerializedName">
-                @if (genders == null)
+            <select id="inputGender" class="d-inline form-control mt-3" name="gender" @bind="_selectedGender.SerializedName">
+                @if (Genders == null)
                 {
                     <option selected disabled hidden>Loading...</option>
                 }
@@ -52,7 +52,7 @@
                 {
                     <option selected disabled hidden>Género</option>
                     <option value="">Ambos</option>
-                    foreach (Gender gender in genders)
+                    foreach (var gender in Genders)
                     {
                         <option value="@gender.SerializedName">@gender.Name</option>
                     }
@@ -61,11 +61,11 @@
         </div>
         <!-- Name or Description -->
         <div class="col-12 col-md-auto">
-            <input id="search" class="d-inline form-control mt-3" type="text" placeholder="Nombre o descripción" name="search" @bind="searchText">
+            <input id="search" class="d-inline form-control mt-3" type="text" placeholder="Nombre o descripción" name="search" @bind="_searchText">
         </div>
         <!-- Filter -->
         <div class="col-12 col-md-auto d-flex justify-content-center mt-3 mt-md-0">
-            <button type="button" class="text-white d-inline btn bg-orange mt-md-3 mb-3" @onclick="filtrar">
+            <button type="button" class="text-white d-inline btn bg-orange mt-md-3 mb-3" @onclick="Filter">
                 Filtrar
             </button>
         </div>
@@ -73,41 +73,44 @@
 </section>
 
 @code {
-    [Parameter]
-    public IEnumerable<City> cities { get; set; }
-    [Parameter]
-    public IEnumerable<AnimalType> animalTypes { get; set; }
-    [Parameter]
-    public IEnumerable<Gender> genders { get; set; }
 
-    private City selectedCity = new();
-    private AnimalType selectedAnimalType = new();
-    private Gender selectedGender = new();
-    private string searchText = null;
+    [Parameter]
+    public IEnumerable<City> Cities { get; set; }
 
-    private void filtrar()
+    [Parameter]
+    public IEnumerable<AnimalType> AnimalTypes { get; set; }
+
+    [Parameter]
+    public IEnumerable<Gender> Genders { get; set; }
+
+    private City _selectedCity = new();
+    private AnimalType _selectedAnimalType = new();
+    private Gender _selectedGender = new();
+    private string _searchText = null;
+
+    private void Filter()
     {
-
-        string urlFilter = "/filtrar";
-        if(selectedCity.SerializedName != null)
+        var urlFilter = "/filtrar";
+        if (_selectedCity.SerializedName != null)
         {
-            urlFilter += $"/ciudad-{selectedCity.SerializedName.ToLower()}";
+            urlFilter += $"/ciudad-{_selectedCity.SerializedName.ToLower()}";
         }
-        if (selectedAnimalType.SerializedName != null)
+        if (_selectedAnimalType.SerializedName != null)
         {
-            urlFilter += $"/tipo-{selectedAnimalType.SerializedName.ToLower()}";
+            urlFilter += $"/tipo-{_selectedAnimalType.SerializedName.ToLower()}";
         }
-        if (selectedGender.SerializedName != null )
+        if (_selectedGender.SerializedName != null)
         {
-            urlFilter += $"/genero-{selectedGender.SerializedName.ToLower()}";
+            urlFilter += $"/genero-{_selectedGender.SerializedName.ToLower()}";
         }
-        if (searchText != null)
+        if (_searchText != null)
         {
-            urlFilter += $"/contiene-{searchText}";
+            urlFilter += $"/contiene-{_searchText}";
         }
         if (urlFilter.Length > 0)
         {
-            navigationManager.NavigateTo(urlFilter);
+            NavigationManager.NavigateTo(urlFilter);
         }
     }
+
 }

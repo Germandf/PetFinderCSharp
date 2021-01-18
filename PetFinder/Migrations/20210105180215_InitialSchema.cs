@@ -8,407 +8,388 @@ namespace PetFinder.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "AnimalTypes",
-                columns: table => new
+                "AnimalTypes",
+                table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>("int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SerializedName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Name = table.Column<string>("nvarchar(max)", nullable: true),
+                    SerializedName = table.Column<string>("nvarchar(max)", nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AnimalTypes", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_AnimalTypes", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "AspNetRoles",
-                columns: table => new
+                "AspNetRoles",
+                table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Id = table.Column<string>("nvarchar(450)", nullable: false),
+                    Name = table.Column<string>("nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedName = table.Column<string>("nvarchar(256)", maxLength: 256, nullable: true),
+                    ConcurrencyStamp = table.Column<string>("nvarchar(max)", nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetRoles", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_AspNetRoles", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUsers",
-                columns: table => new
+                "AspNetUsers",
+                table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Surname = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    NormalizedEmail = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
-                    EmailConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SecurityStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ConcurrencyStamp = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumberConfirmed = table.Column<bool>(type: "bit", nullable: false),
-                    TwoFactorEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    LockoutEnd = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
-                    LockoutEnabled = table.Column<bool>(type: "bit", nullable: false),
-                    AccessFailedCount = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<string>("nvarchar(450)", nullable: false),
+                    Name = table.Column<string>("nvarchar(max)", nullable: true),
+                    Surname = table.Column<string>("nvarchar(max)", nullable: true),
+                    UserName = table.Column<string>("nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedUserName = table.Column<string>("nvarchar(256)", maxLength: 256, nullable: true),
+                    Email = table.Column<string>("nvarchar(256)", maxLength: 256, nullable: true),
+                    NormalizedEmail = table.Column<string>("nvarchar(256)", maxLength: 256, nullable: true),
+                    EmailConfirmed = table.Column<bool>("bit", nullable: false),
+                    PasswordHash = table.Column<string>("nvarchar(max)", nullable: true),
+                    SecurityStamp = table.Column<string>("nvarchar(max)", nullable: true),
+                    ConcurrencyStamp = table.Column<string>("nvarchar(max)", nullable: true),
+                    PhoneNumber = table.Column<string>("nvarchar(max)", nullable: true),
+                    PhoneNumberConfirmed = table.Column<bool>("bit", nullable: false),
+                    TwoFactorEnabled = table.Column<bool>("bit", nullable: false),
+                    LockoutEnd = table.Column<DateTimeOffset>("datetimeoffset", nullable: true),
+                    LockoutEnabled = table.Column<bool>("bit", nullable: false),
+                    AccessFailedCount = table.Column<int>("int", nullable: false)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_AspNetUsers", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "Cities",
-                columns: table => new
+                "Cities",
+                table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>("int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SerializedName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Name = table.Column<string>("nvarchar(max)", nullable: true),
+                    SerializedName = table.Column<string>("nvarchar(max)", nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Cities", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_Cities", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "Genders",
-                columns: table => new
+                "Genders",
+                table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>("int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    SerializedName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Name = table.Column<string>("nvarchar(max)", nullable: true),
+                    SerializedName = table.Column<string>("nvarchar(max)", nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Genders", x => x.Id);
-                });
+                constraints: table => { table.PrimaryKey("PK_Genders", x => x.Id); });
 
             migrationBuilder.CreateTable(
-                name: "AspNetRoleClaims",
-                columns: table => new
+                "AspNetRoleClaims",
+                table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>("int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    RoleId = table.Column<string>("nvarchar(450)", nullable: false),
+                    ClaimType = table.Column<string>("nvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>("nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetRoleClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetRoleClaims_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
+                        "FK_AspNetRoleClaims_AspNetRoles_RoleId",
+                        x => x.RoleId,
+                        "AspNetRoles",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserClaims",
-                columns: table => new
+                "AspNetUserClaims",
+                table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>("int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ClaimType = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ClaimValue = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    UserId = table.Column<string>("nvarchar(450)", nullable: false),
+                    ClaimType = table.Column<string>("nvarchar(max)", nullable: true),
+                    ClaimValue = table.Column<string>("nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUserClaims", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_AspNetUserClaims_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
+                        "FK_AspNetUserClaims_AspNetUsers_UserId",
+                        x => x.UserId,
+                        "AspNetUsers",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserLogins",
-                columns: table => new
+                "AspNetUserLogins",
+                table => new
                 {
-                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    ProviderKey = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    LoginProvider = table.Column<string>("nvarchar(128)", maxLength: 128, nullable: false),
+                    ProviderKey = table.Column<string>("nvarchar(128)", maxLength: 128, nullable: false),
+                    ProviderDisplayName = table.Column<string>("nvarchar(max)", nullable: true),
+                    UserId = table.Column<string>("nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserLogins", x => new { x.LoginProvider, x.ProviderKey });
+                    table.PrimaryKey("PK_AspNetUserLogins", x => new {x.LoginProvider, x.ProviderKey});
                     table.ForeignKey(
-                        name: "FK_AspNetUserLogins_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
+                        "FK_AspNetUserLogins_AspNetUsers_UserId",
+                        x => x.UserId,
+                        "AspNetUsers",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserRoles",
-                columns: table => new
+                "AspNetUserRoles",
+                table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    RoleId = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                    UserId = table.Column<string>("nvarchar(450)", nullable: false),
+                    RoleId = table.Column<string>("nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserRoles", x => new { x.UserId, x.RoleId });
+                    table.PrimaryKey("PK_AspNetUserRoles", x => new {x.UserId, x.RoleId});
                     table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "AspNetRoles",
-                        principalColumn: "Id",
+                        "FK_AspNetUserRoles_AspNetRoles_RoleId",
+                        x => x.RoleId,
+                        "AspNetRoles",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_AspNetUserRoles_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
+                        "FK_AspNetUserRoles_AspNetUsers_UserId",
+                        x => x.UserId,
+                        "AspNetUsers",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "AspNetUserTokens",
-                columns: table => new
+                "AspNetUserTokens",
+                table => new
                 {
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    UserId = table.Column<string>("nvarchar(450)", nullable: false),
+                    LoginProvider = table.Column<string>("nvarchar(128)", maxLength: 128, nullable: false),
+                    Name = table.Column<string>("nvarchar(128)", maxLength: 128, nullable: false),
+                    Value = table.Column<string>("nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_AspNetUserTokens", x => new { x.UserId, x.LoginProvider, x.Name });
+                    table.PrimaryKey("PK_AspNetUserTokens", x => new {x.UserId, x.LoginProvider, x.Name});
                     table.ForeignKey(
-                        name: "FK_AspNetUserTokens_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
+                        "FK_AspNetUserTokens_AspNetUsers_UserId",
+                        x => x.UserId,
+                        "AspNetUsers",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Comments",
-                columns: table => new
+                "Comments",
+                table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>("int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Message = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    PetId = table.Column<int>(type: "int", nullable: false),
-                    Rate = table.Column<int>(type: "int", nullable: false)
+                    Message = table.Column<string>("nvarchar(max)", nullable: true),
+                    UserId = table.Column<string>("nvarchar(450)", nullable: true),
+                    PetId = table.Column<int>("int", nullable: false),
+                    Rate = table.Column<int>("int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Comments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Comments_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
+                        "FK_Comments_AspNetUsers_UserId",
+                        x => x.UserId,
+                        "AspNetUsers",
+                        "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Pets",
-                columns: table => new
+                "Pets",
+                table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>("int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    AnimalTypeId = table.Column<int>(type: "int", nullable: false),
-                    CityId = table.Column<int>(type: "int", nullable: false),
-                    GenderId = table.Column<int>(type: "int", nullable: false),
-                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Photo = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    Found = table.Column<byte>(type: "tinyint", nullable: false)
+                    Name = table.Column<string>("nvarchar(max)", nullable: true),
+                    AnimalTypeId = table.Column<int>("int", nullable: false),
+                    CityId = table.Column<int>("int", nullable: false),
+                    GenderId = table.Column<int>("int", nullable: false),
+                    Date = table.Column<DateTime>("datetime2", nullable: false),
+                    PhoneNumber = table.Column<string>("nvarchar(max)", nullable: true),
+                    Photo = table.Column<string>("nvarchar(max)", nullable: true),
+                    Description = table.Column<string>("nvarchar(max)", nullable: true),
+                    UserId = table.Column<string>("nvarchar(450)", nullable: true),
+                    Found = table.Column<byte>("tinyint", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Pets", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Pets_AnimalTypes_AnimalTypeId",
-                        column: x => x.AnimalTypeId,
-                        principalTable: "AnimalTypes",
-                        principalColumn: "Id",
+                        "FK_Pets_AnimalTypes_AnimalTypeId",
+                        x => x.AnimalTypeId,
+                        "AnimalTypes",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Pets_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id",
+                        "FK_Pets_AspNetUsers_UserId",
+                        x => x.UserId,
+                        "AspNetUsers",
+                        "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Pets_Cities_CityId",
-                        column: x => x.CityId,
-                        principalTable: "Cities",
-                        principalColumn: "Id",
+                        "FK_Pets_Cities_CityId",
+                        x => x.CityId,
+                        "Cities",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Pets_Genders_GenderId",
-                        column: x => x.GenderId,
-                        principalTable: "Genders",
-                        principalColumn: "Id",
+                        "FK_Pets_Genders_GenderId",
+                        x => x.GenderId,
+                        "Genders",
+                        "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.Sql(
-                sql: "CREATE FULLTEXT CATALOG PetFinder_Catalog AS DEFAULT;",
-            suppressTransaction: true);
+                "CREATE FULLTEXT CATALOG PetFinder_Catalog AS DEFAULT;",
+                true);
 
             migrationBuilder.Sql(
-                sql: "CREATE FULLTEXT INDEX ON [dbo].[Pets](" +
+                "CREATE FULLTEXT INDEX ON [dbo].[Pets](" +
                 "[Description] LANGUAGE 'Spanish', " +
                 "[Name] LANGUAGE 'Spanish')" +
                 "KEY INDEX[PK_Pets]ON([PetFinder_Catalog], FILEGROUP[PRIMARY])" +
                 "WITH(CHANGE_TRACKING = AUTO, STOPLIST = SYSTEM)",
-                suppressTransaction: true);
+                true);
 
             migrationBuilder.CreateTable(
-                name: "Logs",
-                columns: table => new
+                "Logs",
+                table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>("int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Message = table.Column<string>(type: "nvarchar(MAX)", nullable: true),
-                    MessageTemplate = table.Column<string>(type: "nvarchar(MAX)", nullable: true),
-                    Level = table.Column<string>(type: "nvarchar(MAX)", nullable: false),
-                    TimeStamp = table.Column<DateTime>(type: "datetime", nullable: false),
-                    Exception = table.Column<string>(type: "nvarchar(MAX)", nullable: true),
-                    Properties = table.Column<string>(type: "nvarchar(MAX)", nullable: true)
+                    Message = table.Column<string>("nvarchar(MAX)", nullable: true),
+                    MessageTemplate = table.Column<string>("nvarchar(MAX)", nullable: true),
+                    Level = table.Column<string>("nvarchar(MAX)", nullable: false),
+                    TimeStamp = table.Column<DateTime>("datetime", nullable: false),
+                    Exception = table.Column<string>("nvarchar(MAX)", nullable: true),
+                    Properties = table.Column<string>("nvarchar(MAX)", nullable: true)
                 },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Logs", x => x.Id);
-
-                }
-           );
+                constraints: table => { table.PrimaryKey("PK_Logs", x => x.Id); }
+            );
             migrationBuilder.InsertData(
-                table: "Genders",
-                columns: new[] { "Id", "Name", "SerializedName" },
-                values: new object[] { 1, "Macho", "MACHO" });
+                "Genders",
+                new[] {"Id", "Name", "SerializedName"},
+                new object[] {1, "Macho", "MACHO"});
 
             migrationBuilder.InsertData(
-                table: "Genders",
-                columns: new[] { "Id", "Name", "SerializedName" },
-                values: new object[] { 2, "Hembra", "HEMBRA" });
+                "Genders",
+                new[] {"Id", "Name", "SerializedName"},
+                new object[] {2, "Hembra", "HEMBRA"});
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetRoleClaims_RoleId",
-                table: "AspNetRoleClaims",
-                column: "RoleId");
+                "IX_AspNetRoleClaims_RoleId",
+                "AspNetRoleClaims",
+                "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "RoleNameIndex",
-                table: "AspNetRoles",
-                column: "NormalizedName",
+                "RoleNameIndex",
+                "AspNetRoles",
+                "NormalizedName",
                 unique: true,
                 filter: "[NormalizedName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserClaims_UserId",
-                table: "AspNetUserClaims",
-                column: "UserId");
+                "IX_AspNetUserClaims_UserId",
+                "AspNetUserClaims",
+                "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserLogins_UserId",
-                table: "AspNetUserLogins",
-                column: "UserId");
+                "IX_AspNetUserLogins_UserId",
+                "AspNetUserLogins",
+                "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_AspNetUserRoles_RoleId",
-                table: "AspNetUserRoles",
-                column: "RoleId");
+                "IX_AspNetUserRoles_RoleId",
+                "AspNetUserRoles",
+                "RoleId");
 
             migrationBuilder.CreateIndex(
-                name: "EmailIndex",
-                table: "AspNetUsers",
-                column: "NormalizedEmail");
+                "EmailIndex",
+                "AspNetUsers",
+                "NormalizedEmail");
 
             migrationBuilder.CreateIndex(
-                name: "UserNameIndex",
-                table: "AspNetUsers",
-                column: "NormalizedUserName",
+                "UserNameIndex",
+                "AspNetUsers",
+                "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Comments_UserId",
-                table: "Comments",
-                column: "UserId");
+                "IX_Comments_UserId",
+                "Comments",
+                "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Pets_AnimalTypeId",
-                table: "Pets",
-                column: "AnimalTypeId");
+                "IX_Pets_AnimalTypeId",
+                "Pets",
+                "AnimalTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Pets_CityId",
-                table: "Pets",
-                column: "CityId");
+                "IX_Pets_CityId",
+                "Pets",
+                "CityId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Pets_GenderId",
-                table: "Pets",
-                column: "GenderId");
+                "IX_Pets_GenderId",
+                "Pets",
+                "GenderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Pets_UserId",
-                table: "Pets",
-                column: "UserId");
+                "IX_Pets_UserId",
+                "Pets",
+                "UserId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Logs");
+                "Logs");
             migrationBuilder.DropTable(
-                name: "AspNetRoleClaims");
+                "AspNetRoleClaims");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserClaims");
+                "AspNetUserClaims");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserLogins");
+                "AspNetUserLogins");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserRoles");
+                "AspNetUserRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUserTokens");
+                "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Comments");
+                "Comments");
 
             migrationBuilder.DropTable(
-                name: "Pets");
+                "Pets");
 
             migrationBuilder.DropTable(
-                name: "AspNetRoles");
+                "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AnimalTypes");
+                "AnimalTypes");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Cities");
+                "Cities");
 
             migrationBuilder.DropTable(
-                name: "Genders");
+                "Genders");
         }
     }
 }

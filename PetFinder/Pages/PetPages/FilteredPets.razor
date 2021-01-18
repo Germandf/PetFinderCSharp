@@ -7,78 +7,85 @@
 @page "/filtrar/{filter1}/{filter2}/{filter3}/{record:int}"
 @page "/filtrar/{filter1}/{filter2}/{filter3}/{filter4}"
 @page "/filtrar/{filter1}/{filter2}/{filter3}/{filter4}/{record:int}"
+@using PetFinder.Areas.Identity
 @inject ICityService CityService
 @inject IAnimalTypeService AnimalTypeService
 @inject IGenderService GenderService
 @inject IPetService PetService
-@inject IApplicationUserService applicationUserService
-@using PetFinder.Areas.Identity;
+@inject IApplicationUserService ApplicationUserService
 
-<PetFilter cities="cities" animalTypes="animalTypes" genders="genders"></PetFilter>
+<PetFilter Cities="_cities" AnimalTypes="_animalTypes" Genders="_genders"></PetFilter>
 <section class="container">
     <div class="row justify-content-center">
         <h1 class="mt-5 mb-4 lastPetsTitle">Mascotas filtradas</h1>
     </div>
-    @if (pets == null)
+    @if (Pets == null)
     {
         <h2>Loading...</h2>
     }
-    else if (!pets.Any())
+    else if (!Pets.Any())
     {
         <p class="lastPetsTitle text-center">No se encontraron mascotas con estos filtros, ¡Prueba otros!</p>
     }
     else
     {
         <div class="row">
-            @foreach (Pet pet in pets)
+            @foreach (var pet in Pets)
             {
-                <PetCard pet="pet" user="user"></PetCard>
+                <PetCard Pet="pet" User="User"></PetCard>
             }
         </div>
-        <PaginationButtons record="@record" pageSize="@pageSize" petsCount="@pets.Count()" isHome="true"></PaginationButtons>
+        <PaginationButtons Record="@Record" PageSize="@PageSize" PetsCount="@Pets.Count()" IsHome="true"></PaginationButtons>
     }
 </section>
 
 @code {
-    [Parameter]
-    public string filter1 { get; set; }
-    [Parameter]
-    public string filter2 { get; set; }
-    [Parameter]
-    public string filter3 { get; set; }
-    [Parameter]
-    public string filter4 { get; set; }
-    [Parameter]
-    public int record { get; set; }
 
-    private int pageSize = 12;
-    private ApplicationUser user { get; set; }
-    private IEnumerable<City> cities;
-    private IEnumerable<AnimalType> animalTypes;
-    private IEnumerable<Gender> genders;
-    private IEnumerable<Pet> pets { get; set; }
+    [Parameter]
+    public string Filter1 { get; set; }
+
+    [Parameter]
+    public string Filter2 { get; set; }
+
+    [Parameter]
+    public string Filter3 { get; set; }
+
+    [Parameter]
+    public string Filter4 { get; set; }
+
+    [Parameter]
+    public int Record { get; set; }
+        
+    private const int PageSize = 12;
+    private ApplicationUser User { get; set; }
+    private IEnumerable<Pet> Pets { get; set; }
+
+    private IEnumerable<City> _cities;
+    private IEnumerable<AnimalType> _animalTypes;
+    private IEnumerable<Gender> _genders;
 
     private string Message { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         base.OnInitialized();
-        user = await applicationUserService.GetCurrent();
-        cities = await CityService.GetAll();
-        animalTypes = await AnimalTypeService.GetAll();
-        genders = await GenderService.GetAll();
+        User = await ApplicationUserService.GetCurrent();
+        _cities = await CityService.GetAll();
+        _animalTypes = await AnimalTypeService.GetAll();
+        _genders = await GenderService.GetAll();
     }
 
     protected override async Task OnParametersSetAsync()
     {
         try
         {
-            pets = await PetService.GetAllByFilter(filter1, filter2, filter3, filter4);
-            pets = pets.Skip(record).Take(pageSize).ToList();
+            Pets = await PetService.GetAllByFilter(Filter1, Filter2, Filter3, Filter4);
+            Pets = Pets.Skip(Record).Take(PageSize).ToList();
         }
         catch (Exception e)
         {
             Message = e.Message;
         }
     }
+
 }

@@ -1,30 +1,31 @@
-﻿@using Microsoft.AspNetCore.Identity
-@using PetFinder.Areas.Identity;
+﻿@using PetFinder.Areas.Identity
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject IPetService petService;
+@inject IPetService PetService
 
-@if (!ReferenceEquals(null, pet) && pet.Found == 0)
+@if (!ReferenceEquals(null, Pet) && Pet.Found == 0)
 {
     <div class="col-12 mb-3 col-md-6 col-xl-4">
         <div class="card shadow">
-            <a href="ver/@pet.Id"><img class="card-img-top imgPetCard" src="/images/@pet.Photo"></a>
+            <a href="ver/@Pet.Id">
+                <img class="card-img-top imgPetCard" src="/images/@Pet.Photo">
+            </a>
             <div class="card-body">
-                <h3 class="card-title">@pet.Name</h3>
+                <h3 class="card-title">@Pet.Name</h3>
                 <ul class="list-group list-group-flush">
-                    <li class="list-group-item pl-0">Perdido en: @pet.City.Name</li>
-                    <li class="list-group-item pl-0">El día: @pet.Date</li>
-                    <li class="list-group-item pl-0">Animal: @pet.AnimalType.Name</li>
+                    <li class="list-group-item pl-0">Perdido en: @Pet.City.Name</li>
+                    <li class="list-group-item pl-0">El día: @Pet.Date</li>
+                    <li class="list-group-item pl-0">Animal: @Pet.AnimalType.Name</li>
                 </ul>
                 <div class="text-right">
                     <a href="ver/#" class="btn bg-orange text-white mt-2">Ver más</a>
                     <AuthorizeView>
                         <Authorized>
-                            @if (user.isAdmin() || pet.UserId == user.Id)
+                            @if (User.IsAdmin() || Pet.UserId == User.Id)
                             {
-                                <a href="editar-mascota/@pet.Id" class="btn bg-orange-dark text-white mt-2 ml-1">Editar</a>
-                                <button @onclick="() => setFound()" class=" btn bg-orange-dark text-white mt-2 ml-1">Lo encontre</button>
+                                <a href="editar-mascota/@Pet.Id" class="btn bg-orange-dark text-white mt-2 ml-1">Editar</a>
+                                <button @onclick="() => SetFound()" class=" btn bg-orange-dark text-white mt-2 ml-1">Lo encontre</button>
                             }
-                            @if (user.isAdmin())
+                            @if (User.IsAdmin())
                             {
                                 <button @onclick="() => Delete()" class="btn bg-red text-white mt-2 ml-2">Eliminar</button>
                             }
@@ -35,76 +36,79 @@
         </div>
     </div>
 
-    <Modal @ref="confirmationModal">
+    <Modal @ref="ConfirmationModal">
         <Title>
             Eliminar
         </Title>
         <Body>
-            <p>
-                ¿Está seguro que desea eliminar?
-            </p>
+        <p>
+            ¿Está seguro que desea eliminar?
+        </p>
         </Body>
         <Footer>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cancelar</button>
-            <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => confirmationModal.Confirm()">Confirmar</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => ConfirmationModal.Close()">Cancelar</button>
+            <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => ConfirmationModal.Confirm()">Confirmar</button>
         </Footer>
     </Modal>
 
-    <Modal @ref="errorModal">
+    <Modal @ref="ErrorModal">
         <Title>
             Error
         </Title>
         <Body>
-            <p>
-                Ocurrió un error al realizar el cambio
-            </p>
+        <p>
+            Ocurrió un error al realizar el cambio
+        </p>
         </Body>
         <Footer>
-            <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cerrar</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => ConfirmationModal.Close()">Cerrar</button>
         </Footer>
     </Modal>
 }
 
 @code {
-    [Parameter]
-    public Pet pet { get; set; } = null!;
-    [Parameter]
-    public ApplicationUser user { get; set; } = null!;
 
-    private Modal confirmationModal { get; set; }
-    private Modal errorModal { get; set; }
+    [Parameter]
+    public Pet Pet { get; set; } = null!;
 
-    private async Task setFound()
+    [Parameter]
+    public ApplicationUser User { get; set; } = null!;
+
+    private Modal ConfirmationModal { get; set; }
+    private Modal ErrorModal { get; set; }
+
+    private async Task SetFound()
     {
-        bool result = await petService.SetFound(pet.Id);
+        var result = await PetService.SetFound(Pet.Id);
         if (result)
         {
             StateHasChanged();
         }
         else
         {
-            errorModal.isError = true;
-            errorModal.Open();
+            ErrorModal.IsError = true;
+            ErrorModal.Open();
         }
     }
 
     private void Delete()
     {
-        confirmationModal.isWarning = true;
-        confirmationModal.Open();
-        confirmationModal.OnConfirm(async () =>
+        ConfirmationModal.IsWarning = true;
+        ConfirmationModal.Open();
+        ConfirmationModal.OnConfirm(async () =>
         {
-            bool result = await petService.Delete(pet.Id);
+            var result = await PetService.Delete(Pet.Id);
             if (result)
             {
-                pet = null;
+                Pet = null;
                 StateHasChanged();
             }
             else
             {
-                errorModal.isError = true;
-                errorModal.Open();
+                ErrorModal.IsError = true;
+                ErrorModal.Open();
             }
         });
     }
+
 }

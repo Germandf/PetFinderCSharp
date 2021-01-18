@@ -1,8 +1,7 @@
-﻿@using Microsoft.AspNetCore.Identity
+﻿@using PetFinder.Areas.Identity.Extensions
 @using PetFinder.Areas.Identity
-@using PetFinder.Areas.Identity.Extensions
-
-@inject SignInManager<ApplicationUser> sigInManager
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
 
 
@@ -13,15 +12,19 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-
             <AuthorizeView Roles="@ApplicationUserService.ROLE_ADMIN">
-                <li class="nav-item"><a class="nav-link" href="admin">Admin</a></li>
+                <li class="nav-item">
+                    <a class="nav-link" href="admin">Admin</a>
+                </li>
             </AuthorizeView>
-            <li class="nav-item"><a class="nav-link" href="mis-mascotas">Mis Mascotas</a></li>
-            <li class="nav-item"><a class="nav-link" href="sobre-nosotros">Acerca de</a></li>
+            <li class="nav-item">
+                <a class="nav-link" href="mis-mascotas">Mis Mascotas</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="sobre-nosotros">Acerca de</a>
+            </li>
         </ul>
         <ul class="navbar-nav mr-right">
-            <!--{if !isset($smarty.session.ID_USER)}-->
             <CascadingAuthenticationState>
                 <AuthorizeView>
                     <Authorized>
@@ -33,13 +36,15 @@
                         </li>
                     </Authorized>
                     <NotAuthorized>
-                        <li class="nav-item"><a class="nav-link" href="Identity/Account/Login">Iniciar Sesión</a></li>
-                        <li class="nav-item"><a class="nav-link" href="Identity/Account/Register">Registrarse</a></li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="Identity/Account/Login">Iniciar Sesión</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="Identity/Account/Register">Registrarse</a>
+                        </li>
                     </NotAuthorized>
                 </AuthorizeView>
             </CascadingAuthenticationState>
-
-            <!--{/if}-->
         </ul>
     </div>
 </nav>

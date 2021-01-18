@@ -1,9 +1,12 @@
+using System;
+using System.IdentityModel.Tokens.Jwt;
+using System.IO;
+using System.Reflection;
+using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,14 +19,6 @@ using PetFinder.Models;
 using PetFinderApi.Data;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
-using System;
-using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.IO;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace PetFinderApi
 {
@@ -44,22 +39,23 @@ namespace PetFinderApi
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { 
+                c.SwaggerDoc("v1", new OpenApiInfo
+                {
                     Title = "PetFinderApi",
                     Version = "v1",
                     Description = "PetFinderApi's official documentation. " +
-                    "Created with educational purposes for Eternet SRL by Huertas José and Germán De Francesco.",
+                                  "Created with educational purposes for Eternet SRL by Huertas José and Germán De Francesco.",
                     TermsOfService = new Uri("https://petfinder.com/api/terms"),
                     Contact = new OpenApiContact
                     {
                         Name = "Eternet SRL",
                         Email = "develop@eternet.cc",
-                        Url = new Uri("https://www.eternet.cc"),
+                        Url = new Uri("https://www.eternet.cc")
                     },
                     License = new OpenApiLicense
                     {
                         Name = "Use under LICX",
-                        Url = new Uri("https://petfinder.com/api/license"),
+                        Url = new Uri("https://petfinder.com/api/license")
                     }
                 });
                 // Set the comments path for the Swagger JSON and UI.
@@ -70,15 +66,15 @@ namespace PetFinderApi
 
             services.AddDbContext<PetFinderContext>(options =>
                     options.UseSqlServer(Environment.GetEnvironmentVariable("SQLServerPetfinder")),
-                    ServiceLifetime.Transient
-                  );
+                ServiceLifetime.Transient
+            );
 
             services.AddSingleton(
-                (ILogger)new LoggerConfiguration()
+                (ILogger) new LoggerConfiguration()
                     .MinimumLevel.Information()
                     .WriteTo.MSSqlServer(
-                        connectionString: Environment.GetEnvironmentVariable("SQLServerPetfinder"),
-                        sinkOptions: new MSSqlServerSinkOptions { TableName = "Logs" })
+                        Environment.GetEnvironmentVariable("SQLServerPetfinder"),
+                        new MSSqlServerSinkOptions {TableName = "Logs"})
                     .CreateLogger()
             );
 
@@ -88,7 +84,8 @@ namespace PetFinderApi
                 .AddDefaultTokenProviders();
 
             // ===== Add Jwt Authentication ========
-            Configuration["JwtKey"] = Environment.GetEnvironmentVariable("PetFinderJWTSecret"); // Random password secret
+            Configuration["JwtKey"] =
+                Environment.GetEnvironmentVariable("PetFinderJWTSecret"); // Random password secret
             JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear(); // => remove default claims
             services
                 .AddAuthentication(options =>
@@ -106,14 +103,14 @@ namespace PetFinderApi
                         ValidIssuer = Configuration["JwtIssuer"],
                         ValidAudience = Configuration["JwtIssuer"],
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
-                           Configuration["JwtKey"]
+                            Configuration["JwtKey"]
                         )),
                         ClockSkew = TimeSpan.Zero // remove delay of token when expire
                     };
                 });
 
             services.AddScoped<ICommentService, CommentService>();
-            services.AddScoped<IJWTService, JWTService>();
+            services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<PetService>();
         }
 
@@ -133,10 +130,7 @@ namespace PetFinderApi
             app.UseRouting();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
+            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
     }
 }

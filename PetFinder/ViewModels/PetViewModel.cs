@@ -1,8 +1,5 @@
-﻿using PetFinder.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
+using PetFinder.Models;
 
 namespace PetFinder.ViewModels
 {
@@ -20,15 +17,17 @@ namespace PetFinder.ViewModels
 
         public Pet ConvertToPet()
         {
-            var pet = new Pet();
-            pet.Id = Id;
-            pet.Name = Name;
-            pet.AnimalTypeId = AnimalTypeId;
-            pet.CityId = CityId;
-            pet.GenderId = GenderId;
-            pet.Date = Date;
-            pet.PhoneNumber = PhoneNumber;
-            pet.Description = Description;
+            var pet = new Pet
+            {
+                Id = Id,
+                Name = Name,
+                AnimalTypeId = AnimalTypeId,
+                CityId = CityId,
+                GenderId = GenderId,
+                Date = Date,
+                PhoneNumber = PhoneNumber,
+                Description = Description
+            };
             return pet;
         }
 

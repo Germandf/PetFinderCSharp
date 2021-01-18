@@ -1,8 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PetFinder.Areas.Identity.Helper
 {
@@ -18,9 +14,9 @@ namespace PetFinder.Areas.Identity.Helper
         public override IdentityError PasswordTooShort(int length)
         {
             var error = base.PasswordTooShort(length);
-            error.Description = $"La contraseña es demasiado corta, se requiere almenos una contraseña de {length} caracteres";
+            error.Description =
+                $"La contraseña es demasiado corta, se requiere almenos una contraseña de {length} caracteres";
             return error;
-
         }
     }
 }

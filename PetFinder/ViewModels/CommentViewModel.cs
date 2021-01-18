@@ -1,9 +1,5 @@
 ﻿using PetFinder.Areas.Identity;
 using PetFinder.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PetFinder.ViewModels
 {
@@ -18,13 +14,15 @@ namespace PetFinder.ViewModels
 
         public Comment ConvertToComment()
         {
-            var comment = new Comment();
-            comment.Id = Id;
-            comment.Message = Message;
-            comment.UserId = UserId;
-            comment.PetId = PetId;
-            comment.Rate = Rate;
-            comment.User = User;
+            var comment = new Comment
+            {
+                Id = Id,
+                Message = Message,
+                UserId = UserId,
+                PetId = PetId,
+                Rate = Rate,
+                User = User
+            };
             return comment;
         }
 

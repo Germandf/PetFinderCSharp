@@ -1,87 +1,89 @@
-﻿@inject IApplicationUserService ApplicationUserService
+﻿@using PetFinder.Areas.Identity.Extensions
+@using PetFinder.ViewModels
+@using Microsoft.Extensions.Configuration
+@using Newtonsoft.Json
+@using PetFinder.Areas.Identity
+@using System.Net.Http.Headers
+@using System.Text
+@using System.Net
+@inject IApplicationUserService ApplicationUserService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject IConfiguration Configuration
-@using PetFinder.Areas.Identity;
-@using Newtonsoft.Json;
-@using PetFinder.Areas.Identity.Extensions;
-@using Microsoft.Extensions.Configuration;
-@using System.Net.Http.Headers;
-@using PetFinder.ViewModels;
 
 <div class="row">
     <h3 class="petSubTitle mt-3 mx-4">Comentarios</h3>
     <section class="mb-2 col-12">
         <AuthorizeView>
             <Authorized>
-                <EditForm Context="editFormContext" Model="@newComment" id="form-new-comment" class="g-bg-secondary rounded shadow mt-2 w-100 text-left p-2 u-shadow-v18">
+                <EditForm Context="editFormContext" Model="@_newComment" id="form-new-comment" class="g-bg-secondary rounded shadow mt-2 w-100 text-left p-2 u-shadow-v18">
                     <p class="mt-2">Agregar nuevo comentario... </p>
-                    <textarea class="w-100 p-2" type="text" id="message" name="message" maxlength="200" @bind="newComment.Message"></textarea>
+                    <textarea class="w-100 p-2" type="text" id="message" name="message" maxlength="200" @bind="_newComment.Message"></textarea>
                     <p class="mt-2 mb-2">
-                        <span class="mr-2">¿Que tan seguro estas de haberlo visto?</span><input type="range" min="1" max="5" id="rate" @bind="newComment.Rate">
+                        <span class="mr-2">¿Que tan seguro estas de haberlo visto?</span><input type="range" min="1" max="5" id="rate" @bind="_newComment.Rate">
                     </p>
-                    <button type="button" class="btn bg-orange text-white mr-2 mt-1" @onclick="() => CreateComment(newComment)">
+                    <button type="button" class="btn bg-orange text-white mr-2 mt-1" @onclick="() => CreateComment(_newComment)">
                         Comentar
                     </button>
                 </EditForm>
-                <ModalWithValue TypeValue="string" @ref="editModal">
+                <ModalWithValue TypeValue="string" @ref="                    EditModal">
                     <Title>
                         Editar
                     </Title>
                     <Body>
-                        <p>
-                            <textarea class="w-100 p-2" type="text" maxlength="200" @bind="editModal.value"></textarea>
-                        </p>
+                    <p>
+                        <textarea class="w-100 p-2" type="text" maxlength="200" @bind="EditModal.value"></textarea>
+                    </p>
                     </Body>
                     <Footer>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => editModal.Close()">Cancelar</button>
-                        <button type="button" class="btn btn-primary" data-dismiss="modal" @onclick="() => editModal.Confirm()">Confirmar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => EditModal.Close()">Cancelar</button>
+                        <button type="button" class="btn btn-primary" data-dismiss="modal" @onclick="() => EditModal.Confirm()">Confirmar</button>
                     </Footer>
                 </ModalWithValue>
-                <Modal @ref="confirmationModal">
+                <Modal @ref="ConfirmationModal">
                     <Title>
                         Eliminar
                     </Title>
                     <Body>
-                        <p>
-                            ¿Está seguro que desea eliminar?
-                        </p>
+                    <p>
+                        ¿Está seguro que desea eliminar?
+                    </p>
                     </Body>
                     <Footer>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cancelar</button>
-                        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => confirmationModal.Confirm()">Confirmar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => ConfirmationModal.Close()">Cancelar</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => ConfirmationModal.Confirm()">Confirmar</button>
                     </Footer>
                 </Modal>
-                <Modal @ref="errorModal">
+                <Modal @ref="ErrorModal">
                     <Title>
                         Error
                     </Title>
                     <Body>
-                        <p>
-                            @errorMessage
-                        </p>
+                    <p>
+                        @ErrorMessage
+                    </p>
                     </Body>
                     <Footer>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => errorModal.Close()">Entendido</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => ErrorModal.Close()">Entendido</button>
                     </Footer>
                 </Modal>
-                <Modal @ref="successModal">
+                <Modal @ref="SuccessModal">
                     <Title>
                         ¡Éxito!
                     </Title>
                     <Body>
-                        <p>
-                            La tarea solicitada se realizó correctamente
-                        </p>
+                    <p>
+                        La tarea solicitada se realizó correctamente
+                    </p>
                     </Body>
                     <Footer>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => successModal.Close()">Cerrar</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => SuccessModal.Close()">Cerrar</button>
                     </Footer>
                 </Modal>
             </Authorized>
         </AuthorizeView>
     </section>
     <section id="comments" class="col-12">
-        @foreach (CommentViewModel comment in comments)
+        @foreach (var comment in _comments)
         {
             <div class="media g-mb-30 media-comment">
                 <div class="media-body shadow g-bg-secondary g-pa-30">
@@ -89,7 +91,9 @@
                         <h3 class="h5 mb-0">@comment.User.Name @comment.User.Surname </h3>
                     </div>
                     <p>@comment.Message</p>
-                    <p><b>Seguridad de haberlo visto @comment.Rate / 5</b></p>
+                    <p>
+                        <b>Seguridad de haberlo visto @comment.Rate / 5</b>
+                    </p>
                     <AuthorizeView>
                         <Authorized>
                             <!-- Si es el dueño del comentario o es admin -->
@@ -104,7 +108,7 @@
                 </div>
             </div>
         }
-        @if (comments.Count == 0)
+        @if (_comments.Count == 0)
         {
             <p class="ml-2">No hay comentarios disponibles. Si eres un usuario registrado, eres libre de comentar cuanto quieras.</p>
         }
@@ -112,60 +116,61 @@
 </div>
 
 @code {
+
     [Parameter]
     public int PetId { get; set; }
 
-    private readonly HttpClient httpClient = new HttpClient();
-    private static string ERROR_BAD_REQUEST = "El comentario tenía datos incorrectos, intente nuevamente";
-    private static string ERROR_UNAUTHORIZED = "No tienes permiso para realizar esta acción";
-    private static string ERROR_NOT_FOUND = "No se encontró el objeto solicitado";
-    private static string ERROR_CONFLICT = "No se ha podido completar la acción, intenta más tarde";
-    private static string ERROR_UNKNOWN = "Ha ocurrido un error inesperado, ponte en contacto con uno de los administradores";
+    public static string ErrorBadRequest = "El comentario tenía datos incorrectos, intente nuevamente";
+    public static string ErrorUnauthorized = "No tienes permiso para realizar esta acción";
+    public static string ErrorNotFound = "No se encontró el objeto solicitado";
+    public static string ErrorConflict = "No se ha podido completar la acción, intenta más tarde";
+    public static string ErrorUnknown = "Ha ocurrido un error inesperado, ponte en contacto con uno de los administradores";
 
-    private ApplicationUser user = null;
-    private CommentViewModel newComment = new();
-    private List<CommentViewModel> comments = new();
-    private ModalWithValue<string> editModal { get; set; }
-    private Modal confirmationModal { get; set; }
-    private Modal errorModal { get; set; }
-    private Modal successModal { get; set; }
+    private ModalWithValue<string> EditModal { get; set; }
+    private Modal ConfirmationModal { get; set; }
+    private Modal ErrorModal { get; set; }
+    private Modal SuccessModal { get; set; }
+    private string Jwt { get; set; }
+    private string UrlApiComments { get; set; }
+    private string ErrorMessage { get; set; }
 
-    private string JWT { get; set; }
-    private string URLApiComments { get; set; }
-    private string errorMessage { get; set; }
+    private readonly HttpClient _httpClient = new();
+    private ApplicationUser _user = null;
+    private CommentViewModel _newComment = new();
+    private List<CommentViewModel> _comments = new();
 
     protected override async Task OnInitializedAsync()
     {
-        user = await ApplicationUserService.GetCurrent();
+        _user = await ApplicationUserService.GetCurrent();
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var userClaims = authState.User;
-        URLApiComments = Configuration["UrlApiController"] + "comentarios";
+        UrlApiComments = Configuration["UrlApiController"] + "comentarios";
         await GetComments();
-        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userClaims.Identity.GetJwt());
+        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userClaims.Identity.GetJwt());
     }
 
     private async void CreateComment(CommentViewModel commentViewModel)
     {
-        Comment comment = commentViewModel.ConvertToComment();
+        var comment = commentViewModel.ConvertToComment();
         comment.PetId = PetId;
-        comment.UserId = user.Id;
+        comment.UserId = _user.Id;
         // Preparo content del post
         var json = JsonConvert.SerializeObject(comment);
-        var buffer = System.Text.Encoding.UTF8.GetBytes(json);
+        var buffer = Encoding.UTF8.GetBytes(json);
         var byteContent = new ByteArrayContent(buffer);
-        byteContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+        byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
         try
         {
             // POST api/comentarios
-            HttpResponseMessage response = await httpClient.PostAsync(URLApiComments, byteContent);
+            var response = await _httpClient.PostAsync(UrlApiComments, byteContent);
             await CheckResponse(response);
         }
         catch (HttpRequestException exception)
         {
-            ShowModalError(ERROR_UNKNOWN + "Código de error: " + exception);
+            ShowModalError(ErrorUnknown + "Código de error: " + exception);
         }
-        newComment.Message = "";
-        newComment.Rate = 1;
+        _newComment.Message = "";
+        _newComment.Rate = 1;
     }
 
     private async Task GetComments()
@@ -173,72 +178,72 @@
         // GET api/comentarios/id
         try
         {
-            HttpResponseMessage response = await httpClient.GetAsync(URLApiComments + "/mascota/" + PetId.ToString());
-            CommentViewModel[] commentsFromApi = await response.Content.ReadAsAsync<CommentViewModel[]>();
+            var response = await _httpClient.GetAsync(UrlApiComments + "/mascota/" + PetId);
+            var commentsFromApi = await response.Content.ReadAsAsync<CommentViewModel[]>();
             if (commentsFromApi == null)
                 commentsFromApi = new CommentViewModel[0];
-            comments.Clear();
-            comments.AddRange(commentsFromApi);
-            comments.Reverse();
+            _comments.Clear();
+            _comments.AddRange(commentsFromApi);
+            _comments.Reverse();
             StateHasChanged();
         }
         catch (HttpRequestException exception)
         {
-            ShowModalError(ERROR_UNKNOWN + "Código de error: " + exception);
+            ShowModalError(ErrorUnknown + "Código de error: " + exception);
         }
     }
 
     private void UpdateComment(CommentViewModel commentViewModel)
     {
-        editModal.valueChange(commentViewModel.Message);
-        editModal.isEditing = true;
-        editModal.Open();
-        editModal.OnConfirm(async () =>
+        EditModal.valueChange(commentViewModel.Message);
+        EditModal.IsEditing = true;
+        EditModal.Open();
+        EditModal.OnConfirm(async () =>
         {
-            commentViewModel.Message = editModal.value;
-            Comment comment = commentViewModel.ConvertToComment();
+            commentViewModel.Message = EditModal.value;
+            var comment = commentViewModel.ConvertToComment();
             // Preparo content del put
             var json = JsonConvert.SerializeObject(comment);
-            var buffer = System.Text.Encoding.UTF8.GetBytes(json);
+            var buffer = Encoding.UTF8.GetBytes(json);
             var byteContent = new ByteArrayContent(buffer);
-            byteContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/json");
+            byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             try
             {
                 // PUT api/comentarios/id
-                HttpResponseMessage response = await httpClient.PutAsync(URLApiComments + "/" + comment.Id.ToString(), byteContent);
+                var response = await _httpClient.PutAsync(UrlApiComments + "/" + comment.Id, byteContent);
                 await CheckResponse(response);
             }
             catch (HttpRequestException exception)
             {
-                ShowModalError(ERROR_UNKNOWN + "Código de error: " + exception);
+                ShowModalError(ErrorUnknown + "Código de error: " + exception);
             }
         });
     }
 
     private void DeleteComment(CommentViewModel commentViewModel)
     {
-        confirmationModal.isWarning = true;
-        confirmationModal.Open();
-        confirmationModal.OnConfirm(async () =>
+        ConfirmationModal.IsWarning = true;
+        ConfirmationModal.Open();
+        ConfirmationModal.OnConfirm(async () =>
         {
             try
             {
                 // DELETE api/comentarios/id
-                HttpResponseMessage response = await httpClient.DeleteAsync(URLApiComments + "/" + commentViewModel.Id.ToString());
+                var response = await _httpClient.DeleteAsync(UrlApiComments + "/" + commentViewModel.Id);
                 await CheckResponse(response);
             }
             catch (HttpRequestException exception)
             {
-                ShowModalError(ERROR_UNKNOWN + "Código de error: " + exception);
+                ShowModalError(ErrorUnknown + "Código de error: " + exception);
             }
         });
     }
 
     private void ShowModalError(string err)
     {
-        errorMessage = err;
-        errorModal.isError = true;
-        errorModal.Open();
+        ErrorMessage = err;
+        ErrorModal.IsError = true;
+        ErrorModal.Open();
     }
 
     private async Task CheckResponse(HttpResponseMessage response)
@@ -246,18 +251,19 @@
         if (response.IsSuccessStatusCode)
         {
             await GetComments();
-            successModal.isSuccess = true;
-            successModal.Open();
+            SuccessModal.IsSuccess = true;
+            SuccessModal.Open();
         }
-        else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
-            ShowModalError(ERROR_BAD_REQUEST);
-        else if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
-            ShowModalError(ERROR_UNAUTHORIZED);
-        else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
-            ShowModalError(ERROR_NOT_FOUND);
-        else if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
-            ShowModalError(ERROR_CONFLICT);
+        else if (response.StatusCode == HttpStatusCode.BadRequest)
+            ShowModalError(ErrorBadRequest);
+        else if (response.StatusCode == HttpStatusCode.Unauthorized)
+            ShowModalError(ErrorUnauthorized);
+        else if (response.StatusCode == HttpStatusCode.NotFound)
+            ShowModalError(ErrorNotFound);
+        else if (response.StatusCode == HttpStatusCode.Conflict)
+            ShowModalError(ErrorConflict);
         else
-            ShowModalError(ERROR_UNKNOWN);
+            ShowModalError(ErrorUnknown);
     }
+
 }

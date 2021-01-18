@@ -1,50 +1,57 @@
 ﻿<div class="mb-3 text-right">
-    @if (record > 0)
+    @if (Record > 0)
     {
-        if (isHome)
+        if (IsHome)
         {
-            <a href="/@(record - pageSize)" class="btn bg-gray text-white">Anteriores</a>
+            <a href="/@(Record - PageSize)" class="btn bg-gray text-white">Anteriores</a>
             <a href="" class="btn bg-gray text-white">Portada</a>
         }
-        else if (isMyPets)
+        else if (IsMyPets)
         {
-            <a href="mis-mascotas/@(record - pageSize)" class="btn bg-gray text-white">Anteriores</a>
+            <a href="mis-mascotas/@(Record - PageSize)" class="btn bg-gray text-white">Anteriores</a>
             <a href="mis-mascotas" class="btn bg-gray text-white">Portada</a>
         }
-        else if (isAdmin)
+        else if (IsAdmin)
         {
-            <a href="admin/@(record - pageSize)" class="btn bg-gray text-white">Anteriores</a>
+            <a href="admin/@(Record - PageSize)" class="btn bg-gray text-white">Anteriores</a>
             <a href="admin" class="btn bg-gray text-white">Portada</a>
         }
     }
-    @if (record + pageSize < petsCount)
+    @if (Record + PageSize < PetsCount)
     {
-        if (isHome)
+        if (IsHome)
         {
-            <a href="/@(record + pageSize)" class="btn bg-gray text-white">Siguientes</a>
+            <a href="/@(Record + PageSize)" class="btn bg-gray text-white">Siguientes</a>
         }
-        else if (isMyPets)
+        else if (IsMyPets)
         {
-            <a href="mis-mascotas/@(record + pageSize)" class="btn bg-gray text-white">Siguientes</a>
+            <a href="mis-mascotas/@(Record + PageSize)" class="btn bg-gray text-white">Siguientes</a>
         }
-        else if (isAdmin)
+        else if (IsAdmin)
         {
-            <a href="admin/@(record + pageSize)" class="btn bg-gray text-white">Siguientes</a>
+            <a href="admin/@(Record + PageSize)" class="btn bg-gray text-white">Siguientes</a>
         }
     }
 </div>
 
 @code {
+
     [Parameter]
-    public int record { get; set; }
+    public int Record { get; set; }
+
     [Parameter]
-    public int pageSize { get; set; }
+    public int PageSize { get; set; }
+
     [Parameter]
-    public int petsCount { get; set; }
+    public int PetsCount { get; set; }
+
     [Parameter]
-    public bool isHome { get; set; }
+    public bool IsHome { get; set; }
+
     [Parameter]
-    public bool isMyPets { get; set; }
+    public bool IsMyPets { get; set; }
+
     [Parameter]
-    public bool isAdmin { get; set; }
+    public bool IsAdmin { get; set; }
+
 }

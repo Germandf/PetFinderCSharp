@@ -1,19 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using PetFinder.Models;
-using Microsoft.EntityFrameworkCore;
-using System.Net.Http;
-using PetFinder.Areas.Identity;
-using Microsoft.AspNetCore.Identity;
-using PetFinder.Data;
-using PetFinderApi.Data;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Authorization;
-using PetFinder.Helpers;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using PetFinder.Models;
+using PetFinderApi.Data;
 
 namespace PetFinderApi.Controllers
 {
@@ -21,27 +15,27 @@ namespace PetFinderApi.Controllers
     [ApiController]
     public class CommentsController : ControllerBase
     {
-        private readonly ILogger<CommentsController> _logger;
-        private readonly PetFinderContext _context;
         private readonly ICommentService _commentService;
-        private readonly IJWTService _JWTService;
+        private readonly PetFinderContext _context;
+        private readonly IJwtService _jwtService;
+        private readonly ILogger<CommentsController> _logger;
 
-        public CommentsController(  ILogger<CommentsController> logger,
-                                    PetFinderContext context,
-                                    ICommentService commentService,
-                                    IJWTService jwtService)
+        public CommentsController(ILogger<CommentsController> logger,
+            PetFinderContext context,
+            ICommentService commentService,
+            IJwtService jwtService)
         {
             _logger = logger;
             _context = context;
             _commentService = commentService;
-            _JWTService = jwtService;
+            _jwtService = jwtService;
         }
 
         /// <summary>
-        /// Gets a comment
+        ///     Gets a comment
         /// </summary>
         /// <remarks>
-        /// Gets a specific comment by its ID.
+        ///     Gets a specific comment by its ID.
         /// </remarks>
         /// <param name="id">Comment's id</param>
         /// <response code="200">Returns the comment</response>
@@ -51,22 +45,17 @@ namespace PetFinderApi.Controllers
         [HttpGet("comentarios/{id}")]
         public async Task<ActionResult<Comment>> Get(int id)
         {
-            Comment comment = await _commentService.Get(id);
+            var comment = await _commentService.Get(id);
             if (comment != null)
-            {
                 return Ok(comment);
-            }
-            else
-            {
-                return NotFound();
-            }
+            return NotFound();
         }
 
         /// <summary>
-        /// Creates a comment
+        ///     Creates a comment
         /// </summary>
         /// <remarks>
-        /// Creates a comment by sending its complete content in http body with JSON format
+        ///     Creates a comment by sending its complete content in http body with JSON format
         /// </remarks>
         /// <param name="comment">Comment's content</param>
         /// <response code="201">The comment was created</response>
@@ -81,23 +70,18 @@ namespace PetFinderApi.Controllers
         [Authorize]
         public async Task<ActionResult<Comment>> Insert([FromBody] Comment comment)
         {
-            GenericResult wasCreated = await _commentService.Insert(comment);
+            var wasCreated = await _commentService.Insert(comment);
             if (wasCreated.Success)
-            {
                 return Created(new Uri($"{Request.Path}/{comment.Id}", UriKind.Relative), comment);
-            }
-            else if(wasCreated.Errors.Contains(CommentService.ERROR_SAVING_COMMENT))
-            {
-                return Conflict();
-            }
+            if (wasCreated.Errors.Contains(CommentService.ERROR_SAVING_COMMENT)) return Conflict();
             return BadRequest();
         }
 
         /// <summary>
-        /// Modifies a comment
+        ///     Modifies a comment
         /// </summary>
         /// <remarks>
-        /// Modifies a specific comment by its ID.
+        ///     Modifies a specific comment by its ID.
         /// </remarks>
         /// <param name="id">Comment's id</param>
         /// <param name="comment">Comment's content</param>
@@ -115,33 +99,23 @@ namespace PetFinderApi.Controllers
         [Authorize]
         public async Task<IActionResult> Update(int id, [FromBody] Comment comment)
         {
-            string userEmail = _JWTService.GetUserEmail(HttpContext);
-            if (!await _commentService.UserCanEdit(userEmail, id))
-            {
-                return Unauthorized();
-            }
+            var userEmail = _jwtService.GetUserEmail(HttpContext);
+            if (!await _commentService.UserCanEdit(userEmail, id)) return Unauthorized();
             comment.Id = id;
-            GenericResult wasUpdated = await _commentService.Update(comment);
+            var wasUpdated = await _commentService.Update(comment);
             if (wasUpdated.Success)
-            {
                 return Ok(comment);
-            }
-            else if (wasUpdated.Errors.Contains(CommentService.ERROR_COMMENT_NOT_FOUND))
-            {
+            if (wasUpdated.Errors.Contains(CommentService.ERROR_COMMENT_NOT_FOUND))
                 return NotFound();
-            }
-            else if (wasUpdated.Errors.Contains(CommentService.ERROR_SAVING_COMMENT))
-            {
-                return Conflict();
-            }
+            if (wasUpdated.Errors.Contains(CommentService.ERROR_SAVING_COMMENT)) return Conflict();
             return BadRequest();
         }
 
         /// <summary>
-        /// Deletes a comment
+        ///     Deletes a comment
         /// </summary>
         /// <remarks>
-        /// Deletes a specific comment by its ID.
+        ///     Deletes a specific comment by its ID.
         /// </remarks>
         /// <param name="id">Comment's id</param>
         /// <response code="200">The comment was deleted</response>
@@ -151,40 +125,30 @@ namespace PetFinderApi.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status409Conflict)] 
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
         [HttpDelete("comentarios/{id}")]
         [Authorize]
         public async Task<IActionResult> Delete(int id)
         {
-            bool commentExists = await _commentService.Exists(id);
+            var commentExists = await _commentService.Exists(id);
             if (commentExists)
             {
-                string userEmail = _JWTService.GetUserEmail(HttpContext);
-                if (!await _commentService.UserCanEdit(userEmail, id))
-                {
-                    return Unauthorized();
-                }
-                bool wasDeleted = await _commentService.Delete(id);
+                var userEmail = _jwtService.GetUserEmail(HttpContext);
+                if (!await _commentService.UserCanEdit(userEmail, id)) return Unauthorized();
+                var wasDeleted = await _commentService.Delete(id);
                 if (wasDeleted)
-                {
                     return Ok();
-                }
-                else
-                {
-                    return Conflict();
-                }
+                return Conflict();
             }
-            else
-            {
-                return NotFound();
-            }
+
+            return NotFound();
         }
 
         /// <summary>
-        /// Gets all comments from a pet
+        ///     Gets all comments from a pet
         /// </summary>
         /// <remarks>
-        /// Gets all comments from a pet by its ID
+        ///     Gets all comments from a pet by its ID
         /// </remarks>
         /// <param name="id">Pet's id</param>
         /// <response code="200">Returns the comments</response>
@@ -194,15 +158,10 @@ namespace PetFinderApi.Controllers
         [HttpGet("comentarios/mascota/{id}")]
         public async Task<ActionResult<IEnumerable<Comment>>> GetAllFromPet(int id)
         {
-            IEnumerable<Comment> comments = await _commentService.GetAllFromPet(id);
+            var comments = await _commentService.GetAllFromPet(id);
             if (comments.Any())
-            {
                 return Ok(comments);
-            }
-            else
-            {
-                return NotFound(comments);
-            }
+            return NotFound(comments);
         }
     }
 }

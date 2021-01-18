@@ -1,34 +1,23 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
-
 
 namespace PetFinder.Areas.Identity
 {
     public class ApplicationUser : IdentityUser
     {
-
         public string Name { get; set; }
 
         public string Surname { get; set; }
 
-        private bool admin { get; set; }
+        private bool Admin { get; set; }
 
-        public bool isAdmin()
+        public bool IsAdmin()
         {
-            return this.admin; 
+            return Admin;
         }
 
-        public bool setAdmin(bool admin)
+        public bool SetAdmin(bool admin)
         {
-            return this.admin = admin;
-
+            return this.Admin = admin;
         }
-
     }
-
 }

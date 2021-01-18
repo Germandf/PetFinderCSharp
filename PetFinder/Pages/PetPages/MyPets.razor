@@ -1,10 +1,10 @@
 ﻿@page "/mis-mascotas"
 @page "/mis-mascotas/{record:int}"
+@using PetFinder.Areas.Identity
 @using Microsoft.AspNetCore.Identity
-@using PetFinder.Areas.Identity;
 @inject IPetService PetService
-@inject UserManager<ApplicationUser> userManager
-@inject IApplicationUserService applicationUserService
+@inject UserManager<ApplicationUser> UserManager
+@inject IApplicationUserService ApplicationUserService
 @inject NavigationManager NavigationManager
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
@@ -12,7 +12,9 @@
     <div class="row">
         <div class="col-12 mt-3 mb-3">
             <a href="agregar-mascota" class="btn bg-orange text-white mr-2 mt-1">
-                <span><i class="fa fa-paw"></i></span>
+                <span>
+                    <i class="fa fa-paw"></i>
+                </span>
                 <span>Añadir mascota perdida</span>
             </a>
         </div>
@@ -22,7 +24,7 @@
     <div class="row justify-content-center">
         <h1 class="mt-4 mb-4 mt-md-5 mb-md-5 lastPetsTitle">Mis mascotas perdidas</h1>
     </div>
-    @if (pets == null || isLoading)
+    @if (Pets == null || IsLoading)
     {
         <div class="w-100 text-center">
             <div class="spinner-border large-spinner" role="status">
@@ -30,35 +32,36 @@
             </div>
         </div>
     }
-    else if (!pets.Any())
+    else if (!Pets.Any())
     {
         <p class="lastPetsTitle text-center">Aún no tienes mascotas perdidas, ¿acabás de perder una? Lo sentimos, ¡agrégala a PetFinder para advertir al resto!</p>
     }
     else
     {
         <div class="row">
-            @foreach (Pet pet in pets)
+            @foreach (var pet in Pets)
             {
-                <PetCard pet="pet" user="user">
+                <PetCard Pet="pet" User="User">
                 </PetCard>
             }
         </div>
-        <PaginationButtons record="@record" pageSize="@pageSize" petsCount="@pets.Count()" isMyPets="true"></PaginationButtons>
+        <PaginationButtons Record="@Record" PageSize="@PageSize" PetsCount="@Pets.Count()" IsMyPets="true"></PaginationButtons>
     }
 </section>
 
 @code {
+
     [Parameter]
-    public int record { get; set; }
+    public int Record { get; set; }
 
-    private int pageSize = 12;
+    [CascadingParameter]
+    protected Task<AuthenticationState> AuthStat { get; set; }
 
-    [CascadingParameter] protected Task<AuthenticationState> AuthStat { get; set; }
-
-    private IEnumerable<Pet> pets { get; set; }
+    private const int PageSize = 12;
+    private IEnumerable<Pet> Pets { get; set; }
     private string Message { get; set; }
-    private Boolean isLoading { get; set; }
-    private ApplicationUser user { get; set; }
+    private bool IsLoading { get; set; }
+    private ApplicationUser User { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -66,32 +69,33 @@
         var userClaims = authState.User;
         if (!userClaims.Identity.IsAuthenticated) //Si no está autenticado redirigimos
         {
-            string currUri = NavigationManager.Uri;
-            string baseUri = NavigationManager.BaseUri;
+            var currUri = NavigationManager.Uri;
+            var baseUri = NavigationManager.BaseUri;
             currUri = currUri.Replace(baseUri, "/");
 
-            NavigationManager.NavigateTo($"Identity/Account/Login?returnUrl={currUri}", forceLoad: true);
+            NavigationManager.NavigateTo($"Identity/Account/Login?returnUrl={currUri}", true);
         }
         else
         {
-            user = await applicationUserService.GetCurrent();
+            User = await ApplicationUserService.GetCurrent();
         }
     }
 
     protected override async Task OnParametersSetAsync()
     {
-        isLoading = true;
+        IsLoading = true;
         try
         {
             var user = (await AuthStat).User;
-            var userId = userManager.GetUserId(user);
-            pets = await PetService.GetAllByUser(userId);
-            pets = pets.Skip(record).Take(pageSize).ToList();
+            var userId = UserManager.GetUserId(user);
+            Pets = await PetService.GetAllByUser(userId);
+            Pets = Pets.Skip(Record).Take(PageSize).ToList();
         }
         catch (Exception e)
         {
             Message = e.Message;
         }
-        isLoading = false;
+        IsLoading = false;
     }
+
 }

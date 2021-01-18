@@ -1,12 +1,11 @@
-﻿using PetFinder.Areas.Identity;
-using System;
-using System.Collections.Generic;
+﻿using System;
+using PetFinder.Areas.Identity;
 
 #nullable disable
 
 namespace PetFinder.Models
 {
-    public partial class Pet
+    public class Pet
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -24,6 +23,5 @@ namespace PetFinder.Models
         public virtual City City { get; set; }
         public virtual Gender Gender { get; set; }
         public virtual ApplicationUser User { get; set; }
-
     }
 }

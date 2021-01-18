@@ -1,48 +1,48 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using PetFinder.Areas.Identity;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
+using PetFinder.Areas.Identity;
 
 namespace PetFinderApi.Data
 {
-    public interface IJWTService
+    public interface IJwtService
     {
         /// <summary>
-        /// Generates a JWT by a User's credentials
+        ///     Generates a JWT by a User's credentials
         /// </summary>
         /// <returns>
-        /// The JWT in string format
+        ///     The JWT in string format
         /// </returns>
         string GenerateJwtToken(ApplicationUser user);
 
         /// <summary>
-        /// Gets a User's email through the HttpContext
+        ///     Gets a User's email through the HttpContext
         /// </summary>
         /// <returns>
-        /// A string with the User's email
+        ///     A string with the User's email
         /// </returns>
         string GetUserEmail(HttpContext httpContext);
     }
 
-    public class JWTService : IJWTService
+    public class JwtService : IJwtService
     {
         private readonly IConfiguration _configuration;
 
-        public JWTService(IConfiguration configuration)
+        public JwtService(IConfiguration configuration)
         {
             _configuration = configuration;
         }
 
         public string GetUserEmail(HttpContext httpContext)
         {
-            ClaimsPrincipal principal = httpContext.User;
-            string userEmail = principal.Claims.Where(x => x.Type == JwtRegisteredClaimNames.Sub).FirstOrDefault()?.Value;
+            var principal = httpContext.User;
+            var userEmail = principal.Claims.Where(x => x.Type == JwtRegisteredClaimNames.Sub).FirstOrDefault()?.Value;
             return userEmail;
         }
 
@@ -50,9 +50,9 @@ namespace PetFinderApi.Data
         {
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(ClaimTypes.NameIdentifier, user.Id)
+                new(JwtRegisteredClaimNames.Sub, user.Email),
+                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new(ClaimTypes.NameIdentifier, user.Id)
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

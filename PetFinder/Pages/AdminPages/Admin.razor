@@ -1,34 +1,44 @@
 ﻿@page "/admin"
 @page "/admin/{record:int}"
-@using PetFinder.Areas.Identity;
+@using PetFinder.Areas.Identity
 @inject ICityService CityService
 @inject IAnimalTypeService AnimalTypeService
 @inject IPetService PetService
-@inject IApplicationUserService applicationUserService
+@inject IApplicationUserService ApplicationUserService
 
-<AuthorizeView Roles="@ApplicationUserService.ROLE_ADMIN">
+<AuthorizeView Roles="@Data.ApplicationUserService.ROLE_ADMIN">
     <Authorized>
         <section class="container-fluid bg-orange-dark">
             <div class="row">
                 <div class="col-12 mt-3 mb-3">
                     <a href="agregar-mascota" class="btn bg-orange text-white mr-2 my-1">
-                        <span><i class="fa fa-paw"></i></span>
+                        <span>
+                            <i class="fa fa-paw"></i>
+                        </span>
                         <span>Añadir mascota perdida</span>
                     </a>
                     <a href="agregar-ciudad" class="btn bg-orange text-white mr-2 my-1">
-                        <span><i class="fa fa-city"></i></span>
+                        <span>
+                            <i class="fa fa-city"></i>
+                        </span>
                         <span>Añadir ciudad</span>
                     </a>
                     <a href="agregar-tipo-de-animal" class="btn bg-orange text-white mr-2 my-1">
-                        <span><i class="fa fa-feather"></i></span>
+                        <span>
+                            <i class="fa fa-feather"></i>
+                        </span>
                         <span>Añadir tipo de animal</span>
                     </a>
                     <a href="usuarios" class="btn bg-orange text-white mr-2 my-1">
-                        <span><i class="fa fa-users"></i></span>
+                        <span>
+                            <i class="fa fa-users"></i>
+                        </span>
                         <span>Tabla de usuarios</span>
                     </a>
                     <a href="logs" class="btn bg-orange text-white mr-2 my-1">
-                        <span><i class="fas fa-clipboard-list"></i></span>
+                        <span>
+                            <i class="fas fa-clipboard-list"></i>
+                        </span>
                         <span>Logger</span>
                     </a>
                 </div>
@@ -40,7 +50,7 @@
                 <div class="col-12 col-md-6 mt-4">
                     <ul class="list-group">
                         <li class="list-group-item bg-orange text-white m-0">Ciudades</li>
-                        @if (cities == null)
+                        @if (Cities == null)
                         {
                             <li class="w-100 text-center mt-3">
                                 <div class="spinner-border" role="status">
@@ -50,14 +60,16 @@
                         }
                         else
                         {
-                            @foreach (var city in cities)
+                            @foreach (var city in Cities)
                             {
                                 <li class="list-group-item d-flex align-items-center">
                                     <div class="col-6 text-left">@city.Name</div>
                                     <div class="col-6 text-right">
                                         <a href="editar-ciudad/@city.Id" class="btn bg-gray text-white">Editar</a>
-                                        <button type="button" value="Delete" class="btn bg-red text-white" 
-                                                @onclick="async () => await DeleteCity(city)">Eliminar</button>
+                                        <button type="button" value="Delete" class="btn bg-red text-white"
+                                                @onclick="async () => await DeleteCity(city)">
+                                            Eliminar
+                                        </button>
                                     </div>
                                 </li>
                             }
@@ -67,7 +79,7 @@
                 <div class="col-12 col-md-6 mt-4">
                     <ul class="list-group">
                         <li class="list-group-item  bg-orange text-white m-0">Tipo de animal</li>
-                        @if (animalTypes == null)
+                        @if (AnimalTypes == null)
                         {
                             <li class="w-100 text-center mt-3">
                                 <div class="spinner-border" role="status">
@@ -77,14 +89,16 @@
                         }
                         else
                         {
-                            @foreach (var animalType in animalTypes)
+                            @foreach (var animalType in AnimalTypes)
                             {
                                 <li class="list-group-item d-flex align-items-center">
                                     <div class="col-6 text-left">@animalType.Name</div>
                                     <div class="col-6 text-right">
                                         <a href="editar-tipo-de-animal/@animalType.Id" class="btn bg-gray text-white">Editar</a>
-                                        <button type="button" value="Delete" class="btn bg-red text-white" 
-                                                @onclick="async () => await DeleteAnimalType(animalType)">Eliminar</button>
+                                        <button type="button" value="Delete" class="btn bg-red text-white"
+                                                @onclick="async () => await DeleteAnimalType(animalType)">
+                                            Eliminar
+                                        </button>
                                     </div>
                                 </li>
                             }
@@ -98,7 +112,7 @@
             <div class="row justify-content-center">
                 <h1 class="mt-4 mb-4 mt-md-5 mb-md-5 lastPetsTitle">Últimas mascotas perdidas</h1>
             </div>
-            @if (pets == null)
+            @if (Pets == null)
             {
                 <div class="w-100 text-center">
                     <div class="spinner-border large-spinner" role="status">
@@ -106,33 +120,33 @@
                     </div>
                 </div>
             }
-            else if (!pets.Any())
+            else if (!Pets.Any())
             {
                 <p class="lastPetsTitle text-center">¡Lo siento! Aún no tenemos mascotas perdidas que mostrar</p>
             }
             else
             {
                 <div class="row">
-                    @foreach (Pet pet in pets)
+                    @foreach (var pet in Pets)
                     {
-                        <PetCard pet="pet" user="user"></PetCard>
+                        <PetCard Pet="pet" User="User"></PetCard>
                     }
                 </div>
-                <PaginationButtons record="@record" pageSize="@pageSize" petsCount="@pets.Count()" isAdmin="true"></PaginationButtons>
+                <PaginationButtons Record="@Record" PageSize="@pageSize" PetsCount="@Pets.Count()" IsAdmin="true"></PaginationButtons>
             }
         </section>
 
-        <Modal @ref="confirmationModal">
+        <Modal @ref="ConfirmationModal">
             <Title>
                 Advertencia
             </Title>
             <Body>
-                <p>El item que está a punto de eliminar tiene mascotas asociadas</p>
-                <p>¿Está seguro que desea eliminar?</p>
+            <p>El item que está a punto de eliminar tiene mascotas asociadas</p>
+            <p>¿Está seguro que desea eliminar?</p>
             </Body>
             <Footer>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cancelar</button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => confirmationModal.Confirm()">Confirmar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => ConfirmationModal.Close()">Cancelar</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => ConfirmationModal.Confirm()">Confirmar</button>
             </Footer>
         </Modal>
     </Authorized>
@@ -145,26 +159,26 @@
 </AuthorizeView>
 
 @code {
+
     [Parameter]
-    public int record { get; set; }
-    private int pageSize = 12;
+    public int Record { get; set; }
 
-    private IEnumerable<City> cities { get; set; }
-    private IEnumerable<AnimalType> animalTypes { get; set; }
-    private IEnumerable<Pet> pets { get; set; }
+    private readonly int pageSize = 12;
 
+    private IEnumerable<City> Cities { get; set; }
+    private IEnumerable<AnimalType> AnimalTypes { get; set; }
+    private IEnumerable<Pet> Pets { get; set; }
     private string Message { get; set; }
-    private Modal confirmationModal { get; set; }
-
-    private ApplicationUser user { get; set; }
+    private Modal ConfirmationModal { get; set; }
+    private ApplicationUser User { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        user = await applicationUserService.GetCurrent();
+        User = await ApplicationUserService.GetCurrent();
         try
         {
-            cities = await CityService.GetAll();
-            animalTypes = await AnimalTypeService.GetAll();
+            Cities = await CityService.GetAll();
+            AnimalTypes = await AnimalTypeService.GetAll();
         }
         catch (Exception e)
         {
@@ -176,8 +190,8 @@
     {
         try
         {
-            pets = await PetService.GetAll();
-            pets = pets.Skip(record).Take(pageSize).ToList();
+            Pets = await PetService.GetAll();
+            Pets = Pets.Skip(Record).Take(pageSize).ToList();
         }
         catch (Exception e)
         {
@@ -187,15 +201,12 @@
 
     private async Task DeleteAnimalType(AnimalType animalType)
     {
-        bool result = false;
+        var result = false;
         if (await AnimalTypeService.HasPetsAssociated(animalType))
         {
-            confirmationModal.isWarning = true;
-            confirmationModal.Open();
-            confirmationModal.OnConfirm(async () =>
-            {
-                result = await AnimalTypeService.Delete(animalType.Id);
-            });
+            ConfirmationModal.IsWarning = true;
+            ConfirmationModal.Open();
+            ConfirmationModal.OnConfirm(async () => { result = await AnimalTypeService.Delete(animalType.Id); });
         }
         else
         {
@@ -203,22 +214,19 @@
         }
         if (result)
         {
-            animalTypes = await AnimalTypeService.GetAll();
+            AnimalTypes = await AnimalTypeService.GetAll();
             StateHasChanged(); // Actualizo la lista
         }
     }
 
     private async Task DeleteCity(City city)
     {
-        bool result = false;
+        var result = false;
         if (await CityService.HasPetsAssociated(city))
         {
-            confirmationModal.isWarning = true;
-            confirmationModal.Open();
-            confirmationModal.OnConfirm(async () =>
-            {
-                result = await CityService.Delete(city.Id);
-            });
+            ConfirmationModal.IsWarning = true;
+            ConfirmationModal.Open();
+            ConfirmationModal.OnConfirm(async () => { result = await CityService.Delete(city.Id); });
         }
         else
         {
@@ -226,8 +234,9 @@
         }
         if (result)
         {
-            cities = await CityService.GetAll();
+            Cities = await CityService.GetAll();
             StateHasChanged(); // Actualizo la lista
         }
     }
+
 }

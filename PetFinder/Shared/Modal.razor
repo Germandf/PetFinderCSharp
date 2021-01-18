@@ -1,10 +1,9 @@
-﻿
-<div class="modal fade @modalClass" aria-hidden="true" tabindex="-1" role="dialog" style="display:@modalDisplay; overflow-y: auto;">
+﻿<div class="modal fade @_modalClass" aria-hidden="true" tabindex="-1" role="dialog" style="display: @_modalDisplay; overflow-y: auto;">
     <div class="modal-dialog-centered mx-auto modal-confirm">
         <div class="modal-content">
             <div class="modal-header flex-column">
-                <div class="icon-box @iconBoxClass">
-                    <i class="fas @fasClass"></i>
+                <div class="icon-box @IconBoxClass">
+                    <i class="fas @FasClass"></i>
                 </div>
                 <h4 class="modal-title w-100">@Title </h4>
             </div>
@@ -20,7 +19,7 @@
     </div>
 </div>
 
-@if (showBackdrop)
+@if (_showBackdrop)
 {
     <div class="modal-backdrop fade show"></div>
 }
@@ -36,67 +35,63 @@
     [Parameter]
     public RenderFragment Footer { get; set; }
 
-    public bool isSuccess { get; set; }
-    public bool isWarning { get; set; }
-    public bool isError { get; set; }
-    public bool isEditing { get; set; }
+    public bool IsSuccess { get; set; }
+    public bool IsWarning { get; set; }
+    public bool IsError { get; set; }
+    public bool IsEditing { get; set; }
+    private string IconBoxClass { get; set; }
+    private string FasClass { get; set; }
+    private Func<Task> FunctionConfirm { get; set; }
 
-    private string modalDisplay = "none;";
-    private string modalClass = "";
-    private bool showBackdrop = false;
-    private string iconBoxClass { get; set; }
-    private string fasClass { get; set; }
-    private Func<Task> functionConfirm { get; set; }
-
-    public Modal()
-    {
-
-    }
+    private string _modalDisplay = "none;";
+    private string _modalClass = "";
+    private bool _showBackdrop = false;
 
     public void Open()
     {
-        if (isError)
+        if (IsError)
         {
-            iconBoxClass = "icon-box-error";
-            fasClass = "fa-times";
+            IconBoxClass = "icon-box-error";
+            FasClass = "fa-times";
         }
-        else if (isWarning)
+        else if (IsWarning)
         {
-            iconBoxClass = "icon-box-warning";
-            fasClass = "fa-exclamation";
+            IconBoxClass = "icon-box-warning";
+            FasClass = "fa-exclamation";
         }
-        else if (isEditing)
+        else if (IsEditing)
         {
-            iconBoxClass = "icon-box-edit";
-            fasClass = "fa-pencil-alt";
+            IconBoxClass = "icon-box-edit";
+            FasClass = "fa-pencil-alt";
         }
         else
         {
-            iconBoxClass = "icon-box-success";
-            fasClass = "fa-check";
+            IconBoxClass = "icon-box-success";
+            FasClass = "fa-check";
         }
-        modalDisplay = "block;";
-        modalClass = "show";
-        showBackdrop = true;
+        _modalDisplay = "block;";
+        _modalClass = "show";
+        _showBackdrop = true;
         StateHasChanged();
     }
 
     public void Close()
     {
-        modalDisplay = "none";
-        modalClass = "";
-        showBackdrop = false;
-        functionConfirm = null;
+        _modalDisplay = "none";
+        _modalClass = "";
+        _showBackdrop = false;
+        FunctionConfirm = null;
     }
 
     public void Confirm()
     {
-        functionConfirm();
-        this.Close();
+        FunctionConfirm();
+        Close();
     }
 
     public void OnConfirm(Func<Task> functionAsParameter)
     {
-        functionConfirm = functionAsParameter;
+        FunctionConfirm = functionAsParameter;
     }
+
 }

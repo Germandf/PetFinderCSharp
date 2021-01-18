@@ -1,14 +1,11 @@
 ﻿@page "/ver/{id:int}"
-@using Microsoft.AspNetCore.Identity
-@using PetFinder.Areas.Identity;
-
+@using PetFinder.Areas.Identity
 @inject IPetService PetService
-@inject IApplicationUserService userService;
-
+@inject IApplicationUserService UserService
 
 <section class="container" id="pet-page" data-id="{$pet->id}">
     <a href="javascript:history.back()" class="btn bg-orange text-white my-2 w-100">Volver</a>
-    @if (pet == null)
+    @if (_pet == null)
     {
         <h3>Loading...</h3>
     }
@@ -17,62 +14,64 @@
         <!-- Foto -->
         <div class="row">
             <div class="col-12 col-md-8">
-                <img src="/images/@pet.Photo" alt="@pet.Name's image" class="img-thumbnail mx-auto w-100">
+                <img src="/images/@_pet.Photo" alt="@_pet.Name's image" class="img-thumbnail mx-auto w-100">
             </div>
             <div class="col-12 col-md-4">
                 <!-- Nombre -->
                 <div class="row">
-                    <h1 class="mt-3 mx-4 petTitle">@pet.Name</h1>
+                    <h1 class="mt-3 mx-4 petTitle">@_pet.Name</h1>
                 </div>
                 <!-- Descripcion -->
                 <div class="row">
-                    <p class="mx-4">@pet.Description</p>
+                    <p class="mx-4">@_pet.Description</p>
                 </div>
                 <!-- Detalles -->
                 <div class="row">
                     <h3 class="mt-3 mx-4 petSubTitle">Detalles</h3>
                 </div>
                 <div class="row">
-                    <p class="mx-4">Tipo de animal: @pet.AnimalType.Name</p>
+                    <p class="mx-4">Tipo de animal: @_pet.AnimalType.Name</p>
                 </div>
                 <div class="row">
-                    <p class="mx-4">Ciudad: @pet.City.Name</p>
+                    <p class="mx-4">Ciudad: @_pet.City.Name</p>
                 </div>
                 <div class="row">
-                    <p class="mx-4">Género: @pet.Gender.Name</p>
+                    <p class="mx-4">Género: @_pet.Gender.Name</p>
                 </div>
                 <div class="row">
-                    <p class="mx-4">Fecha de extravío: @pet.Date</p>
+                    <p class="mx-4">Fecha de extravío: @_pet.Date</p>
                 </div>
                 <!-- Contacto -->
                 <div class="row">
                     <h3 class="mt-3 mx-4 petSubTitle">Contacto</h3>
                 </div>
                 <div class="row">
-                    <p class="mx-4">Dueño: @user.Name</p>
+                    <p class="mx-4">Dueño: @_user.Name</p>
                 </div>
                 <div class="row">
-                    <p class="mx-4">Email: @user.Email</p>
+                    <p class="mx-4">Email: @_user.Email</p>
                 </div>
                 <div class="row">
-                    <p class="mx-4">Teléfono: @pet.PhoneNumber</p>
+                    <p class="mx-4">Teléfono: @_pet.PhoneNumber</p>
                 </div>
             </div>
         </div>
     }
-    <Comments PetId="id"></Comments>
+    <Comments PetId="Id"></Comments>
 </section>
 
 @code {
-    [Parameter]
-    public int id { get; set; }
 
-    private Pet pet = null;
-    private ApplicationUser user = null;
+    [Parameter]
+    public int Id { get; set; }
+
+    private Pet _pet;
+    private ApplicationUser _user;
 
     protected override async Task OnInitializedAsync()
     {
-        pet = await PetService.Get(id);
-        user = await userService.GetById(pet.UserId);
+        _pet = await PetService.Get(Id);
+        _user = await UserService.GetById(_pet.UserId);
     }
+
 }

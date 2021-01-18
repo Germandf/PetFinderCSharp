@@ -1,35 +1,27 @@
-﻿using Microsoft.EntityFrameworkCore;
-using PetFinder.Data;
-using PetFinder.Helpers;
-using PetFinder.Models;
-using Serilog;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoNSubstitute;
+using PetFinder.Data;
+using PetFinder.Models;
 using Xunit;
 
-
-namespace PetFinderTests
+namespace PetFinderTests.Integration
 {
     public class AnimalTypeTests
     {
-        private IFixture fixture;
+        private readonly IFixture _fixture;
 
         public AnimalTypeTests()
         {
-            var DbContextFactory = new PetFinderDbContextFactory();
-            fixture = new Fixture().Customize(new AutoNSubstituteCustomization());
-            fixture.Register(DbContextFactory.CreateContext);
+            var dbContextFactory = new PetFinderDbContextFactory();
+            _fixture = new Fixture().Customize(new AutoNSubstituteCustomization());
+            _fixture.Register(dbContextFactory.CreateContext);
         }
 
         private AnimalType CreateAnimalType(string name)
         {
-            var auxAnimalType = new AnimalType();
-            auxAnimalType.Name = name;
+            var auxAnimalType = new AnimalType {Name = name};
             auxAnimalType.SerializedName = auxAnimalType.Name.ToUpper().Replace(" ", "");
             return auxAnimalType;
         }
@@ -39,9 +31,9 @@ namespace PetFinderTests
         {
             var animalType = CreateAnimalType("Perro");
             var animalTypeRepeated = CreateAnimalType("Perro");
-            var sut = fixture.Create<AnimalTypeService>();
+            var sut = _fixture.Create<AnimalTypeService>();
             await sut.Save(animalType);
-            GenericResult result = await sut.Save(animalTypeRepeated);
+            var result = await sut.Save(animalTypeRepeated);
             // No deberia insertarse ya que existe una ciudad con el mismo nombre
             Assert.False(result.Success);
         }
@@ -49,8 +41,8 @@ namespace PetFinderTests
         [Fact]
         private async Task ShouldUpdateAsync()
         {
-            AnimalType animalType= CreateAnimalType("Perro Lobo");
-            var sut = fixture.Create<AnimalTypeService>();
+            var animalType = CreateAnimalType("Perro Lobo");
+            var sut = _fixture.Create<AnimalTypeService>();
 
             await sut.Save(animalType);
             animalType.Name = "Edited mock";
@@ -58,14 +50,13 @@ namespace PetFinderTests
             var numberOfAnimalTypes = (await sut.GetAll()).Count();
 
             // Deberia haber una sola ciudad ya que editamos la misma que insertamos
-            Assert.Equal<int>(1, numberOfAnimalTypes);
+            Assert.Equal(1, numberOfAnimalTypes);
         }
 
         [Fact]
         private async Task ShouldAddAsync()
         {
-
-            var sut = fixture.Create<AnimalTypeService>();
+            var sut = _fixture.Create<AnimalTypeService>();
 
             var animalType = CreateAnimalType("Perro Lobo");
             var animalTypeGato = CreateAnimalType("Gato");
@@ -75,16 +66,16 @@ namespace PetFinderTests
 
             var numberOfAnimalTypes = (await sut.GetAll()).Count();
             // Deberia haber una sola ciudad ya que editamos la misma que insertamos
-            Assert.Equal<int>(2, numberOfAnimalTypes);
+            Assert.Equal(2, numberOfAnimalTypes);
         }
 
         [Fact]
         private void ShouldBeInvalidName()
         {
-            var sut = fixture.Create<AnimalTypeService>();
+            var sut = _fixture.Create<AnimalTypeService>();
 
-            string invalidName = "algo muy largo con muchos caracteres";
-            bool isValid = sut.IsValidName(invalidName);
+            var invalidName = "algo muy largo con muchos caracteres";
+            var isValid = sut.IsValidName(invalidName);
 
             // Deberia ser falso ya que la cadena tiene 36 caracteres, siendo el maximo 35
             Assert.False(isValid);
@@ -93,10 +84,10 @@ namespace PetFinderTests
         [Fact]
         private void ShouldBeInvalidNameIlegalCharacters()
         {
-            var sut = fixture.Create<AnimalTypeService>();
+            var sut = _fixture.Create<AnimalTypeService>();
 
-            string invalidName = "@asdasd 213"; // Solo deberia aceptar letras de la A a la Z
-            bool isValid = sut.IsValidName(invalidName);
+            var invalidName = "@asdasd 213"; // Solo deberia aceptar letras de la A a la Z
+            var isValid = sut.IsValidName(invalidName);
 
             Assert.False(isValid);
         }
@@ -104,10 +95,10 @@ namespace PetFinderTests
         [Fact]
         private void ShouldBeValidName()
         {
-            var sut = fixture.Create<AnimalTypeService>();
+            var sut = _fixture.Create<AnimalTypeService>();
 
-            string invalidName = "Perro Lobo"; // Solo deberia aceptar numeros de la A a la Z
-            bool isValid = sut.IsValidName(invalidName);
+            var invalidName = "Perro Lobo"; // Solo deberia aceptar numeros de la A a la Z
+            var isValid = sut.IsValidName(invalidName);
 
             Assert.True(isValid);
         }

@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Hosting;
@@ -6,19 +7,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using PetFinder.Data;
-using PetFinder.Models;
-using System;
-using Microsoft.AspNetCore.Identity.UI;
-using Microsoft.AspNetCore.Components.Server;
 using PetFinder.Areas.Identity;
 using PetFinder.Areas.Identity.Helper;
-using Microsoft.Extensions.FileProviders;
-using System.IO;
+using PetFinder.Data;
+using PetFinder.Models;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
-using Serilog.Ui.Web;
 using Serilog.Ui.MsSqlServerProvider;
+using Serilog.Ui.Web;
 
 namespace PetFinder
 {
@@ -37,10 +33,7 @@ namespace PetFinder
         {
             var mvcBuilder = services.AddControllersWithViews();
             services.AddSerilogUi(mvcBuilder, options => options
-                .EnableAuthorization(authOptions =>
-                {
-                    authOptions.Roles = new[] { ApplicationUserService.ROLE_ADMIN };
-                })
+                .EnableAuthorization(authOptions => { authOptions.Roles = new[] {ApplicationUserService.ROLE_ADMIN}; })
                 .UseSqlServer(Environment.GetEnvironmentVariable("SQLServerPetfinder"), "Logs")
             );
 
@@ -48,33 +41,32 @@ namespace PetFinder
 
             services.AddDbContext<PetFinderContext>(options =>
                     options.UseSqlServer(Environment.GetEnvironmentVariable("SQLServerPetfinder")),
-                    ServiceLifetime.Transient
-                  );
+                ServiceLifetime.Transient
+            );
 
             services.AddSingleton(
-                (ILogger)new LoggerConfiguration()
+                (ILogger) new LoggerConfiguration()
                     .MinimumLevel.Information()
                     .WriteTo.MSSqlServer(
-                        connectionString: Environment.GetEnvironmentVariable("SQLServerPetfinder"),
-                        sinkOptions: new MSSqlServerSinkOptions { TableName = "Logs" })
+                        Environment.GetEnvironmentVariable("SQLServerPetfinder"),
+                        new MSSqlServerSinkOptions {TableName = "Logs"})
                     .CreateLogger()
             );
-            services.AddDefaultIdentity<ApplicationUser>(options => 
-            {
-                options.SignIn.RequireConfirmedAccount = false;
-                options.Password.RequireDigit = false;
-                options.Password.RequireLowercase = false;
-                options.Password.RequireNonAlphanumeric = false;
-                options.Password.RequireUppercase = false;
-                options.Password.RequiredLength = 8;
-                options.Password.RequiredUniqueChars = 0;
+            services.AddDefaultIdentity<ApplicationUser>(options =>
+                {
+                    options.SignIn.RequireConfirmedAccount = false;
+                    options.Password.RequireDigit = false;
+                    options.Password.RequireLowercase = false;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequiredLength = 8;
+                    options.Password.RequiredUniqueChars = 0;
+                }).AddRoles<IdentityRole>().AddEntityFrameworkStores<PetFinderContext>()
+                .AddClaimsPrincipalFactory<CustomUserClaimsPrincipalFactory>().AddErrorDescriber<AppErrorDescriber>();
 
-            }).AddRoles<IdentityRole>().
-            AddEntityFrameworkStores<PetFinderContext>().
-            AddClaimsPrincipalFactory<CustomUserClaimsPrincipalFactory>().
-            AddErrorDescriber<AppErrorDescriber>();
-
-            services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
+            services
+                .AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>
+                >();
             services.AddScoped<SignInManager<ApplicationUser>, SignInManager<ApplicationUser>>();
 
             services.AddRazorPages();
@@ -92,7 +84,7 @@ namespace PetFinder
 
             services.AddHttpContextAccessor();
 
-            services.AddControllers();  
+            services.AddControllers();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -120,7 +112,7 @@ namespace PetFinder
                 endpoints.MapControllers();
                 endpoints.MapBlazorHub();
                 endpoints.MapFallbackToPage("/_Host");
-                endpoints.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");
             });
         }
     }

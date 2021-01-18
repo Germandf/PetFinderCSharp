@@ -1,8 +1,4 @@
 ﻿using PetFinder.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PetFinder.ViewModels
 {
@@ -13,9 +9,7 @@ namespace PetFinder.ViewModels
 
         public AnimalType ConvertToAnimalType()
         {
-            var animalType = new AnimalType();
-            animalType.Id = Id;
-            animalType.Name = Name;
+            var animalType = new AnimalType {Id = Id, Name = Name};
             return animalType;
         }
 

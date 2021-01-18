@@ -1,6 +1,4 @@
 ﻿@page
-
-@using Microsoft.AspNetCore.Identity
 @model RegisterModel
 @inject SignInManager<ApplicationUser> SignInManager
 @inject UserManager<ApplicationUser> UserManager
@@ -14,24 +12,24 @@
                     <h1 class="h3 mb-3 font-weight-normal">Registrarse</h1>
 
                     <label asp-for="Input.Name" class="sr-only mt-3">Nombre</label>
-                    <input asp-for="Input.Name" class="form-control mt-3" placeholder="Nombre" />
+                    <input asp-for="Input.Name" class="form-control mt-3" placeholder="Nombre"/>
                     <span asp-validation-for="Input.Name" class="text-danger"></span>
 
                     <label asp-for="Input.Surname" class="sr-only mt-3">Apellido</label>
-                    <input asp-for="Input.Surname" class="form-control mt-3" placeholder="Apellido" />
+                    <input asp-for="Input.Surname" class="form-control mt-3" placeholder="Apellido"/>
                     <span asp-validation-for="Input.Surname" class="text-danger"></span>
 
 
                     <label asp-for="Input.Email" class="sr-only mt-3">Email</label>
-                    <input asp-for="Input.Email" type="email" class="form-control mt-3" placeholder="Email" />
+                    <input asp-for="Input.Email" type="email" class="form-control mt-3" placeholder="Email"/>
                     <span asp-validation-for="Input.Email" class="text-danger"></span>
 
                     <label asp-for="Input.Password" class="sr-only mt-3">Email</label>
-                    <input asp-for="Input.Password" type="password" class="form-control mt-3" placeholder="Contraseña" />
+                    <input asp-for="Input.Password" type="password" class="form-control mt-3" placeholder="Contraseña"/>
                     <span asp-validation-for="Input.Password" class="text-danger"></span>
 
                     <label asp-for="Input.ConfirmPassword" class="sr-only mt-3">Email</label>
-                    <input asp-for="Input.ConfirmPassword" type="password" class="form-control mt-3" placeholder="Repetir contraseña" />
+                    <input asp-for="Input.ConfirmPassword" type="password" class="form-control mt-3" placeholder="Repetir contraseña"/>
                     <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
 
 
@@ -45,7 +43,6 @@
             </div>
         </div>
     </section>
-
 }
 else
 {
@@ -53,5 +50,5 @@ else
 }
 
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial"/>
 }

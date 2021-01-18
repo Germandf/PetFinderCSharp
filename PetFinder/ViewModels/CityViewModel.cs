@@ -1,8 +1,4 @@
 ﻿using PetFinder.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace PetFinder.ViewModels
 {
@@ -13,9 +9,7 @@ namespace PetFinder.ViewModels
 
         public City ConvertToCity()
         {
-            var city = new City();
-            city.Id = Id;
-            city.Name = Name;
+            var city = new City {Id = Id, Name = Name};
             return city;
         }
 

@@ -1,17 +1,16 @@
 ﻿@page "/agregar-ciudad"
 @page "/editar-ciudad/{id:int}"
+@using PetFinder.ViewModels
 @inject ICityService CityService
 @inject NavigationManager NavigationManager
-@using PetFinder.Helpers;
-@using PetFinder.ViewModels;
 
 <AuthorizeView Roles="@ApplicationUserService.ROLE_ADMIN">
     <Authorized>
         <div class="row">
             <div class="col-12 mt-5 text-center">
-                <EditForm Context="editFormContext" Model="@cityViewModel" id="addcityForm" class="form-signin text-left shadow rounded">
+                <EditForm Context="editFormContext" Model="@_cityViewModel" id="addcityForm" class="form-signin text-left shadow rounded">
                     <!-- Muestra el titulo correspondiente -->
-                    @if (id != 0 && isError == false)
+                    @if (Id != 0 && IsError == false)
                     {
                         <h1 class="h3 mb-3 font-weight-normal">Editar ciudad</h1>
                     }
@@ -20,16 +19,16 @@
                         <h1 class="h3 mb-3 font-weight-normal">Agregar ciudad</h1>
                     }
                     <label for="inputName" class="sr-only mt-3 ">Nombre</label>
-                    <input id="inputName" type="text" class="mt-3 form-control" placeholder="Nombre" required autofocus="" @bind="cityViewModel.Name">
+                    <input id="inputName" type="text" class="mt-3 form-control" placeholder="Nombre" required autofocus="" @bind="_cityViewModel.Name">
                     <div class="d-block text-right">
                         <button class="mt-2 text-white btn-lg bg-orange-dark" type="button" value="Cancel" @onclick="Cancel">Cancelar</button>
                         <button class="mt-2 text-white btn-lg bg-orange" type="submit" value="Save" @onclick="SaveCity">Confirmar</button>
                     </div>
-                    @if (isError)
+                    @if (IsError)
                     {
                         <div class="alert alert-danger mt-2">
                             <ul>
-                                @foreach (string error in errorsOnSaving)
+                                @foreach (var error in _errorsOnSaving)
                                 {
                                     <li> @error </li>
                                 }
@@ -40,14 +39,14 @@
             </div>
         </div>
 
-        <Modal @ref="modal">
+        <Modal @ref="Modal">
             <Title>
                 ¡Se guardó con éxito!
             </Title>
             <Body>
-                <p>
-                    La ciudad @cityViewModel.Name se guardó con éxito.
-                </p>
+            <p>
+                La ciudad @_cityViewModel.Name se guardó con éxito.
+            </p>
             </Body>
             <Footer>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick='() => NavigationManager.NavigateTo("/admin")'>Cerrar</button>
@@ -63,45 +62,45 @@
 </AuthorizeView>
 
 @code {
-    [Parameter]
-    public int id { get; set; }
 
-    private CityViewModel cityViewModel = new();
-    public bool isError { get; set; }
-    private Modal modal { get; set; }
-    private List<string> errorsOnSaving = new List<string>();
+    [Parameter]
+    public int Id { get; set; }
+
+    private readonly CityViewModel _cityViewModel = new();
+    public bool IsError { get; set; }
+    private Modal Modal { get; set; }
+    private List<string> _errorsOnSaving = new();
 
     protected override async Task OnInitializedAsync()
     {
-        if (id != 0)
+        if (Id != 0)
         {
-            City city = await CityService.Get(id);
+            var city = await CityService.Get(Id);
             if (city == null)
             {
-                errorsOnSaving.Add("No se encontro la ciudad");
-                isError = true;
+                _errorsOnSaving.Add("No se encontro la ciudad");
+                IsError = true;
             }
             else
             {
-                cityViewModel.ConvertFromCity(city);
+                _cityViewModel.ConvertFromCity(city);
             }
         }
     }
 
     protected async Task SaveCity()
     {
-        errorsOnSaving = new List<string>();
-        GenericResult result = await CityService.Save(cityViewModel);
+        _errorsOnSaving = new List<string>();
+        var result = await CityService.Save(_cityViewModel);
         if (result.Success)
         {
-            modal.Open();
+            Modal.Open();
         }
         else
         {
-            isError = true;
-            errorsOnSaving = result.Errors;
+            IsError = true;
+            _errorsOnSaving = result.Errors;
             StateHasChanged();
-            return;
         }
     }
 
@@ -109,4 +108,5 @@
     {
         NavigationManager.NavigateTo("/admin");
     }
+
 }

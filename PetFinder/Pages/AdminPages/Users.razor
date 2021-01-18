@@ -1,11 +1,11 @@
 ﻿@page "/usuarios"
-@using PetFinder.Areas.Identity;
+@using PetFinder.Areas.Identity
 @using Microsoft.AspNetCore.Identity
-@inject IApplicationUserService aplicationUserService;
-@inject SignInManager<ApplicationUser> sigInManager
-@inject RoleManager<IdentityRole> roleManager
+@inject IApplicationUserService ApplicationUserService
+@inject SignInManager<ApplicationUser> SigInManager
+@inject RoleManager<IdentityRole> RoleManager
 
-<AuthorizeView Roles="@ApplicationUserService.ROLE_ADMIN">
+<AuthorizeView Roles="@Data.ApplicationUserService.ROLE_ADMIN">
     <Authorized>
         <section class="container">
             <div class="row justify-content-center">
@@ -14,57 +14,57 @@
             <div class="table-responsive">
                 <table class="table table-hover text-center">
                     <thead class="bg-orange">
-                        <tr>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Acciones</th>
-                        </tr>
+                    <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Email</th>
+                        <th scope="col">Acciones</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        @if (users == null)
+                    @if (UsersObtained == null)
+                    {
+                        <tr class="list-group-item d-flex align-items-center">Cargando...</tr>
+                    }
+                    else
+                    {
+                        foreach (var user in UsersObtained)
                         {
-                            <tr class="list-group-item d-flex align-items-center">Cargando...</tr>
+                            <tr scope="row">
+                                <td class="align-middle">@user.Name</td>
+                                <td class="align-middle">@user.Email</td>
+                                <td class="align-middle">
+                                    <div class="text-center">
+                                        @if (user.IsAdmin())
+                                        {
+                                            <button type="button" value="Degradar" class="btn bg-orange text-white" @onclick="() => Downgrade(user)"> Degradar </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" value="Promover" class="btn bg-success text-white" @onclick="() => Upgrade(user)">Promover</button>
+                                        }
+                                        <button type="button" value="Delete" class="btn bg-red text-white" @onclick="() => Delete(user)">Eliminar</button>
+                                    </div>
+                                </td>
+                            </tr>
                         }
-                        else
-                        {
-                            foreach (var user in users)
-                            {
-                                <tr scope="row">
-                                    <td class="align-middle">@user.Name</td>
-                                    <td class="align-middle">@user.Email</td>
-                                    <td class="align-middle">
-                                        <div class="text-center">
-                                            @if (user.isAdmin())
-                                            {
-                                                <button type="button" value="Degradar" class="btn bg-orange text-white" @onclick="() => Downgrade(user)"> Degradar </button>
-                                            }
-                                            else
-                                            {
-                                                <button type="button" value="Promover" class="btn bg-success text-white" @onclick="() => Upgrade(user)">Promover</button>
-                                            }
-                                            <button type="button" value="Delete" class="btn bg-red text-white" @onclick="() => Delete(user)">Eliminar</button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        }
+                    }
                     </tbody>
                 </table>
             </div>
         </section>
 
-        <Modal @ref="confirmationModal">
+        <Modal @ref="ConfirmationModal">
             <Title>
                 Eliminar
             </Title>
             <Body>
-                <p>
-                    ¿Está seguro que desea eliminar?
-                </p>
+            <p>
+                ¿Está seguro que desea eliminar?
+            </p>
             </Body>
             <Footer>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => confirmationModal.Close()">Cancelar</button>
-                <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => confirmationModal.Confirm()">Confirmar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => ConfirmationModal.Close()">Cancelar</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal" @onclick="() => ConfirmationModal.Confirm()">Confirmar</button>
             </Footer>
         </Modal>
     </Authorized>
@@ -75,17 +75,17 @@
         </Error>
     </NotAuthorized>
 </AuthorizeView>
-    
+
 @code {
-    private IEnumerable<ApplicationUser> users { get; set; }
+    private IEnumerable<ApplicationUser> UsersObtained { get; set; }
     private string Message { get; set; }
-    private Modal confirmationModal { get; set; }
+    private Modal ConfirmationModal { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
-            users = await aplicationUserService.GetAll();
+            UsersObtained = await ApplicationUserService.GetAll();
         }
         catch (Exception e)
         {
@@ -95,32 +95,32 @@
 
     private async Task Downgrade(ApplicationUser user)
     {
-        await aplicationUserService.Downgrade(user.Id);
-        users = await aplicationUserService.GetAll();
+        await ApplicationUserService.Downgrade(user.Id);
+        UsersObtained = await ApplicationUserService.GetAll();
         StateHasChanged();
     }
 
     private async Task Upgrade(ApplicationUser user)
     {
-        await aplicationUserService.Upgrade(user.Id);
-        users = await aplicationUserService.GetAll();
+        await ApplicationUserService.Upgrade(user.Id);
+        UsersObtained = await ApplicationUserService.GetAll();
         StateHasChanged();
     }
 
     private void Delete(ApplicationUser currUser)
     {
-        confirmationModal.isWarning = true;
-        confirmationModal.Open();
-        confirmationModal.OnConfirm(async () =>
+        ConfirmationModal.IsWarning = true;
+        ConfirmationModal.Open();
+        ConfirmationModal.OnConfirm(async () =>
         {
-            IdentityResult result = await aplicationUserService.DeleteAsync(currUser);
+            var result = await ApplicationUserService.DeleteAsync(currUser);
             if (result.Succeeded)
             {
                 //Actualizo la lista con la db
-                users = null;
-                users = await aplicationUserService.GetAll();
+                UsersObtained = await ApplicationUserService.GetAll();
                 StateHasChanged();
             }
         });
     }
+
 }
