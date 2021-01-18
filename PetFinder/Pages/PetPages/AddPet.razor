@@ -155,7 +155,7 @@
     private IEnumerable<City> _cities;
     private IEnumerable<AnimalType> _animalTypes;
     private IEnumerable<Gender> _genders;
-    IFileListEntry _file;
+    private IFileListEntry _file;
 
     [CascadingParameter]
     protected Task<AuthenticationState> AuthStat { get; set; }
