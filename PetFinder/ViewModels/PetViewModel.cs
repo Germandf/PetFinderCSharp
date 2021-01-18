@@ -26,6 +26,7 @@ namespace PetFinder.ViewModels
                 GenderId = GenderId,
                 Date = Date,
                 PhoneNumber = PhoneNumber,
+                Photo = Photo,
                 Description = Description
             };
             return pet;
