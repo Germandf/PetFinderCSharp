@@ -242,6 +242,8 @@ namespace PetFinder.Data
             if (await CurrUserCanEdit(pet))
             {
                 _context.Entry(pet).State = EntityState.Modified;
+                if(pet.Photo == null)
+                    _context.Entry(pet).Property(x => x.Photo).IsModified = false;
                 if (await _context.SaveChangesAsync() > 0)
                     return result;
                 result.AddError(ErrorSaving);
