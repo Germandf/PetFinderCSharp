@@ -29,7 +29,7 @@ namespace PetFinderTests.Integration
         [Fact]
         private async Task ShouldInsertAsync()
         {
-            var sut = _fixture.Create<CityService>();
+            var sut = _fixture.Create<CategoryService<City>>();
             var city = CreateCity("Tres Arroyos");
 
             await sut.Save(city);
@@ -41,7 +41,7 @@ namespace PetFinderTests.Integration
         private async Task ShouldNotInsertAsync()
         {
             var city = new City();
-            var sut = _fixture.Create<CityService>();
+            var sut = _fixture.Create<CategoryService<City>>();
             var result = await sut.Save(city);
             Assert.False(result.Success, "No debería insertarse ya que no se especifico un nombre");
         }
@@ -49,7 +49,7 @@ namespace PetFinderTests.Integration
         [Fact]
         private async Task ShouldNotSaveWithSameName()
         {
-            var sut = _fixture.Create<CityService>();
+            var sut = _fixture.Create<CategoryService<City>>();
             var city = CreateCity("Tres Arroyos");
             var cityRepeated = CreateCity("Tres Arroyos");
 
@@ -63,7 +63,7 @@ namespace PetFinderTests.Integration
         [InlineData("Nombre demasiado largo con muchisimos caracteres")]
         private void ShouldBeInvalidName(string invalidName)
         {
-            var sut = _fixture.Create<CityService>();
+            var sut = _fixture.Create<CategoryService<City>>();
 
             var isValid = sut.IsValidName(invalidName);
 
@@ -75,7 +75,7 @@ namespace PetFinderTests.Integration
         private async Task ShouldUpdateAsync()
         {
             var city = CreateCity("Tres Arroyos");
-            var sut = _fixture.Create<CityService>();
+            var sut = _fixture.Create<CategoryService<City>>();
 
             await sut.Save(city);
             city.Name = "Edited mock";
@@ -91,7 +91,7 @@ namespace PetFinderTests.Integration
         private async Task ShouldDelete()
         {
             var city = CreateCity("Tres Arroyos");
-            var sut = _fixture.Create<CityService>();
+            var sut = _fixture.Create<CategoryService<City>>();
 
             await sut.Save(city);
             await sut.Delete(city.Id);
