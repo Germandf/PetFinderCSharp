@@ -10,18 +10,21 @@ using Newtonsoft.Json;
 using System.Text;
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
 namespace PetFinder.Data
 {
     public interface ICommentApiService
     {
-        public Task<HttpResponseMessage> CreateComment(HttpClient httpClient, CommentViewModel commentViewModel, int petId, ApplicationUser user);
+        public Task<HttpResponseMessage> CreateComment(CommentViewModel commentViewModel, int petId, ApplicationUser user);
 
-        public Task<HttpResponseMessage> DeleteComment(HttpClient httpClient, CommentViewModel commentViewModel);
+        public Task<HttpResponseMessage> DeleteComment(CommentViewModel commentViewModel);
 
-        public Task<HttpResponseMessage> GetComments(HttpClient httpClient, int petId);
+        public Task<HttpResponseMessage> GetComments(int petId);
 
-        public Task<HttpResponseMessage> UpdateComment(HttpClient httpClient, CommentViewModel commentViewModel);
+        public void SetJwt(string token);
+
+        public Task<HttpResponseMessage> UpdateComment(CommentViewModel commentViewModel);
     }
 
     public class CommentApiService : ICommentApiService
@@ -32,13 +35,18 @@ namespace PetFinder.Data
         public static string ErrorUnauthorized = "No tienes permiso para realizar esta acción";
         public static string ErrorUnknown = "Ha ocurrido un error inesperado, ponte en contacto con uno de los administradores";
         private readonly string _urlApiComments;
+        private HttpClient _httpClient { get; }
+
 
         public CommentApiService(IConfiguration configuration)
         {
             _urlApiComments = configuration["UrlApiController"] + "comentarios";
+            _httpClient = new HttpClient();
         }
 
-        public async Task<HttpResponseMessage> CreateComment(HttpClient httpClient, CommentViewModel commentViewModel, int petId, ApplicationUser user)
+        
+
+        public async Task<HttpResponseMessage> CreateComment(CommentViewModel commentViewModel, int petId, ApplicationUser user)
         {
             var comment = commentViewModel.ConvertToComment();
             comment.PetId = petId;
@@ -49,24 +57,29 @@ namespace PetFinder.Data
             var byteContent = new ByteArrayContent(buffer);
             byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             // POST api/comentarios
-            var response = await httpClient.PostAsync(_urlApiComments, byteContent);
+            var response = await _httpClient.PostAsync(_urlApiComments, byteContent);
             return response;
         }
 
-        public async Task<HttpResponseMessage> DeleteComment(HttpClient httpClient, CommentViewModel commentViewModel)
+        public async Task<HttpResponseMessage> DeleteComment(CommentViewModel commentViewModel)
         {
-            var response = await httpClient.DeleteAsync(_urlApiComments + "/" + commentViewModel.Id);
+            var response = await _httpClient.DeleteAsync(_urlApiComments + "/" + commentViewModel.Id);
             return response;
         }
 
-        public async Task<HttpResponseMessage> GetComments(HttpClient httpClient, int petId)
+        public async Task<HttpResponseMessage> GetComments(int petId)
         {
             // GET api/comentarios/id
-            var response = await httpClient.GetAsync(_urlApiComments + "/mascota/" + petId);
+            var response = await _httpClient.GetAsync(_urlApiComments + "/mascota/" + petId);
             return response;
         }
 
-        public async Task<HttpResponseMessage> UpdateComment(HttpClient httpClient, CommentViewModel commentViewModel)
+        public void SetJwt(string token)
+        {
+            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        }
+
+        public async Task<HttpResponseMessage> UpdateComment(CommentViewModel commentViewModel)
         {
             var comment = commentViewModel.ConvertToComment();
             // Preparo content del put
@@ -75,7 +88,7 @@ namespace PetFinder.Data
             var byteContent = new ByteArrayContent(buffer);
             byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             // PUT api/comentarios/id
-            var response = await httpClient.PutAsync(_urlApiComments + "/" + comment.Id, byteContent);
+            var response = await _httpClient.PutAsync(_urlApiComments + "/" + comment.Id, byteContent);
             return response;
         }
     }
