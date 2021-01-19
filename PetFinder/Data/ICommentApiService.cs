@@ -5,12 +5,16 @@ using System.Dynamic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using PetFinder.Areas.Identity;
+using Newtonsoft.Json;
+using System.Text;
+using System.Net.Http.Headers;
 
 namespace PetFinder.Data
 {
     public interface ICommentApiService
     {
-        public Task<HttpResponseMessage> CreateComment(CommentViewModel commentViewModel);
+        public Task<HttpResponseMessage> CreateComment(int petId, ApplicationUser user, CommentViewModel commentViewModel);
 
         public Task<HttpResponseMessage> DeleteComment(CommentViewModel commentViewModel);
 
@@ -29,9 +33,19 @@ namespace PetFinder.Data
             _urlApiComments = configuration["UrlApiController"] + "comentarios";
         }
 
-        public async Task<HttpResponseMessage> CreateComment(CommentViewModel commentViewModel)
+        public async Task<HttpResponseMessage> CreateComment(int petId, ApplicationUser user, CommentViewModel commentViewModel)
         {
-            throw new NotImplementedException();
+            var comment = commentViewModel.ConvertToComment();
+            comment.PetId = petId;
+            comment.UserId = user.Id;
+            // Preparo content del post
+            var json = JsonConvert.SerializeObject(comment);
+            var buffer = Encoding.UTF8.GetBytes(json);
+            var byteContent = new ByteArrayContent(buffer);
+            byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            // POST api/comentarios
+            var response = await _httpClient.PostAsync(_urlApiComments, byteContent);
+            return response;
         }
 
         public async Task<HttpResponseMessage> DeleteComment(CommentViewModel commentViewModel)
