@@ -1,7 +1,7 @@
 ﻿@page "/agregar-ciudad"
 @page "/editar-ciudad/{id:int}"
 @using PetFinder.ViewModels
-@inject ICityService CityService
+@inject ICategoryService<City> CityService
 @inject NavigationManager NavigationManager
 
 <AuthorizeView Roles="@ApplicationUserService.ROLE_ADMIN">
@@ -66,7 +66,7 @@
     [Parameter]
     public int Id { get; set; }
 
-    private readonly CityViewModel _cityViewModel = new();
+    private readonly CategoryViewModel<City> _cityViewModel = new();
     public bool IsError { get; set; }
     private Modal Modal { get; set; }
     private List<string> _errorsOnSaving = new();
@@ -83,7 +83,7 @@
             }
             else
             {
-                _cityViewModel.ConvertFromCity(city);
+                _cityViewModel.ConvertFromCategory(city);
             }
         }
     }

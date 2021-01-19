@@ -2,7 +2,7 @@
 @page "/editar-tipo-de-animal/{id:int}"
 @using PetFinder.ViewModels
 @inject NavigationManager Navigator
-@inject IAnimalTypeService AnimalTypeService
+@inject ICategoryService<AnimalType> AnimalTypeService
 
 <AuthorizeView Roles="@ApplicationUserService.ROLE_ADMIN">
     <Authorized>
@@ -72,7 +72,7 @@
     private bool IsError { get; set; }
     private bool IsEditing { get; set; }
     private List<string> _errorsOnSaving = new();
-    private readonly AnimalTypeViewModel _animalTypeViewModel = new();
+    private readonly CategoryViewModel<AnimalType> _animalTypeViewModel = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -88,7 +88,7 @@
             else
             {
                 IsEditing = true;
-                _animalTypeViewModel.ConvertFromAnimalType(animalType);
+                _animalTypeViewModel.ConvertFromCategory(animalType);
             }
         }
     }

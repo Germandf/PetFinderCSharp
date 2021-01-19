@@ -28,7 +28,7 @@ namespace PetFinderTests.Integration
         [Fact]
         public async Task ShouldInsertAsync()
         {
-            var sut = _fixture.Create<GenderService>();
+            var sut = _fixture.Create<CategoryService<Gender>>();
             var gender = CreateGender("Masculino");
 
             await sut.Save(gender);
@@ -39,7 +39,7 @@ namespace PetFinderTests.Integration
         [Fact]
         public async Task ShouldNotInsertAsync()
         {
-            var sut = _fixture.Create<GenderService>();
+            var sut = _fixture.Create<CategoryService<Gender>>();
             var gender = new Gender();
             var result = await sut.Save(gender);
             Assert.False(result.Success, "No deberia insertarse ya que no tiene nombre");
@@ -48,7 +48,7 @@ namespace PetFinderTests.Integration
         [Fact]
         public async Task ShouldNotSaveWithSameName()
         {
-            var sut = _fixture.Create<GenderService>();
+            var sut = _fixture.Create<CategoryService<Gender>>();
             var gender1 = CreateGender("Masculino");
             var gender2 = CreateGender("Masculino");
 
@@ -59,20 +59,21 @@ namespace PetFinderTests.Integration
             Assert.False(result.Success, "No deberia insertarse ya que existe un genero con el mismo nombre");
         }
 
-        [Fact]
-        public void ShouldBeInvalidName()
+        [Theory]
+        [InlineData("Nombre demasiado largo con muchos caracteres")]
+        [InlineData("@asdasd 213")]
+        private void ShouldBeInvalidName(string invalidName)
         {
-            var sut = _fixture.Create<GenderService>();
+            var sut = _fixture.Create<CategoryService<AnimalType>>();
 
-            var invalidName = "asdasdasdasdasdasdasd";
             var isValid = sut.IsValidName(invalidName);
-            Assert.False(isValid, "Deberia ser falso ya que la cadena tiene 21 caracteres, siendo el maximo 20");
+            Assert.False(isValid, "Debería aceptar letras de la A a la Z, como máximo 35 caracteres");
         }
 
         [Fact]
         public async void ShouldBeNotRepeated()
         {
-            var sut = _fixture.Create<GenderService>();
+            var sut = _fixture.Create<CategoryService<Gender>>();
 
             var notRepeatedName = "Masculino";
             var isValid = await sut.IsRepeated(notRepeatedName);
@@ -83,7 +84,7 @@ namespace PetFinderTests.Integration
         [Fact]
         public async Task ShouldUpdateAsync()
         {
-            var sut = _fixture.Create<GenderService>();
+            var sut = _fixture.Create<CategoryService<Gender>>();
             var gender = CreateGender("Masculino");
 
             await sut.Save(gender);
@@ -99,7 +100,7 @@ namespace PetFinderTests.Integration
         public async Task ShouldDelete()
         {
             var gender = CreateGender("Masculino");
-            var sut = _fixture.Create<GenderService>();
+            var sut = _fixture.Create<CategoryService<Gender>>();
 
             await sut.Save(gender);
             await sut.Delete(gender.Id);

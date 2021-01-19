@@ -32,7 +32,7 @@ namespace PetFinderTests.Integration
         {
             var animalType = CreateAnimalType("Perro");
             var animalTypeRepeated = CreateAnimalType("Perro");
-            var sut = _fixture.Create<AnimalTypeService>();
+            var sut = _fixture.Create<CategoryService<AnimalType>>();
             await sut.Save(animalType);
             var result = await sut.Save(animalTypeRepeated);
             Assert.False(result.Success, "No deberia permitir insertar tipos de animales duplicados");
@@ -42,7 +42,7 @@ namespace PetFinderTests.Integration
         private async Task ShouldUpdateAsync()
         {
             var animalType = CreateAnimalType("Perro Lobo");
-            var sut = _fixture.Create<AnimalTypeService>();
+            var sut = _fixture.Create<CategoryService<AnimalType>>();
 
             await sut.Save(animalType);
             animalType.Name = "Edited mock";
@@ -56,7 +56,7 @@ namespace PetFinderTests.Integration
         [Fact]
         private async Task ShouldAddAsync()
         {
-            var sut = _fixture.Create<AnimalTypeService>();
+            var sut = _fixture.Create<CategoryService<AnimalType>>();
 
             var animalType = CreateAnimalType("Perro Lobo");
             var animalTypeGato = CreateAnimalType("Gato");
@@ -75,7 +75,7 @@ namespace PetFinderTests.Integration
         [InlineData("@asdasd 213")]
         private void ShouldBeInvalidName(string invalidName)
         {
-            var sut = _fixture.Create<AnimalTypeService>();
+            var sut = _fixture.Create<CategoryService<AnimalType>>();
 
             var isValid = sut.IsValidName(invalidName);
             Assert.False(isValid, "Debería aceptar letras de la A a la Z, como máximo 35 caracteres");
@@ -85,7 +85,7 @@ namespace PetFinderTests.Integration
         [InlineData("Gato")]
         private void ShouldBeValidName(string name)
         {
-            var sut = _fixture.Create<AnimalTypeService>();
+            var sut = _fixture.Create<CategoryService<AnimalType>>();
             var isValid = sut.IsValidName(name);
             Assert.True(isValid);
         }

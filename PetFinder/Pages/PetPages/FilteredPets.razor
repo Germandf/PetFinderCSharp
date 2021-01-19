@@ -8,9 +8,9 @@
 @page "/filtrar/{filter1}/{filter2}/{filter3}/{filter4}"
 @page "/filtrar/{filter1}/{filter2}/{filter3}/{filter4}/{record:int}"
 @using PetFinder.Areas.Identity
-@inject ICityService CityService
-@inject IAnimalTypeService AnimalTypeService
-@inject IGenderService GenderService
+@inject ICategoryService<City> CityService
+@inject ICategoryService<AnimalType> AnimalTypeService
+@inject ICategoryService<Gender> GenderService
 @inject IPetService PetService
 @inject IApplicationUserService ApplicationUserService
 
@@ -55,7 +55,7 @@
 
     [Parameter]
     public int Record { get; set; }
-        
+
     private const int PageSize = 12;
     private ApplicationUser User { get; set; }
     private IEnumerable<Pet> Pets { get; set; }

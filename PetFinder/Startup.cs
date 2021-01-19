@@ -72,9 +72,10 @@ namespace PetFinder
             services.AddRazorPages();
             services.AddServerSideBlazor();
 
-            services.AddScoped<ICityService, CityService>();
-            services.AddScoped<IAnimalTypeService, AnimalTypeService>();
-            services.AddScoped<IGenderService, GenderService>();
+            services.AddScoped<ICategoryService<AnimalType>, CategoryService<AnimalType>>();
+            services.AddScoped<ICategoryService<City>, CategoryService<City>>();
+            services.AddScoped<ICategoryService<Gender>, CategoryService<Gender>>();
+
             services.AddScoped<IPetService, PetService>();
 
             services.AddScoped<IApplicationUserService, ApplicationUserService>();
