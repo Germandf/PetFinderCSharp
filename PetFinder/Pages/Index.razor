@@ -1,9 +1,9 @@
 ﻿@page "/"
 @page "/{record:int}"
 @using PetFinder.Areas.Identity
-@inject ICityService CityService
-@inject IAnimalTypeService AnimalTypeService
-@inject IGenderService GenderService
+@inject ICategoryService<City> CityService
+@inject ICategoryService<AnimalType> AnimalTypeService
+@inject ICategoryService<Gender> GenderService
 @inject IPetService PetService
 @inject IApplicationUserService ApplicationUserService
 
