@@ -76,6 +76,7 @@ namespace PetFinder
             services.AddScoped<IAnimalTypeService, AnimalTypeService>();
             services.AddScoped<IGenderService, GenderService>();
             services.AddScoped<IPetService, PetService>();
+            services.AddScoped<ICommentApiService, CommentApiService>();
 
             services.AddScoped<IApplicationUserService, ApplicationUserService>();
 
