@@ -8,7 +8,7 @@
 @using System.Net
 @inject IApplicationUserService ApplicationUserService
 @inject AuthenticationStateProvider AuthenticationStateProvider
-@inject IConfiguration Configuration
+@inject ICommentApiService CommentApiService
 
 <div class="row">
     <h3 class="petSubTitle mt-3 mx-4">Comentarios</h3>
@@ -120,19 +120,12 @@
     [Parameter]
     public int PetId { get; set; }
 
-    public static string ErrorBadRequest = "El comentario tenía datos incorrectos, intente nuevamente";
-    public static string ErrorUnauthorized = "No tienes permiso para realizar esta acción";
-    public static string ErrorNotFound = "No se encontró el objeto solicitado";
-    public static string ErrorConflict = "No se ha podido completar la acción, intenta más tarde";
-    public static string ErrorUnknown = "Ha ocurrido un error inesperado, ponte en contacto con uno de los administradores";
-
     private ModalWithValue<string> EditModal { get; set; }
     private Modal ConfirmationModal { get; set; }
     private Modal ErrorModal { get; set; }
     private Modal SuccessModal { get; set; }
-    private string Jwt { get; set; }
-    private string UrlApiComments { get; set; }
     private string ErrorMessage { get; set; }
+    private string Jwt { get; set; }
 
     private readonly HttpClient _httpClient = new();
     private ApplicationUser _user = null;
@@ -144,41 +137,34 @@
         _user = await ApplicationUserService.GetCurrent();
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var userClaims = authState.User;
-        UrlApiComments = Configuration["UrlApiController"] + "comentarios";
         await GetComments();
         _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userClaims.Identity.GetJwt());
     }
 
     private async void CreateComment(CommentViewModel commentViewModel)
     {
-        var comment = commentViewModel.ConvertToComment();
-        comment.PetId = PetId;
-        comment.UserId = _user.Id;
-        // Preparo content del post
-        var json = JsonConvert.SerializeObject(comment);
-        var buffer = Encoding.UTF8.GetBytes(json);
-        var byteContent = new ByteArrayContent(buffer);
-        byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-        try
-        {
-            // POST api/comentarios
-            var response = await _httpClient.PostAsync(UrlApiComments, byteContent);
-            await CheckResponse(response);
-        }
-        catch (HttpRequestException exception)
-        {
-            ShowModalError(ErrorUnknown + "Código de error: " + exception);
-        }
+        var response = await CommentApiService.CreateComment(_httpClient, commentViewModel, PetId, _user);
+        await CheckResponse(response);
         _newComment.Message = "";
         _newComment.Rate = 1;
     }
 
+    private void DeleteComment(CommentViewModel commentViewModel)
+    {
+        ConfirmationModal.IsWarning = true;
+        ConfirmationModal.Open();
+        ConfirmationModal.OnConfirm(async () =>
+        {
+            var response = await CommentApiService.DeleteComment(_httpClient, commentViewModel);
+            await CheckResponse(response);
+        });
+    }
+
     private async Task GetComments()
     {
-        // GET api/comentarios/id
         try
         {
-            var response = await _httpClient.GetAsync(UrlApiComments + "/mascota/" + PetId);
+            var response = await CommentApiService.GetComments(_httpClient, PetId);
             var commentsFromApi = await response.Content.ReadAsAsync<CommentViewModel[]>();
             if (commentsFromApi == null)
                 commentsFromApi = new CommentViewModel[0];
@@ -189,7 +175,7 @@
         }
         catch (HttpRequestException exception)
         {
-            ShowModalError(ErrorUnknown + "Código de error: " + exception);
+            ShowModalError(Data.CommentApiService.ErrorUnknown + "Código de error: " + exception);
         }
     }
 
@@ -201,47 +187,14 @@
         EditModal.OnConfirm(async () =>
         {
             commentViewModel.Message = EditModal.value;
-            var comment = commentViewModel.ConvertToComment();
-            // Preparo content del put
-            var json = JsonConvert.SerializeObject(comment);
-            var buffer = Encoding.UTF8.GetBytes(json);
-            var byteContent = new ByteArrayContent(buffer);
-            byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-            try
-            {
-                // PUT api/comentarios/id
-                var response = await _httpClient.PutAsync(UrlApiComments + "/" + comment.Id, byteContent);
-                await CheckResponse(response);
-            }
-            catch (HttpRequestException exception)
-            {
-                ShowModalError(ErrorUnknown + "Código de error: " + exception);
-            }
+            var response = await CommentApiService.UpdateComment(_httpClient, commentViewModel);
+            await CheckResponse(response);
         });
     }
 
-    private void DeleteComment(CommentViewModel commentViewModel)
+    private void ShowModalError(string error)
     {
-        ConfirmationModal.IsWarning = true;
-        ConfirmationModal.Open();
-        ConfirmationModal.OnConfirm(async () =>
-        {
-            try
-            {
-                // DELETE api/comentarios/id
-                var response = await _httpClient.DeleteAsync(UrlApiComments + "/" + commentViewModel.Id);
-                await CheckResponse(response);
-            }
-            catch (HttpRequestException exception)
-            {
-                ShowModalError(ErrorUnknown + "Código de error: " + exception);
-            }
-        });
-    }
-
-    private void ShowModalError(string err)
-    {
-        ErrorMessage = err;
+        ErrorMessage = error;
         ErrorModal.IsError = true;
         ErrorModal.Open();
     }
@@ -255,15 +208,14 @@
             SuccessModal.Open();
         }
         else if (response.StatusCode == HttpStatusCode.BadRequest)
-            ShowModalError(ErrorBadRequest);
+            ShowModalError(Data.CommentApiService.ErrorBadRequest);
         else if (response.StatusCode == HttpStatusCode.Unauthorized)
-            ShowModalError(ErrorUnauthorized);
+            ShowModalError(Data.CommentApiService.ErrorUnauthorized);
         else if (response.StatusCode == HttpStatusCode.NotFound)
-            ShowModalError(ErrorNotFound);
+            ShowModalError(Data.CommentApiService.ErrorNotFound);
         else if (response.StatusCode == HttpStatusCode.Conflict)
-            ShowModalError(ErrorConflict);
+            ShowModalError(Data.CommentApiService.ErrorConflict);
         else
-            ShowModalError(ErrorUnknown);
+            ShowModalError(Data.CommentApiService.ErrorUnknown);
     }
-
 }
