@@ -50,7 +50,8 @@ namespace PetFinder.Data
 
         public async Task<HttpResponseMessage> DeleteComment(CommentViewModel commentViewModel)
         {
-            throw new NotImplementedException();
+            var response = await _httpClient.DeleteAsync(_urlApiComments + "/" + commentViewModel.Id);
+            return response;
         }
 
         public async Task<HttpResponseMessage> GetComments(int petId)
