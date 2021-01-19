@@ -9,8 +9,8 @@ namespace PetFinder.ViewModels
 
         public T ConvertToCategory()
         {
-            var animalType = new T {Id = Id, Name = Name};
-            return animalType;
+            var category = new T {Id = Id, Name = Name};
+            return category;
         }
 
         public void ConvertFromCategory(T category)
