@@ -4,9 +4,9 @@
 @using PetFinder.ViewModels
 @using Microsoft.AspNetCore.Identity
 @inject IPetService PetService
-@inject ICityService CityService
-@inject IAnimalTypeService AnimalTypeService
-@inject IGenderService GenderService
+@inject ICategoryService<City> CityService
+@inject ICategoryService<AnimalType> AnimalTypeService
+@inject ICategoryService<Gender> GenderService
 @inject IFileService FileService
 @inject NavigationManager NavigationManager
 @inject UserManager<ApplicationUser> UserManager
