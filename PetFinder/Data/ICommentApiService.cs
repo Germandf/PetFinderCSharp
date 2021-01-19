@@ -63,7 +63,15 @@ namespace PetFinder.Data
 
         public async Task<HttpResponseMessage> UpdateComment(CommentViewModel commentViewModel)
         {
-            throw new NotImplementedException();
+            var comment = commentViewModel.ConvertToComment();
+            // Preparo content del put
+            var json = JsonConvert.SerializeObject(comment);
+            var buffer = Encoding.UTF8.GetBytes(json);
+            var byteContent = new ByteArrayContent(buffer);
+            byteContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            // PUT api/comentarios/id
+            var response = await _httpClient.PutAsync(_urlApiComments + "/" + comment.Id, byteContent);
+            return response;
         }
     }
 }
