@@ -4,17 +4,11 @@
 
 namespace PetFinder.Models
 {
-    public class AnimalType
+    public class AnimalType: CategoryBase
     {
         public AnimalType()
         {
             Pets = new HashSet<Pet>();
         }
-
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public string SerializedName { get; set; }
-
-        public virtual ICollection<Pet> Pets { get; set; }
     }
 }
