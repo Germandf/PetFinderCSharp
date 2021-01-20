@@ -17,7 +17,7 @@
                     <li class="list-group-item pl-0">Animal: @Pet.AnimalType.Name</li>
                 </ul>
                 <div class="text-right">
-                    <a href="ver/#" class="btn bg-orange text-white mt-2">Ver más</a>
+                    <a href="ver/@Pet.Id" class="btn bg-orange text-white mt-2">Ver más</a>
                     <AuthorizeView>
                         <Authorized>
                             @if (User.IsAdmin() || Pet.UserId == User.Id)
