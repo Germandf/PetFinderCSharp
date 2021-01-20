@@ -23,9 +23,9 @@ namespace PetFinder.Data
 
     public class AuthJwtService : IAuthJwtService
     {
-        public AuthJwtService(IConfiguration Configuration)
+        public AuthJwtService(IConfiguration configuration)
         {
-            _configuration = Configuration;
+            _configuration = configuration;
             _httpClient = new HttpClient();
             _urlApiAuth = _configuration["UrlApiController"] + "auth";
         }
@@ -47,7 +47,7 @@ namespace PetFinder.Data
                 {
                     var source = await response.Content.ReadAsStringAsync();
                     var tokenObj = JObject.Parse(source);
-                    result.value = Convert.ToString(tokenObj["token"]);
+                    result.Value = Convert.ToString(tokenObj["token"]);
                 }
                 else
                 {

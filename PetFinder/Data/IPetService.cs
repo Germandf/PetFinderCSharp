@@ -35,7 +35,7 @@ namespace PetFinder.Data
         ///     Inserts a Pet
         /// </summary>
         /// <returns>
-        ///     A bool that indicates if it was successfull or not
+        ///     A bool that indicates if it was successful or not
         /// </returns>
         Task<bool> Insert(Pet pet);
 
@@ -43,7 +43,7 @@ namespace PetFinder.Data
         ///     Updates a Pet
         /// </summary>
         /// <returns>
-        ///     A bool that indicates if it was successfull or not
+        ///     A bool that indicates if it was successful or not
         /// </returns>
         Task<GenericResult> Update(Pet pet);
 
@@ -51,7 +51,7 @@ namespace PetFinder.Data
         ///     Deletes a Pet
         /// </summary>
         /// <returns>
-        ///     A bool that indicates if it was successfull or not
+        ///     A bool that indicates if it was successful or not
         /// </returns>
         Task<bool> Delete(int id);
 
@@ -59,7 +59,7 @@ namespace PetFinder.Data
         ///     Inserts or Updates a Pet depending on the case, it also takes care of uploading the photo if necessary
         /// </summary>
         /// <returns>
-        ///     A GenericResult that indicates if it was successfull or not, if not, it will contain the error/s
+        ///     A GenericResult that indicates if it was successful or not, if not, it will contain the error/s
         /// </returns>
         Task<GenericResult> Save(Pet pet, IFileListEntry photo);
 
@@ -67,7 +67,7 @@ namespace PetFinder.Data
         ///     Transforms the PetViewModel into a Pet and calls Save with the Pet parameter
         /// </summary>
         /// <returns>
-        ///     A GenericResult that indicates if it was successfull or not, if not, it will contain the error/s
+        ///     A GenericResult that indicates if it was successful or not, if not, it will contain the error/s
         /// </returns>
         Task<GenericResult> Save(PetViewModel petViewModel, IFileListEntry photo);
 
@@ -93,13 +93,13 @@ namespace PetFinder.Data
         /// <returns>
         ///     A bool that indicates if he has permissions or not
         /// </returns>
-        Task<bool> CurrUserCanEdit(Pet pet);
+        Task<bool> CurrentUserCanEdit(Pet pet);
 
         /// <summary>
         ///     Sets the Found attribute of the Pet object as true
         /// </summary>
         /// <returns>
-        ///     A bool that indicates if it was successfull or not
+        ///     A bool that indicates if it was successful or not
         /// </returns>
         Task<bool> SetFound(int id);
     }
@@ -139,20 +139,19 @@ namespace PetFinder.Data
             _fileService = fileService;
         }
 
-        public async Task<bool> CurrUserCanEdit(Pet pet)
+        public async Task<bool> CurrentUserCanEdit(Pet pet)
         {
             var currUser = await _applicationUserService.GetCurrent();
             if (currUser == null) return false; // No esta logeado
-            var isAdmin = await _userManager.IsInRoleAsync(currUser, ApplicationUserService.ROLE_ADMIN);
+            var isAdmin = await _userManager.IsInRoleAsync(currUser, ApplicationUserService.RoleAdmin);
             if (isAdmin) return true; //Si es admin puede editar
-            if (pet.UserId == currUser.Id) return true; // Si es suya puede editar
-            return false; // No puede editar
+            return pet.UserId == currUser.Id; // Si es suya puede editar, sino no
         }
 
         public async Task<bool> Delete(int id)
         {
             var pet = await _context.Pets.FindAsync(id);
-            if (await CurrUserCanEdit(pet))
+            if (await CurrentUserCanEdit(pet))
             {
                 _context.Pets.Remove(pet);
                 _logger.Warning("Pet {name} deleted, Id: {id}", pet.Name, pet.Id);
@@ -164,7 +163,7 @@ namespace PetFinder.Data
         public async Task<bool> SetFound(int id)
         {
             var pet = await _context.Pets.FindAsync(id);
-            if (await CurrUserCanEdit(pet))
+            if (await CurrentUserCanEdit(pet))
             {
                 pet.Found = 1;
                 _context.Entry(pet).State = EntityState.Modified;
@@ -220,7 +219,7 @@ namespace PetFinder.Data
             {
                 var resultImage = await _fileService.UploadPetPhotoAsync(photo);
                 if (resultImage.Success)
-                    pet.Photo = resultImage.value; // Si la imagen se subio bien le asignamos la url a la mascota
+                    pet.Photo = resultImage.Value; // Si la imagen se subio bien le asignamos la url a la mascota
                 else result.AddRange(resultImage.Errors);
             }
 
@@ -239,7 +238,7 @@ namespace PetFinder.Data
         public async Task<GenericResult> Update(Pet pet)
         {
             var result = new GenericResult();
-            if (await CurrUserCanEdit(pet))
+            if (await CurrentUserCanEdit(pet))
             {
                 _context.Entry(pet).State = EntityState.Modified;
                 if (pet.Photo == null)

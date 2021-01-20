@@ -16,17 +16,10 @@ namespace PetFinderApi.Controllers
     public class CommentsController : ControllerBase
     {
         private readonly ICommentService _commentService;
-        private readonly PetFinderContext _context;
         private readonly IJwtService _jwtService;
-        private readonly ILogger<CommentsController> _logger;
 
-        public CommentsController(ILogger<CommentsController> logger,
-            PetFinderContext context,
-            ICommentService commentService,
-            IJwtService jwtService)
+        public CommentsController(ICommentService commentService, IJwtService jwtService)
         {
-            _logger = logger;
-            _context = context;
             _commentService = commentService;
             _jwtService = jwtService;
         }

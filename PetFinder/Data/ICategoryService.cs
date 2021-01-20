@@ -32,7 +32,7 @@ namespace PetFinder.Data
         ///     Inserts a <typeparamref name="T" />
         /// </summary>
         /// <returns>
-        ///     A bool that indicates if it was successfull or not
+        ///     A bool that indicates if it was successful or not
         /// </returns>
         Task<bool> Insert(T category);
 
@@ -40,7 +40,7 @@ namespace PetFinder.Data
         ///     Updates a <typeparamref name="T" />
         /// </summary>
         /// <returns>
-        ///     A bool that indicates if it was successfull or not
+        ///     A bool that indicates if it was successful or not
         /// </returns>
         Task<bool> Update(T category);
 
@@ -48,7 +48,7 @@ namespace PetFinder.Data
         ///     Deletes a <typeparamref name="T" />
         /// </summary>
         /// <returns>
-        ///     A bool that indicates if it was successfull or not
+        ///     A bool that indicates if it was successful or not
         /// </returns>
         Task<bool> Delete(int id);
 
@@ -56,7 +56,7 @@ namespace PetFinder.Data
         ///     Inserts or Updates a <typeparamref name="T" /> depending on the case.
         /// </summary>
         /// <returns>
-        ///     A GenericResult that indicates if it was successfull or not, if not, it will contain the error/s
+        ///     A GenericResult that indicates if it was successful or not, if not, it will contain the error/s
         /// </returns>
         Task<GenericResult> Save(T category);
 
@@ -65,7 +65,7 @@ namespace PetFinder.Data
         ///     <typeparamref name="T" /> parameter
         /// </summary>
         /// <returns>
-        ///     A GenericResult that indicates if it was successfull or not, if not, it will contain the error/s
+        ///     A GenericResult that indicates if it was successful or not, if not, it will contain the error/s
         /// </returns>
         Task<GenericResult> Save(CategoryViewModel<T> categoryViewModel);
 
@@ -184,7 +184,7 @@ namespace PetFinder.Data
             var categoryList = await _context.Set<T>().Include(p => p.Pets).FirstAsync();
             var petsFromThisCategory = categoryList.Pets;
 
-            return petsFromThisCategory.Count() == 0;
+            return !petsFromThisCategory.Any();
         }
 
         public bool IsValidName(string name)
@@ -193,8 +193,7 @@ namespace PetFinder.Data
             if (name.Length <= 0 || name.Length > 35) return false;
             // Chequeo que sean caracteres de a - Z con espacios
             var match = Regex.Match(name, "^[a-zA-Z ]+$");
-            if (!match.Success) return false;
-            return true;
+            return match.Success;
         }
     }
 }

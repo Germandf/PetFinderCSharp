@@ -33,7 +33,7 @@ namespace PetFinder
         {
             var mvcBuilder = services.AddControllersWithViews();
             services.AddSerilogUi(mvcBuilder, options => options
-                .EnableAuthorization(authOptions => { authOptions.Roles = new[] {ApplicationUserService.ROLE_ADMIN}; })
+                .EnableAuthorization(authOptions => { authOptions.Roles = new[] {ApplicationUserService.RoleAdmin}; })
                 .UseSqlServer(Environment.GetEnvironmentVariable("SQLServerPetfinder"), "Logs")
             );
 

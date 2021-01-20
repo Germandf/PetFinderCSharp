@@ -25,7 +25,7 @@ namespace PetFinderApi.Data
         ///     Inserts a Comment
         /// </summary>
         /// <returns>
-        ///     A GenericResult that indicates if it was successfull or not, if not, it will contain the error/s
+        ///     A GenericResult that indicates if it was successful or not, if not, it will contain the error/s
         /// </returns>
         Task<GenericResult> Insert(Comment comment);
 
@@ -33,7 +33,7 @@ namespace PetFinderApi.Data
         ///     Updates a Comment
         /// </summary>
         /// <returns>
-        ///     A GenericResult that indicates if it was successfull or not, if not, it will contain the error/s
+        ///     A GenericResult that indicates if it was successful or not, if not, it will contain the error/s
         /// </returns>
         Task<GenericResult> Update(Comment comment);
 
@@ -41,7 +41,7 @@ namespace PetFinderApi.Data
         ///     Deletes a Comment
         /// </summary>
         /// <returns>
-        ///     A bool that indicates if it was successfull or not
+        ///     A bool that indicates if it was successful or not
         /// </returns>
         Task<bool> Delete(int id);
 
@@ -95,7 +95,7 @@ namespace PetFinderApi.Data
         {
             var user = await _userManager.FindByEmailAsync(userEmail);
             if (user == null) return false;
-            var isAdmin = await _userManager.IsInRoleAsync(user, ApplicationUserService.ROLE_ADMIN);
+            var isAdmin = await _userManager.IsInRoleAsync(user, ApplicationUserService.RoleAdmin);
             var comment = await Get(commentId);
             if (comment == null)
                 //Si no existe devuelvo true asi no da error de login, luego HasCorrectData detecta que no existe

@@ -162,9 +162,7 @@
         try
         {
             var response = await CommentApiService.GetComments(PetId);
-            var commentsFromApi = await response.Content.ReadAsAsync<CommentViewModel[]>();
-            if (commentsFromApi == null)
-                commentsFromApi = new CommentViewModel[0];
+            var commentsFromApi = await response.Content.ReadAsAsync<CommentViewModel[]>() ?? new CommentViewModel[0];
             _comments.Clear();
             _comments.AddRange(commentsFromApi);
             _comments.Reverse();

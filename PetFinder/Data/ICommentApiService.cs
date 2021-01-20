@@ -56,6 +56,7 @@ namespace PetFinder.Data
 
         public async Task<HttpResponseMessage> DeleteComment(CommentViewModel commentViewModel)
         {
+            // DELETE api/comentarios/id
             var response = await _httpClient.DeleteAsync(_urlApiComments + "/" + commentViewModel.Id);
             return response;
         }

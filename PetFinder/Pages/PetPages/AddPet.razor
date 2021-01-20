@@ -181,7 +181,7 @@
                 Error = "No se encontró la mascota";
                 IsError = true;
             }
-            else if (!await PetService.CurrUserCanEdit(pet))
+            else if (!await PetService.CurrentUserCanEdit(pet))
             {
                 Error = "No podes editar está mascota";
                 IsError = true;

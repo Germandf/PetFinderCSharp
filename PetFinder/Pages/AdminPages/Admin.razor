@@ -6,7 +6,7 @@
 @inject IPetService PetService
 @inject IApplicationUserService ApplicationUserService
 
-<AuthorizeView Roles="@Data.ApplicationUserService.ROLE_ADMIN">
+<AuthorizeView Roles="@Data.ApplicationUserService.RoleAdmin">
     <Authorized>
         <section class="container-fluid bg-orange-dark">
             <div class="row">
