@@ -138,12 +138,13 @@
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var userClaims = authState.User;
         await GetComments();
-        _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", userClaims.Identity.GetJwt());
+        var token =  userClaims.Identity.GetJwt();
+        CommentApiService.SetJwt(token);
     }
 
     private async void CreateComment(CommentViewModel commentViewModel)
     {
-        var response = await CommentApiService.CreateComment(_httpClient, commentViewModel, PetId, _user);
+        var response = await CommentApiService.CreateComment(commentViewModel, PetId, _user);
         await CheckResponse(response);
         _newComment.Message = "";
         _newComment.Rate = 1;
@@ -155,7 +156,7 @@
         ConfirmationModal.Open();
         ConfirmationModal.OnConfirm(async () =>
         {
-            var response = await CommentApiService.DeleteComment(_httpClient, commentViewModel);
+            var response = await CommentApiService.DeleteComment(commentViewModel);
             await CheckResponse(response);
         });
     }
@@ -164,7 +165,7 @@
     {
         try
         {
-            var response = await CommentApiService.GetComments(_httpClient, PetId);
+            var response = await CommentApiService.GetComments(PetId);
             var commentsFromApi = await response.Content.ReadAsAsync<CommentViewModel[]>();
             if (commentsFromApi == null)
                 commentsFromApi = new CommentViewModel[0];
@@ -187,7 +188,7 @@
         EditModal.OnConfirm(async () =>
         {
             commentViewModel.Message = EditModal.value;
-            var response = await CommentApiService.UpdateComment(_httpClient, commentViewModel);
+            var response = await CommentApiService.UpdateComment( commentViewModel);
             await CheckResponse(response);
         });
     }
