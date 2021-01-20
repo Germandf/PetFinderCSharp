@@ -21,8 +21,9 @@ namespace PetFinder.Data
 
     public class FileService : IFileService
     {
-        public const string EmptyFileError = 
+        public const string EmptyFileError =
             "Debe elegir una imagen";
+
         public const string InvalidFileType =
             "El tipo de archivo que intenta subir es invalido. Debe ser JPG, JPEG o PNG";
 

@@ -1,10 +1,6 @@
 ﻿@using PetFinder.Areas.Identity.Extensions
 @using PetFinder.ViewModels
-@using Microsoft.Extensions.Configuration
-@using Newtonsoft.Json
 @using PetFinder.Areas.Identity
-@using System.Net.Http.Headers
-@using System.Text
 @using System.Net
 @inject IApplicationUserService ApplicationUserService
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -25,7 +21,7 @@
                         Comentar
                     </button>
                 </EditForm>
-                <ModalWithValue TypeValue="string" @ref="                    EditModal">
+                <ModalWithValue TypeValue="string" @ref="EditModal">
                     <Title>
                         Editar
                     </Title>
@@ -138,7 +134,7 @@
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var userClaims = authState.User;
         await GetComments();
-        var token =  userClaims.Identity.GetJwt();
+        var token = userClaims.Identity.GetJwt();
         CommentApiService.SetJwt(token);
     }
 
@@ -188,7 +184,7 @@
         EditModal.OnConfirm(async () =>
         {
             commentViewModel.Message = EditModal.value;
-            var response = await CommentApiService.UpdateComment( commentViewModel);
+            var response = await CommentApiService.UpdateComment(commentViewModel);
             await CheckResponse(response);
         });
     }
@@ -219,4 +215,5 @@
         else
             ShowModalError(Data.CommentApiService.ErrorUnknown);
     }
+
 }

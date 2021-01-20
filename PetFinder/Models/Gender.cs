@@ -4,7 +4,7 @@
 
 namespace PetFinder.Models
 {
-    public class Gender: CategoryBase
+    public class Gender : CategoryBase
     {
         public Gender()
         {

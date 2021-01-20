@@ -242,7 +242,7 @@ namespace PetFinder.Data
             if (await CurrUserCanEdit(pet))
             {
                 _context.Entry(pet).State = EntityState.Modified;
-                if(pet.Photo == null)
+                if (pet.Photo == null)
                     _context.Entry(pet).Property(x => x.Photo).IsModified = false;
                 if (await _context.SaveChangesAsync() > 0)
                     return result;
@@ -291,10 +291,7 @@ namespace PetFinder.Data
 
         public bool IsValidName(string name)
         {
-            if (name == null)
-            {
-                return false;
-            }
+            if (name == null) return false;
 
             var isValid = name.Length > 0 && name.Length <= 20;
             return isValid;
@@ -318,8 +315,7 @@ namespace PetFinder.Data
             return errorMessages;
         }
 
-        private async Task<IEnumerable<Pet>> SearchByFilter(string city, string animalType, string gender,
-            string search)
+        private async Task<IEnumerable<Pet>> SearchByFilter(string city, string animalType, string gender, string search)
         {
             return await _context.Pets.Where(p => p.City.SerializedName == city || city == null)
                 .Where(p => p.AnimalType.SerializedName == animalType || animalType == null)

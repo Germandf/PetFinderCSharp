@@ -1,16 +1,11 @@
-﻿using PetFinder.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Net.Http;
+﻿using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using PetFinder.Areas.Identity;
 using Newtonsoft.Json;
-using System.Text;
-using System.Net.Http.Headers;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
+using PetFinder.Areas.Identity;
+using PetFinder.ViewModels;
 
 namespace PetFinder.Data
 {
@@ -34,17 +29,15 @@ namespace PetFinder.Data
         public static string ErrorNotFound = "No se encontró el objeto solicitado";
         public static string ErrorUnauthorized = "No tienes permiso para realizar esta acción";
         public static string ErrorUnknown = "Ha ocurrido un error inesperado, ponte en contacto con uno de los administradores";
-        private readonly string _urlApiComments;
-        private HttpClient _httpClient { get; }
 
+        private readonly string _urlApiComments;
+        private readonly HttpClient _httpClient;
 
         public CommentApiService(IConfiguration configuration)
         {
             _urlApiComments = configuration["UrlApiController"] + "comentarios";
             _httpClient = new HttpClient();
         }
-
-        
 
         public async Task<HttpResponseMessage> CreateComment(CommentViewModel commentViewModel, int petId, ApplicationUser user)
         {
