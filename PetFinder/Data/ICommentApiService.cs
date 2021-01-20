@@ -11,15 +11,42 @@ namespace PetFinder.Data
 {
     public interface ICommentApiService
     {
-        public Task<HttpResponseMessage> CreateComment(CommentViewModel commentViewModel, int petId, ApplicationUser user);
+        /// <summary>
+        ///     Creates a Comment
+        /// </summary>
+        /// <returns>
+        ///     An HttpResponseMessage
+        /// </returns>
+        public Task<HttpResponseMessage> Create(CommentViewModel commentViewModel, int petId, ApplicationUser user);
 
-        public Task<HttpResponseMessage> DeleteComment(CommentViewModel commentViewModel);
+        /// <summary>
+        ///     Deletes a Comment
+        /// </summary>
+        /// <returns>
+        ///     An HttpResponseMessage
+        /// </returns>
+        public Task<HttpResponseMessage> Delete(CommentViewModel commentViewModel);
 
-        public Task<HttpResponseMessage> GetComments(int petId);
+        /// <summary>
+        ///     Gets all Comments with their referenced User
+        /// </summary>
+        /// <returns>
+        ///     An HttpResponseMessage
+        /// </returns>
+        public Task<HttpResponseMessage> GetAll(int petId);
 
+        /// <summary>
+        ///     Sets the Jwt in the current HttpClient
+        /// </summary>
         public void SetJwt(string token);
 
-        public Task<HttpResponseMessage> UpdateComment(CommentViewModel commentViewModel);
+        /// <summary>
+        ///     Updates a Comment
+        /// </summary>
+        /// <returns>
+        ///     An HttpResponseMessage
+        /// </returns>
+        public Task<HttpResponseMessage> Update(CommentViewModel commentViewModel);
     }
 
     public class CommentApiService : ICommentApiService
@@ -39,7 +66,7 @@ namespace PetFinder.Data
             _httpClient = new HttpClient();
         }
 
-        public async Task<HttpResponseMessage> CreateComment(CommentViewModel commentViewModel, int petId, ApplicationUser user)
+        public async Task<HttpResponseMessage> Create(CommentViewModel commentViewModel, int petId, ApplicationUser user)
         {
             var comment = commentViewModel.ConvertToComment();
             comment.PetId = petId;
@@ -54,14 +81,14 @@ namespace PetFinder.Data
             return response;
         }
 
-        public async Task<HttpResponseMessage> DeleteComment(CommentViewModel commentViewModel)
+        public async Task<HttpResponseMessage> Delete(CommentViewModel commentViewModel)
         {
             // DELETE api/comentarios/id
             var response = await _httpClient.DeleteAsync(_urlApiComments + "/" + commentViewModel.Id);
             return response;
         }
 
-        public async Task<HttpResponseMessage> GetComments(int petId)
+        public async Task<HttpResponseMessage> GetAll(int petId)
         {
             // GET api/comentarios/id
             var response = await _httpClient.GetAsync(_urlApiComments + "/mascota/" + petId);
@@ -73,7 +100,7 @@ namespace PetFinder.Data
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         }
 
-        public async Task<HttpResponseMessage> UpdateComment(CommentViewModel commentViewModel)
+        public async Task<HttpResponseMessage> Update(CommentViewModel commentViewModel)
         {
             var comment = commentViewModel.ConvertToComment();
             // Preparo content del put

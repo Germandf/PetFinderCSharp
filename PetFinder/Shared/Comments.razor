@@ -140,7 +140,7 @@
 
     private async void CreateComment(CommentViewModel commentViewModel)
     {
-        var response = await CommentApiService.CreateComment(commentViewModel, PetId, _user);
+        var response = await CommentApiService.Create(commentViewModel, PetId, _user);
         await CheckResponse(response);
         _newComment.Message = "";
         _newComment.Rate = 1;
@@ -152,7 +152,7 @@
         ConfirmationModal.Open();
         ConfirmationModal.OnConfirm(async () =>
         {
-            var response = await CommentApiService.DeleteComment(commentViewModel);
+            var response = await CommentApiService.Delete(commentViewModel);
             await CheckResponse(response);
         });
     }
@@ -161,7 +161,7 @@
     {
         try
         {
-            var response = await CommentApiService.GetComments(PetId);
+            var response = await CommentApiService.GetAll(PetId);
             var commentsFromApi = await response.Content.ReadAsAsync<CommentViewModel[]>() ?? new CommentViewModel[0];
             _comments.Clear();
             _comments.AddRange(commentsFromApi);
@@ -182,7 +182,7 @@
         EditModal.OnConfirm(async () =>
         {
             commentViewModel.Message = EditModal.value;
-            var response = await CommentApiService.UpdateComment(commentViewModel);
+            var response = await CommentApiService.Update(commentViewModel);
             await CheckResponse(response);
         });
     }
