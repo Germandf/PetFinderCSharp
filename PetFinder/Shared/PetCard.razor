@@ -38,12 +38,24 @@
 
     <Modal @ref="ConfirmationModal">
         <Title>
-            Eliminar
+            @if (_isDeleting)
+            {
+                <p>Eliminar</p>
+            }
+            else
+            {
+                <p>Encontrar</p>
+            }
         </Title>
         <Body>
-        <p>
-            ¿Está seguro que desea eliminar?
-        </p>
+            @if (_isDeleting)
+            {
+                <p>¿Está seguro que desea eliminar?</p>
+            }
+            else
+            {
+                <p>¿Está seguro que desea dar por finalizada la búsqueda?</p>
+            }
         </Body>
         <Footer>
             <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick="() => ConfirmationModal.Close()">Cancelar</button>
@@ -77,22 +89,31 @@
     private Modal ConfirmationModal { get; set; }
     private Modal ErrorModal { get; set; }
 
-    private async Task SetFound()
+    private bool _isDeleting;
+
+    private void SetFound()
     {
-        var result = await PetService.SetFound(Pet.Id);
-        if (result)
+        _isDeleting = false;
+        ConfirmationModal.IsWarning = true;
+        ConfirmationModal.Open();
+        ConfirmationModal.OnConfirm(async () =>
         {
-            StateHasChanged();
-        }
-        else
-        {
-            ErrorModal.IsError = true;
-            ErrorModal.Open();
-        }
+            var result = await PetService.SetFound(Pet.Id);
+            if (result)
+            {
+                StateHasChanged();
+            }
+            else
+            {
+                ErrorModal.IsError = true;
+                ErrorModal.Open();
+            }
+        });
     }
 
     private void Delete()
     {
+        _isDeleting = true;
         ConfirmationModal.IsWarning = true;
         ConfirmationModal.Open();
         ConfirmationModal.OnConfirm(async () =>
