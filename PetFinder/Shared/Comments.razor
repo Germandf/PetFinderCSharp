@@ -79,6 +79,14 @@
         </AuthorizeView>
     </section>
     <section id="comments" class="col-12">
+        @if (_comments.Count == 0)
+        {
+            <p class="ml-2">No hay comentarios disponibles. Para poder comentar, debes iniciar sesión o registrarte primero.</p>
+        }
+        else
+        {
+            <p class="ml-2">Para poder comentar, debes iniciar sesión o registrarte primero.</p>
+        }
         @foreach (var comment in _comments)
         {
             <div class="media g-mb-30 media-comment">
@@ -103,10 +111,6 @@
                     </AuthorizeView>
                 </div>
             </div>
-        }
-        @if (_comments.Count == 0)
-        {
-            <p class="ml-2">No hay comentarios disponibles. Si eres un usuario registrado, eres libre de comentar cuanto quieras.</p>
         }
     </section>
 </div>
