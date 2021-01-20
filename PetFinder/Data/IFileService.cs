@@ -23,13 +23,12 @@ namespace PetFinder.Data
     {
         public const string EmptyFileError =
             "Debe elegir una imagen";
-
         public const string InvalidFileType =
             "El tipo de archivo que intenta subir es invalido. Debe ser JPG, JPEG o PNG";
-
-        private static readonly List<string> ImageTypes = new() {"image/jpg", "image/jpeg", "image/png"};
+        
         private const string ImagesPath = "wwwroot/images";
 
+        private static readonly List<string> ImageTypes = new() {"image/jpg", "image/jpeg", "image/png"};
         private readonly IWebHostEnvironment _environment;
 
         public FileService(IWebHostEnvironment environment)

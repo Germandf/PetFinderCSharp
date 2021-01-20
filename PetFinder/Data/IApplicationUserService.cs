@@ -62,8 +62,8 @@ namespace PetFinder.Data
 
     public class ApplicationUserService : IApplicationUserService
     {
-        public static string RoleAdmin = "Administrator";
-        public static string RoleUser = "Normal";
+        public const string RoleAdmin = "Administrator";
+        public const string RoleUser = "Normal";
 
         private readonly PetFinderContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;

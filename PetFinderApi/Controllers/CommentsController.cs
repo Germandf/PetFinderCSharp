@@ -66,7 +66,7 @@ namespace PetFinderApi.Controllers
             var wasCreated = await _commentService.Insert(comment);
             if (wasCreated.Success)
                 return Created(new Uri($"{Request.Path}/{comment.Id}", UriKind.Relative), comment);
-            if (wasCreated.Errors.Contains(CommentService.ERROR_SAVING_COMMENT)) return Conflict();
+            if (wasCreated.Errors.Contains(CommentService.ErrorSavingComment)) return Conflict();
             return BadRequest();
         }
 
@@ -98,9 +98,9 @@ namespace PetFinderApi.Controllers
             var wasUpdated = await _commentService.Update(comment);
             if (wasUpdated.Success)
                 return Ok(comment);
-            if (wasUpdated.Errors.Contains(CommentService.ERROR_COMMENT_NOT_FOUND))
+            if (wasUpdated.Errors.Contains(CommentService.ErrorCommentNotFound))
                 return NotFound();
-            if (wasUpdated.Errors.Contains(CommentService.ERROR_SAVING_COMMENT)) return Conflict();
+            if (wasUpdated.Errors.Contains(CommentService.ErrorSavingComment)) return Conflict();
             return BadRequest();
         }
 

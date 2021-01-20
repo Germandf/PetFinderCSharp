@@ -51,11 +51,11 @@ namespace PetFinder.Data
 
     public class CommentApiService : ICommentApiService
     {
-        public static string ErrorBadRequest = "El comentario tenía datos incorrectos, intente nuevamente";
-        public static string ErrorConflict = "No se ha podido completar la acción, intenta más tarde";
-        public static string ErrorNotFound = "No se encontró el objeto solicitado";
-        public static string ErrorUnauthorized = "No tienes permiso para realizar esta acción";
-        public static string ErrorUnknown = "Ha ocurrido un error inesperado, ponte en contacto con uno de los administradores";
+        public const string ErrorBadRequest = "El comentario tenía datos incorrectos, intente nuevamente";
+        public const string ErrorConflict = "No se ha podido completar la acción, intenta más tarde";
+        public const string ErrorNotFound = "No se encontró el objeto solicitado";
+        public const string ErrorUnauthorized = "No tienes permiso para realizar esta acción";
+        public const string ErrorUnknown = "Ha ocurrido un error inesperado, ponte en contacto con uno de los administradores";
 
         private readonly string _urlApiComments;
         private readonly HttpClient _httpClient;
