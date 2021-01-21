@@ -26,6 +26,6 @@ namespace PetFinder.Helpers
 
     public class GenericResult<T> : GenericResult
     {
-        public T value { get; set; }
+        public T Value { get; set; }
     }
 }

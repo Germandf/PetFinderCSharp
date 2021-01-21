@@ -21,14 +21,14 @@ namespace PetFinder.Data
 
     public class FileService : IFileService
     {
-        public const string EmptyFileError = 
+        public const string EmptyFileError =
             "Debe elegir una imagen";
         public const string InvalidFileType =
             "El tipo de archivo que intenta subir es invalido. Debe ser JPG, JPEG o PNG";
+        
+        private const string ImagesPath = "wwwroot/images";
 
         private static readonly List<string> ImageTypes = new() {"image/jpg", "image/jpeg", "image/png"};
-        private static readonly string ImagesPath = "wwwroot/images";
-
         private readonly IWebHostEnvironment _environment;
 
         public FileService(IWebHostEnvironment environment)
@@ -50,7 +50,7 @@ namespace PetFinder.Data
             if (ImageTypes.Contains(fileType))
             {
                 var fileExtension = fileType.Replace("image/", string.Empty);
-                var uniqueFileName = string.Format(@"{0}.{1}", Guid.NewGuid(), fileExtension);
+                var uniqueFileName = $@"{Guid.NewGuid()}.{fileExtension}";
                 var path = Path.Combine(_environment.ContentRootPath, "wwwroot/images", uniqueFileName);
                 var ms = new MemoryStream();
                 await fileEntry.Data.CopyToAsync(ms);
@@ -59,7 +59,7 @@ namespace PetFinder.Data
                     ms.WriteTo(file);
                 }
 
-                result.value = uniqueFileName;
+                result.Value = uniqueFileName;
             }
             else
             {

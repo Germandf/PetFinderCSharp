@@ -1,14 +1,12 @@
 ﻿@using PetFinder.Areas.Identity.Extensions
 @using PetFinder.ViewModels
-@using Microsoft.Extensions.Configuration
-@using Newtonsoft.Json
 @using PetFinder.Areas.Identity
-@using System.Net.Http.Headers
-@using System.Text
 @using System.Net
+@using Microsoft.AspNetCore.Identity
 @inject IApplicationUserService ApplicationUserService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ICommentApiService CommentApiService
+@inject UserManager<ApplicationUser> UserManager
 
 <div class="row">
     <h3 class="petSubTitle mt-3 mx-4">Comentarios</h3>
@@ -25,7 +23,7 @@
                         Comentar
                     </button>
                 </EditForm>
-                <ModalWithValue TypeValue="string" @ref="                    EditModal">
+                <ModalWithValue TypeValue="string" @ref="EditModal">
                     <Title>
                         Editar
                     </Title>
@@ -83,6 +81,14 @@
         </AuthorizeView>
     </section>
     <section id="comments" class="col-12">
+        @if (_comments.Count == 0)
+        {
+            <p class="ml-2">No hay comentarios disponibles. Para poder comentar, debes iniciar sesión o registrarte primero.</p>
+        }
+        else
+        {
+            <p class="ml-2">Para poder comentar, debes iniciar sesión o registrarte primero.</p>
+        }
         @foreach (var comment in _comments)
         {
             <div class="media g-mb-30 media-comment">
@@ -96,21 +102,22 @@
                     </p>
                     <AuthorizeView>
                         <Authorized>
-                            <!-- Si es el dueño del comentario o es admin -->
-                            <button class="btn" @onclick="() => UpdateComment(comment)">
-                                <i class="text-primary fa fa-pencil-alt"></i>
-                            </button>
-                            <button class="btn" @onclick="() => DeleteComment(comment)">
-                                <i class="text-danger fa fa-trash"></i>
-                            </button>
+                            @if (@context.User.IsInRole(Data.ApplicationUserService.RoleAdmin)  ||
+                                 comment.UserId == UserManager.GetUserId(@context.User))
+                            {
+                                <!-- Si es el dueño del comentario o es admin -->
+                                <button class="btn" @onclick="() => UpdateComment(comment)">
+                                    <i class="text-primary fa fa-pencil-alt"></i>
+                                </button>
+                                <button class="btn" @onclick="() => DeleteComment(comment)">
+                                    <i class="text-danger fa fa-trash"></i>
+                                </button>
+                            }
+                           
                         </Authorized>
                     </AuthorizeView>
                 </div>
             </div>
-        }
-        @if (_comments.Count == 0)
-        {
-            <p class="ml-2">No hay comentarios disponibles. Si eres un usuario registrado, eres libre de comentar cuanto quieras.</p>
         }
     </section>
 </div>
@@ -138,13 +145,13 @@
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         var userClaims = authState.User;
         await GetComments();
-        var token =  userClaims.Identity.GetJwt();
+        var token = userClaims.Identity.GetJwt();
         CommentApiService.SetJwt(token);
     }
 
     private async void CreateComment(CommentViewModel commentViewModel)
     {
-        var response = await CommentApiService.CreateComment(commentViewModel, PetId, _user);
+        var response = await CommentApiService.Create(commentViewModel, PetId, _user);
         await CheckResponse(response);
         _newComment.Message = "";
         _newComment.Rate = 1;
@@ -156,7 +163,7 @@
         ConfirmationModal.Open();
         ConfirmationModal.OnConfirm(async () =>
         {
-            var response = await CommentApiService.DeleteComment(commentViewModel);
+            var response = await CommentApiService.Delete(commentViewModel);
             await CheckResponse(response);
         });
     }
@@ -165,10 +172,8 @@
     {
         try
         {
-            var response = await CommentApiService.GetComments(PetId);
-            var commentsFromApi = await response.Content.ReadAsAsync<CommentViewModel[]>();
-            if (commentsFromApi == null)
-                commentsFromApi = new CommentViewModel[0];
+            var response = await CommentApiService.GetAll(PetId);
+            var commentsFromApi = await response.Content.ReadAsAsync<CommentViewModel[]>() ?? new CommentViewModel[0];
             _comments.Clear();
             _comments.AddRange(commentsFromApi);
             _comments.Reverse();
@@ -188,7 +193,7 @@
         EditModal.OnConfirm(async () =>
         {
             commentViewModel.Message = EditModal.value;
-            var response = await CommentApiService.UpdateComment( commentViewModel);
+            var response = await CommentApiService.Update(commentViewModel);
             await CheckResponse(response);
         });
     }
@@ -219,4 +224,5 @@
         else
             ShowModalError(Data.CommentApiService.ErrorUnknown);
     }
+
 }

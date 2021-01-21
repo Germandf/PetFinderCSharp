@@ -4,7 +4,7 @@
 
 namespace PetFinder.Models
 {
-    public class AnimalType: CategoryBase
+    public class AnimalType : CategoryBase
     {
         public AnimalType()
         {

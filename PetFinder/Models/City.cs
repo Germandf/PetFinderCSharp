@@ -4,7 +4,7 @@
 
 namespace PetFinder.Models
 {
-    public class City: CategoryBase
+    public class City : CategoryBase
     {
         public City()
         {

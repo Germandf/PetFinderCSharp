@@ -25,7 +25,7 @@ namespace PetFinderApi.Data
         ///     Inserts a Comment
         /// </summary>
         /// <returns>
-        ///     A GenericResult that indicates if it was successfull or not, if not, it will contain the error/s
+        ///     A GenericResult that indicates if it was successful or not, if not, it will contain the error/s
         /// </returns>
         Task<GenericResult> Insert(Comment comment);
 
@@ -33,7 +33,7 @@ namespace PetFinderApi.Data
         ///     Updates a Comment
         /// </summary>
         /// <returns>
-        ///     A GenericResult that indicates if it was successfull or not, if not, it will contain the error/s
+        ///     A GenericResult that indicates if it was successful or not, if not, it will contain the error/s
         /// </returns>
         Task<GenericResult> Update(Comment comment);
 
@@ -41,7 +41,7 @@ namespace PetFinderApi.Data
         ///     Deletes a Comment
         /// </summary>
         /// <returns>
-        ///     A bool that indicates if it was successfull or not
+        ///     A bool that indicates if it was successful or not
         /// </returns>
         Task<bool> Delete(int id);
 
@@ -80,6 +80,16 @@ namespace PetFinderApi.Data
 
     public class CommentService : ICommentService
     {
+        public const string ErrorWrongPet = "La mascota no existe";
+        public const string ErrorWrongUser = "El usuario no existe";
+        public const string ErrorSavingComment = "La operación finalizó con un error, intente más tarde";
+        public const string ErrorCommentNotFound = "El comentario no existe";
+
+        private readonly PetFinderContext _context;
+        private readonly ILogger _logger;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly PetService _petService;
+
         public CommentService(PetFinderContext context,
             ILogger logger,
             UserManager<ApplicationUser> userManager,
@@ -95,7 +105,7 @@ namespace PetFinderApi.Data
         {
             var user = await _userManager.FindByEmailAsync(userEmail);
             if (user == null) return false;
-            var isAdmin = await _userManager.IsInRoleAsync(user, ApplicationUserService.ROLE_ADMIN);
+            var isAdmin = await _userManager.IsInRoleAsync(user, ApplicationUserService.RoleAdmin);
             var comment = await Get(commentId);
             if (comment == null)
                 //Si no existe devuelvo true asi no da error de login, luego HasCorrectData detecta que no existe
@@ -154,9 +164,8 @@ namespace PetFinderApi.Data
             if (hasCorrectData.Success)
             {
                 _context.Comments.Add(comment);
-                if (await _context.SaveChangesAsync() == 0) hasCorrectData.AddError(ERROR_SAVING_COMMENT);
+                if (await _context.SaveChangesAsync() == 0) hasCorrectData.AddError(ErrorSavingComment);
             }
-
             return hasCorrectData;
         }
 
@@ -169,37 +178,22 @@ namespace PetFinderApi.Data
                 if (commentExists)
                 {
                     _context.Entry(comment).State = EntityState.Modified;
-                    if (await _context.SaveChangesAsync() == 0) hasCorrectData.AddError(ERROR_SAVING_COMMENT);
+                    if (await _context.SaveChangesAsync() == 0) hasCorrectData.AddError(ErrorSavingComment);
                 }
                 else
                 {
-                    hasCorrectData.AddError(ERROR_COMMENT_NOT_FOUND);
+                    hasCorrectData.AddError(ErrorCommentNotFound);
                 }
             }
-
             return hasCorrectData;
         }
 
         public async Task<GenericResult> HasCorrectData(Comment comment)
         {
             var result = new GenericResult();
-            if (await _petService.Get(comment.PetId) == null) result.AddError(ERROR_WRONG_PET);
-            if (await _userManager.FindByIdAsync(comment.UserId) == null) result.AddError(ERROR_WRONG_USER);
+            if (await _petService.Get(comment.PetId) == null) result.AddError(ErrorWrongPet);
+            if (await _userManager.FindByIdAsync(comment.UserId) == null) result.AddError(ErrorWrongUser);
             return result;
         }
-
-        #region
-
-        public static string ERROR_WRONG_PET = "La mascota no existe";
-        public static string ERROR_WRONG_USER = "El usuario no existe";
-        public static string ERROR_SAVING_COMMENT = "La operación finalizó con un error, intente más tarde";
-        public static string ERROR_COMMENT_NOT_FOUND = "El comentario no existe";
-
-        private readonly PetFinderContext _context;
-        private readonly ILogger _logger;
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly PetService _petService;
-
-        #endregion
     }
 }

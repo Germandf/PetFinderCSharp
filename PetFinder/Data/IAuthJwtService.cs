@@ -23,11 +23,13 @@ namespace PetFinder.Data
 
     public class AuthJwtService : IAuthJwtService
     {
-        public AuthJwtService(IConfiguration Configuration)
+        private readonly HttpClient _httpClient;
+        private readonly string _urlApiAuth;
+
+        public AuthJwtService(IConfiguration configuration)
         {
-            _configuration = Configuration;
             _httpClient = new HttpClient();
-            _urlApiAuth = _configuration["UrlApiController"] + "auth";
+            _urlApiAuth = configuration["UrlApiController"] + "auth";
         }
 
         public async Task<GenericResult<string>> GetJwt(string email, string password)
@@ -47,7 +49,7 @@ namespace PetFinder.Data
                 {
                     var source = await response.Content.ReadAsStringAsync();
                     var tokenObj = JObject.Parse(source);
-                    result.value = Convert.ToString(tokenObj["token"]);
+                    result.Value = Convert.ToString(tokenObj["token"]);
                 }
                 else
                 {
@@ -61,14 +63,6 @@ namespace PetFinder.Data
 
             return result;
         }
-
-        #region
-
-        private readonly IConfiguration _configuration;
-        private HttpClient _httpClient { get; }
-        private string _urlApiAuth { get; }
-
-        #endregion
     }
 
     public class LoginModel
