@@ -2,9 +2,11 @@
 @using PetFinder.ViewModels
 @using PetFinder.Areas.Identity
 @using System.Net
+@using Microsoft.AspNetCore.Identity
 @inject IApplicationUserService ApplicationUserService
 @inject AuthenticationStateProvider AuthenticationStateProvider
 @inject ICommentApiService CommentApiService
+@inject UserManager<ApplicationUser> UserManager
 
 <div class="row">
     <h3 class="petSubTitle mt-3 mx-4">Comentarios</h3>
@@ -100,13 +102,18 @@
                     </p>
                     <AuthorizeView>
                         <Authorized>
-                            <!-- Si es el dueño del comentario o es admin -->
-                            <button class="btn" @onclick="() => UpdateComment(comment)">
-                                <i class="text-primary fa fa-pencil-alt"></i>
-                            </button>
-                            <button class="btn" @onclick="() => DeleteComment(comment)">
-                                <i class="text-danger fa fa-trash"></i>
-                            </button>
+                            @if (@context.User.IsInRole(Data.ApplicationUserService.RoleAdmin)  ||
+                                 comment.UserId == UserManager.GetUserId(@context.User))
+                            {
+                                <!-- Si es el dueño del comentario o es admin -->
+                                <button class="btn" @onclick="() => UpdateComment(comment)">
+                                    <i class="text-primary fa fa-pencil-alt"></i>
+                                </button>
+                                <button class="btn" @onclick="() => DeleteComment(comment)">
+                                    <i class="text-danger fa fa-trash"></i>
+                                </button>
+                            }
+                           
                         </Authorized>
                     </AuthorizeView>
                 </div>
