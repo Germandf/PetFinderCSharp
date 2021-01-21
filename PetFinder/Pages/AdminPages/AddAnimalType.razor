@@ -4,7 +4,7 @@
 @inject NavigationManager Navigator
 @inject ICategoryService<AnimalType> AnimalTypeService
 
-<AuthorizeView Roles="@ApplicationUserService.ROLE_ADMIN">
+<AuthorizeView Roles="@ApplicationUserService.RoleAdmin">
     <Authorized>
         <div class="row">
             <div class="col-12 mt-5 text-center">

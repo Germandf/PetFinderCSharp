@@ -42,7 +42,7 @@ namespace PetFinderApi.Data
         public string GetUserEmail(HttpContext httpContext)
         {
             var principal = httpContext.User;
-            var userEmail = principal.Claims.Where(x => x.Type == JwtRegisteredClaimNames.Sub).FirstOrDefault()?.Value;
+            var userEmail = principal.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Sub)?.Value;
             return userEmail;
         }
 
@@ -55,14 +55,14 @@ namespace PetFinderApi.Data
                 new(ClaimTypes.NameIdentifier, user.Id)
             };
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JwtKey"]));
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+            var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var expires = DateTime.Now.AddDays(Convert.ToDouble(_configuration["JwtExpireDays"]));
             var token = new JwtSecurityToken(
                 _configuration["JwtIssuer"],
                 _configuration["JwtIssuer"],
                 claims,
                 expires: expires,
-                signingCredentials: creds
+                signingCredentials: credentials
             );
             return new JwtSecurityTokenHandler().WriteToken(token);
         }

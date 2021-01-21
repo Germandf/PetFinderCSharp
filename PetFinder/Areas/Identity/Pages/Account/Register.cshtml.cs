@@ -82,32 +82,32 @@ namespace PetFinder.Areas.Identity.Pages.Account
                         return RedirectToPage("RegisterConfirmation", new {email = Input.Email, returnUrl});
                     }
 
-                    var RoleResult = await _roleManager.FindByNameAsync(ApplicationUserService.ROLE_ADMIN);
+                    var RoleResult = await _roleManager.FindByNameAsync(ApplicationUserService.RoleAdmin);
                     if (RoleResult == null)
                         // Create ROLE_ADMIN Role
-                        await _roleManager.CreateAsync(new IdentityRole(ApplicationUserService.ROLE_ADMIN));
-                    RoleResult = await _roleManager.FindByNameAsync(ApplicationUserService.ROLE_USER);
+                        await _roleManager.CreateAsync(new IdentityRole(ApplicationUserService.RoleAdmin));
+                    RoleResult = await _roleManager.FindByNameAsync(ApplicationUserService.RoleUser);
                     if (RoleResult == null)
                         // Create ROLE_USER Role
-                        await _roleManager.CreateAsync(new IdentityRole(ApplicationUserService.ROLE_USER));
+                        await _roleManager.CreateAsync(new IdentityRole(ApplicationUserService.RoleUser));
 
                     if (_userManager.Users.Count() == 1)
                     {
                         //si es el primer usuario registrado le asigno el rol admin
-                        await _userManager.AddToRoleAsync(user, ApplicationUserService.ROLE_ADMIN);
+                        await _userManager.AddToRoleAsync(user, ApplicationUserService.RoleAdmin);
                         _logger.Information("User: {User} created a new account with {Role} role.", user,
-                            ApplicationUserService.ROLE_ADMIN);
+                            ApplicationUserService.RoleAdmin);
                     }
                     else
                     {
-                        await _userManager.AddToRoleAsync(user, ApplicationUserService.ROLE_USER);
+                        await _userManager.AddToRoleAsync(user, ApplicationUserService.RoleUser);
                         _logger.Information("User: {User} created a new account with {Role} role.", user,
-                            ApplicationUserService.ROLE_USER);
+                            ApplicationUserService.RoleUser);
                     }
 
 
                     var resultJwt = await _jwtService.GetJwt(Input.Email, Input.Password);
-                    if (resultJwt.Success) await _userManager.AddClaimAsync(user, new Claim("JWT", resultJwt.value));
+                    if (resultJwt.Success) await _userManager.AddClaimAsync(user, new Claim("JWT", resultJwt.Value));
                     await _signInManager.SignInAsync(user, false);
                     return LocalRedirect(returnUrl);
                 }

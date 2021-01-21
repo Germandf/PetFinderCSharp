@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Bunit.TestDoubles;
 using Microsoft.EntityFrameworkCore;
 using PetFinder.Helpers;
 using PetFinder.Models;
@@ -13,66 +10,67 @@ using Serilog;
 
 namespace PetFinder.Data
 {
-    public interface ICategoryService<T> where T: CategoryBase, new()
+    public interface ICategoryService<T> where T : CategoryBase, new()
     {
         /// <summary>
-        ///     Gets all <typeparamref name="T"/>
+        ///     Gets all <typeparamref name="T" />
         /// </summary>
         /// <returns>
-        ///     An IEnumerable of type <typeparamref name="T"/>
+        ///     An IEnumerable of type <typeparamref name="T" />
         /// </returns>
         Task<IEnumerable<T>> GetAll();
 
         /// <summary>
-        ///     Gets a specific <typeparamref name="T"/> by its Id
+        ///     Gets a specific <typeparamref name="T" /> by its Id
         /// </summary>
         /// <returns>
-        ///     An <typeparamref name="T"/> object
+        ///     A <typeparamref name="T" /> object
         /// </returns>
         Task<T> Get(int id);
 
         /// <summary>
-        ///     Inserts an <typeparamref name="T"/>
+        ///     Inserts a <typeparamref name="T" />
         /// </summary>
         /// <returns>
-        ///     A bool that indicates if it was successfull or not
+        ///     A bool that indicates if it was successful or not
         /// </returns>
         Task<bool> Insert(T category);
 
         /// <summary>
-        ///     Updates an <typeparamref name="T"/>
+        ///     Updates a <typeparamref name="T" />
         /// </summary>
         /// <returns>
-        ///     A bool that indicates if it was successfull or not
+        ///     A bool that indicates if it was successful or not
         /// </returns>
         Task<bool> Update(T category);
 
         /// <summary>
-        ///     Deletes an <typeparamref name="T"/>
+        ///     Deletes a <typeparamref name="T" />
         /// </summary>
         /// <returns>
-        ///     A bool that indicates if it was successfull or not
+        ///     A bool that indicates if it was successful or not
         /// </returns>
         Task<bool> Delete(int id);
 
         /// <summary>
-        ///     Inserts or Updates an <typeparamref name="T"/> depending on the case.
+        ///     Inserts or Updates a <typeparamref name="T" /> depending on the case.
         /// </summary>
         /// <returns>
-        ///     A GenericResult that indicates if it was successfull or not, if not, it will contain the error/s
+        ///     A GenericResult that indicates if it was successful or not, if not, it will contain the error/s
         /// </returns>
         Task<GenericResult> Save(T category);
 
         /// <summary>
-        ///     Transforms the CategoryViewModel into an <typeparamref name="T"/> and calls Save with the <typeparamref name="T"/> parameter
+        ///     Transforms the CategoryViewModel into a <typeparamref name="T" /> and calls Save with the
+        ///     <typeparamref name="T" /> parameter
         /// </summary>
         /// <returns>
-        ///     A GenericResult that indicates if it was successfull or not, if not, it will contain the error/s
+        ///     A GenericResult that indicates if it was successful or not, if not, it will contain the error/s
         /// </returns>
         Task<GenericResult> Save(CategoryViewModel<T> categoryViewModel);
 
         /// <summary>
-        ///     Checks if the name is used by an already created <typeparamref name="T"/>
+        ///     Checks if the name is used by an already created <typeparamref name="T" />
         /// </summary>
         /// <returns>
         ///     A bool that indicates if it's being used or not
@@ -80,7 +78,7 @@ namespace PetFinder.Data
         Task<bool> IsRepeated(string name);
 
         /// <summary>
-        ///     Checks if exists a Pet that depends on a specific <typeparamref name="T"/>
+        ///     Checks if exists a Pet that depends on a specific <typeparamref name="T" />
         /// </summary>
         /// <returns>
         ///     A bool that indicates if there is at least one
@@ -88,7 +86,7 @@ namespace PetFinder.Data
         Task<bool> HasPetsAssociated(T category);
     }
 
-    public class CategoryService<T> : ICategoryService<T> where T: CategoryBase, new()
+    public class CategoryService<T> : ICategoryService<T> where T : CategoryBase, new()
     {
         public const string InvalidNameError = "El nombre ingresado no corresponde a un nombre valido";
         public const string RepeatedCategoryError = "El nombre ya está registrado. Intenta con uno diferente!";
@@ -107,7 +105,8 @@ namespace PetFinder.Data
         {
             var category = await Get(id);
             _context.Remove(category);
-            _logger.Warning("Category {category} with name {name} deleted, Id: {id}", typeof(T).Name, category.Name, category.Id);
+            _logger.Warning("Category {category} with name {name} deleted, Id: {id}", 
+                typeof(T).Name, category.Name, category.Id);
             return await _context.SaveChangesAsync() > 0;
         }
 
@@ -126,7 +125,7 @@ namespace PetFinder.Data
         public async Task<bool> Insert(T category)
         {
             _context.Set<T>().Add(category);
-            _logger.Information("Category of type:{category} with name {name} created",typeof(T).Name, category.Name);
+            _logger.Information("Category of type:{category} with name {name} created", typeof(T).Name, category.Name);
             return await _context.SaveChangesAsync() > 0;
         }
 
@@ -134,7 +133,8 @@ namespace PetFinder.Data
         {
             //Le decimos a la DB que la categoria fue modificada
             _context.Entry(category).State = EntityState.Modified;
-            _logger.Information("Category of type:{category}  with name   {name} updated, Id: {id}", typeof(T).Name, category.Name, category.Id);
+            _logger.Information("Category of type:{category}  with name   {name} updated, Id: {id}", 
+                typeof(T).Name, category.Name, category.Id);
             return await _context.SaveChangesAsync() > 0;
         }
 
@@ -174,7 +174,7 @@ namespace PetFinder.Data
 
         public async Task<bool> IsRepeated(string serializedName)
         {
-            var existingCategoryCount = await (_context.Set<T>().CountAsync(a => a.SerializedName == serializedName));
+            var existingCategoryCount = await _context.Set<T>().CountAsync(a => a.SerializedName == serializedName);
             if (existingCategoryCount > 0) return true;
             return false;
         }
@@ -184,7 +184,7 @@ namespace PetFinder.Data
             var categoryList = await _context.Set<T>().Include(p => p.Pets).FirstAsync();
             var petsFromThisCategory = categoryList.Pets;
 
-            return petsFromThisCategory.Count() == 0;
+            return !petsFromThisCategory.Any();
         }
 
         public bool IsValidName(string name)
@@ -193,8 +193,7 @@ namespace PetFinder.Data
             if (name.Length <= 0 || name.Length > 35) return false;
             // Chequeo que sean caracteres de a - Z con espacios
             var match = Regex.Match(name, "^[a-zA-Z ]+$");
-            if (!match.Success) return false;
-            return true;
+            return match.Success;
         }
     }
 }

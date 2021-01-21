@@ -53,10 +53,7 @@ namespace PetFinder.Areas.Identity
             var user = await userManager.GetUserAsync(principal);
             if (user == null) return false;
 
-            if (!userManager.SupportsUserSecurityStamp)
-            {
-                return true;
-            }
+            if (!userManager.SupportsUserSecurityStamp) return true;
 
             var principalStamp = principal.FindFirstValue(_options.ClaimsIdentity.SecurityStampClaimType);
             var userStamp = await userManager.GetSecurityStampAsync(user);

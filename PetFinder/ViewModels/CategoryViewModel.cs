@@ -2,7 +2,7 @@
 
 namespace PetFinder.ViewModels
 {
-    public class CategoryViewModel<T> where T: CategoryBase, new()
+    public class CategoryViewModel<T> where T : CategoryBase, new()
     {
         public int Id { get; set; }
         public string Name { get; set; }

@@ -17,7 +17,7 @@ namespace PetFinder.Areas.Identity
 
         public bool SetAdmin(bool admin)
         {
-            return this.Admin = admin;
+            return Admin = admin;
         }
     }
 }

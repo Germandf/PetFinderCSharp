@@ -5,7 +5,7 @@
 @inject SignInManager<ApplicationUser> SigInManager
 @inject RoleManager<IdentityRole> RoleManager
 
-<AuthorizeView Roles="@Data.ApplicationUserService.ROLE_ADMIN">
+<AuthorizeView Roles="@Data.ApplicationUserService.RoleAdmin">
     <Authorized>
         <section class="container">
             <div class="row justify-content-center">

@@ -86,7 +86,7 @@ namespace PetFinder.Areas.Identity.Pages.Account
                             await _context.SaveChangesAsync();
                         }
 
-                        await _userManager.AddClaimAsync(user, new Claim("JWT", resultJwt.value));
+                        await _userManager.AddClaimAsync(user, new Claim("JWT", resultJwt.Value));
                     }
                 }
 

@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using AutoFixture;
 using AutoFixture.AutoNSubstitute;
-using Microsoft.AspNetCore.Mvc;
 using PetFinder.Data;
 using PetFinder.Models;
 using Xunit;
@@ -69,7 +68,6 @@ namespace PetFinderTests.Integration
             Assert.Equal(2, numberOfAnimalTypes);
         }
 
-
         [Theory]
         [InlineData("Nombre demasiado largo con muchos caracteres")]
         [InlineData("@asdasd 213")]
@@ -80,6 +78,7 @@ namespace PetFinderTests.Integration
             var isValid = sut.IsValidName(invalidName);
             Assert.False(isValid, "Debería aceptar letras de la A a la Z, como máximo 35 caracteres");
         }
+
         [Theory]
         [InlineData("Perro lobo")]
         [InlineData("Gato")]

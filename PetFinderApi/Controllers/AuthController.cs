@@ -14,17 +14,14 @@ namespace PetFinderApi.Controllers
     public class AuthController : Controller
     {
         private readonly IJwtService _jwtService;
-        private readonly ILogger<CommentsController> _logger;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly UserManager<ApplicationUser> _userManager;
 
         public AuthController(
-            ILogger<CommentsController> logger,
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IJwtService jwtService)
         {
-            _logger = logger;
             _userManager = userManager;
             _signInManager = signInManager;
             _jwtService = jwtService;
@@ -54,7 +51,6 @@ namespace PetFinderApi.Controllers
                 var jwt = _jwtService.GenerateJwtToken(appUser);
                 response = Ok(new {token = jwt});
             }
-
             return response;
         }
     }
