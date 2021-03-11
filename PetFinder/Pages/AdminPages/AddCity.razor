@@ -21,8 +21,8 @@
                     <label for="inputName" class="sr-only mt-3 ">Nombre</label>
                     <input id="inputName" type="text" class="mt-3 form-control" placeholder="Nombre" required autofocus="" @bind="_cityViewModel.Name">
                     <div class="d-block text-right">
-                        <button class="mt-2 text-white btn-lg bg-orange-dark" type="button" value="Cancel" @onclick="Cancel">Cancelar</button>
-                        <button class="mt-2 text-white btn-lg bg-orange" type="submit" value="Save" @onclick="SaveCity">Confirmar</button>
+                        <button class="mt-2 text-white btn-lg bg-blue-whiter" type="button" value="Cancel" @onclick="Cancel">Cancelar</button>
+                        <button class="mt-2 text-white btn-lg bg-blue" type="submit" value="Save" @onclick="Save">Confirmar</button>
                     </div>
                     @if (IsError)
                     {
@@ -88,7 +88,7 @@
         }
     }
 
-    protected async Task SaveCity()
+    protected async Task Save()
     {
         _errorsOnSaving = new List<string>();
         var result = await CityService.Save(_cityViewModel);

@@ -1,7 +1,7 @@
 ﻿@page "/agregar-tipo-de-animal"
 @page "/editar-tipo-de-animal/{id:int}"
 @using PetFinder.ViewModels
-@inject NavigationManager Navigator
+@inject NavigationManager NavigationManager
 @inject ICategoryService<AnimalType> AnimalTypeService
 
 <AuthorizeView Roles="@ApplicationUserService.RoleAdmin">
@@ -25,7 +25,8 @@
                            placeholder="Nombre" required autofocus="" name="name"
                            @bind="_animalTypeViewModel.Name">
                     <div class="d-block text-right">
-                        <button class="mt-2  text-white btn-lg bg-orange" type="submit" @onclick="Save">Confirmar</button>
+                        <button class="mt-2 text-white btn-lg bg-blue-whiter" type="button" value="Cancel" @onclick="Cancel">Cancelar</button>
+                        <button class="mt-2 text-white btn-lg bg-blue" type="submit" @onclick="Save">Confirmar</button>
                     </div>
                     @if (IsError)
                     {
@@ -52,7 +53,7 @@
             </p>
             </Body>
             <Footer>
-                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick='() => Navigator.NavigateTo("/admin")'>Cerrar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" @onclick='() => NavigationManager.NavigateTo("/admin")'>Cerrar</button>
             </Footer>
         </Modal>
     </Authorized>
@@ -83,7 +84,7 @@
             {
                 IsError = true;
                 _errorsOnSaving.Add("No se encontro el tipo de animal");
-                Navigator.NavigateTo("/admin");
+                NavigationManager.NavigateTo("/admin");
             }
             else
             {
@@ -107,6 +108,11 @@
             _errorsOnSaving = result.Errors;
             StateHasChanged();
         }
+    }
+
+    protected void Cancel()
+    {
+        NavigationManager.NavigateTo("/admin");
     }
 
 }
