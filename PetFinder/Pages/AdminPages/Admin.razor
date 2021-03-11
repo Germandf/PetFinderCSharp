@@ -8,34 +8,34 @@
 
 <AuthorizeView Roles="@Data.ApplicationUserService.RoleAdmin">
     <Authorized>
-        <section class="container-fluid bg-orange-dark">
+        <section class="container-fluid bg-blue-whiter">
             <div class="row">
                 <div class="col-12 mt-3 mb-3">
-                    <a href="agregar-mascota" class="btn bg-orange text-white mr-2 my-1">
+                    <a href="agregar-mascota" class="btn bg-blue text-white mr-2 my-1">
                         <span>
                             <i class="fa fa-paw"></i>
                         </span>
                         <span>Añadir mascota perdida</span>
                     </a>
-                    <a href="agregar-ciudad" class="btn bg-orange text-white mr-2 my-1">
+                    <a href="agregar-ciudad" class="btn bg-blue text-white mr-2 my-1">
                         <span>
                             <i class="fa fa-city"></i>
                         </span>
                         <span>Añadir ciudad</span>
                     </a>
-                    <a href="agregar-tipo-de-animal" class="btn bg-orange text-white mr-2 my-1">
+                    <a href="agregar-tipo-de-animal" class="btn bg-blue text-white mr-2 my-1">
                         <span>
                             <i class="fa fa-feather"></i>
                         </span>
                         <span>Añadir tipo de animal</span>
                     </a>
-                    <a href="usuarios" class="btn bg-orange text-white mr-2 my-1">
+                    <a href="usuarios" class="btn bg-blue text-white mr-2 my-1">
                         <span>
                             <i class="fa fa-users"></i>
                         </span>
                         <span>Tabla de usuarios</span>
                     </a>
-                    <a href="logs" class="btn bg-orange text-white mr-2 my-1">
+                    <a href="logs" class="btn bg-blue text-white mr-2 my-1">
                         <span>
                             <i class="fas fa-clipboard-list"></i>
                         </span>
@@ -49,7 +49,7 @@
             <div class="row">
                 <div class="col-12 col-md-6 mt-4">
                     <ul class="list-group">
-                        <li class="list-group-item bg-orange text-white m-0">Ciudades</li>
+                        <li class="list-group-item bg-blue text-white m-0">Ciudades</li>
                         @if (Cities == null)
                         {
                             <li class="w-100 text-center mt-3">
@@ -65,7 +65,7 @@
                                 <li class="list-group-item d-flex align-items-center">
                                     <div class="col-6 text-left">@city.Name</div>
                                     <div class="col-6 text-right">
-                                        <a href="editar-ciudad/@city.Id" class="btn bg-gray text-white">Editar</a>
+                                        <a href="editar-ciudad/@city.Id" class="btn bg-blue-darker text-white">Editar</a>
                                         <button type="button" value="Delete" class="btn bg-red text-white"
                                                 @onclick="async () => await DeleteCity(city)">
                                             Eliminar
@@ -78,7 +78,7 @@
                 </div>
                 <div class="col-12 col-md-6 mt-4">
                     <ul class="list-group">
-                        <li class="list-group-item  bg-orange text-white m-0">Tipo de animal</li>
+                        <li class="list-group-item  bg-blue text-white m-0">Tipo de animal</li>
                         @if (AnimalTypes == null)
                         {
                             <li class="w-100 text-center mt-3">
@@ -94,7 +94,7 @@
                                 <li class="list-group-item d-flex align-items-center">
                                     <div class="col-6 text-left">@animalType.Name</div>
                                     <div class="col-6 text-right">
-                                        <a href="editar-tipo-de-animal/@animalType.Id" class="btn bg-gray text-white">Editar</a>
+                                        <a href="editar-tipo-de-animal/@animalType.Id" class="btn bg-blue-darker text-white">Editar</a>
                                         <button type="button" value="Delete" class="btn bg-red text-white"
                                                 @onclick="async () => await DeleteAnimalType(animalType)">
                                             Eliminar

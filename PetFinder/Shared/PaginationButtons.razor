@@ -3,33 +3,33 @@
     {
         if (IsHome)
         {
-            <a href="/@(Record - PageSize)" class="btn bg-gray text-white">Anteriores</a>
-            <a href="" class="btn bg-gray text-white">Portada</a>
+            <a href="/@(Record - PageSize)" class="btn bg-blue-darker text-white">Anteriores</a>
+            <a href="" class="btn bg-blue-darker text-white">Portada</a>
         }
         else if (IsMyPets)
         {
-            <a href="mis-mascotas/@(Record - PageSize)" class="btn bg-gray text-white">Anteriores</a>
-            <a href="mis-mascotas" class="btn bg-gray text-white">Portada</a>
+            <a href="mis-mascotas/@(Record - PageSize)" class="btn bg-blue-darker text-white">Anteriores</a>
+            <a href="mis-mascotas" class="btn bg-blue-darker text-white">Portada</a>
         }
         else if (IsAdmin)
         {
-            <a href="admin/@(Record - PageSize)" class="btn bg-gray text-white">Anteriores</a>
-            <a href="admin" class="btn bg-gray text-white">Portada</a>
+            <a href="admin/@(Record - PageSize)" class="btn bg-blue-darker text-white">Anteriores</a>
+            <a href="admin" class="btn bg-blue-darker text-white">Portada</a>
         }
     }
     @if (Record + PageSize < PetsCount)
     {
         if (IsHome)
         {
-            <a href="/@(Record + PageSize)" class="btn bg-gray text-white">Siguientes</a>
+            <a href="/@(Record + PageSize)" class="btn bg-blue-darker text-white">Siguientes</a>
         }
         else if (IsMyPets)
         {
-            <a href="mis-mascotas/@(Record + PageSize)" class="btn bg-gray text-white">Siguientes</a>
+            <a href="mis-mascotas/@(Record + PageSize)" class="btn bg-blue-darker text-white">Siguientes</a>
         }
         else if (IsAdmin)
         {
-            <a href="admin/@(Record + PageSize)" class="btn bg-gray text-white">Siguientes</a>
+            <a href="admin/@(Record + PageSize)" class="btn bg-blue-darker text-white">Siguientes</a>
         }
     }
 </div>

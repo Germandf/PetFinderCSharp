@@ -36,7 +36,7 @@
 }
 
 h1, h2, h3, .card-title, .list-group-item.card-title {
-    color: #CF5D28;
+    color: #366C7D;
     font-family: 'VAG-Rounded-Bold';
 }
 
@@ -70,22 +70,32 @@ body button, body .btn, body select, body input, .list-group, .list-group-item, 
 }
 
 .nav-link.active {
-    background-color: #CF5D28;
+    background-color: #366C7D;
     border-radius: 8px;
     color: white !important;
     padding-bottom: 8px;
     padding-top: 8px;
 }
 
-body .bg-orange { background: #DF9226; }
+body .bg-blue {
+    background: #366C7D;
+}
 
-body .bg-gray { background: #4D4C4E; }
+body .bg-blue-darker {
+    background: #1A353D;
+}
 
-body .bg-gray-whiter { background: #E7E7E8; }
+body .bg-blue-whiter{
+    background: #57AFC9;
+}
 
-body .bg-orange-dark { background: #CF5D28; }
+body .bg-emerald {
+    background: #57E6E1;
+}
 
-body .bg-red { background: #df3c26; }
+body .bg-red {
+    background: #f15e5e;
+}
 
 .categoriesLink, .categoriesLink:hover {
     color: black;

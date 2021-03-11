@@ -13,7 +13,7 @@
             </div>
             <div class="table-responsive">
                 <table class="table table-hover text-center">
-                    <thead class="bg-orange">
+                    <thead class="bg-blue">
                     <tr>
                         <th scope="col">Nombre</th>
                         <th scope="col">Email</th>
@@ -36,11 +36,11 @@
                                     <div class="text-center">
                                         @if (user.IsAdmin())
                                         {
-                                            <button type="button" value="Degradar" class="btn bg-orange text-white" @onclick="() => Downgrade(user)"> Degradar </button>
+                                            <button type="button" value="Degradar" class="btn bg-blue text-white" @onclick="() => Downgrade(user)"> Degradar </button>
                                         }
                                         else
                                         {
-                                            <button type="button" value="Promover" class="btn bg-success text-white" @onclick="() => Upgrade(user)">Promover</button>
+                                            <button type="button" value="Promover" class="btn bg-emerald text-white" @onclick="() => Upgrade(user)">Promover</button>
                                         }
                                         <button type="button" value="Delete" class="btn bg-red text-white" @onclick="() => Delete(user)">Eliminar</button>
                                     </div>

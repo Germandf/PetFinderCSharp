@@ -27,11 +27,9 @@
                         </label>
                     </div>
                     <div class="d-block text-right">
-                        <button class="mt-2 text-white btn-lg bg-orange-dark rounded border-none" type="submit">Iniciar</button>
+                        <button class="mt-2 text-white btn-lg bg-blue-whiter rounded border-none" type="submit">Iniciar</button>
                     </div>
-                    <div asp-validation-summary="All" class="alert ">
-                    </div>
-
+                    <div asp-validation-summary="All" class="alert "></div>
                 </form>
             </div>
         </div>
@@ -41,8 +39,6 @@ else
 {
     Response.Redirect("/");
 }
-
-
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial"/>

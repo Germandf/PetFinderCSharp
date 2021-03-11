@@ -17,13 +17,13 @@
                     <li class="list-group-item pl-0">Animal: @Pet.AnimalType.Name</li>
                 </ul>
                 <div class="text-right">
-                    <a href="ver/@Pet.Id" class="btn bg-orange text-white mt-2">Ver más</a>
+                    <a href="ver/@Pet.Id" class="btn bg-blue text-white mt-2">Ver más</a>
                     <AuthorizeView>
                         <Authorized>
                             @if (User.IsAdmin() || Pet.UserId == User.Id)
                             {
-                                <a href="editar-mascota/@Pet.Id" class="btn bg-orange-dark text-white mt-2 ml-1">Editar</a>
-                                <button @onclick="() => SetFound()" class=" btn bg-orange-dark text-white mt-2 ml-1">Lo encontre</button>
+                                <a href="editar-mascota/@Pet.Id" class="btn bg-blue-whiter text-white mt-2 ml-1">Editar</a>
+                                <button @onclick="() => SetFound()" class=" btn bg-blue-whiter text-white mt-2 ml-1">Lo encontre</button>
                             }
                             @if (User.IsAdmin())
                             {
